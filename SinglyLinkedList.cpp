@@ -520,8 +520,8 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 	tgui::EditBox::Ptr UserInput = gui.get<tgui::EditBox>("EditBox1");
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
-	tgui::Button::Ptr MaximizeButton = PseudoCode->getRenderer()->getMaximizeButton();
 
+	cout << "get rekt\n";
 
 	InsertButton->onPress([=] {
 		InsertPos->setVisible(1 - InsertPos->isVisible());
