@@ -29,6 +29,7 @@ struct SinglyLinkedList {
 	 
 	void initList(RenderWindow& app);
 	void drawList(RenderWindow& app);
+	void drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur);
 	int getInput(tgui::Gui& gui);
 
 	void genList(RenderWindow& app, tgui::Gui& gui);

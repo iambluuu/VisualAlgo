@@ -75,6 +75,36 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 
 }
 
+
+void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur)
+{
+	if (!Cur->nxt)
+		return;
+
+	Vector2f NodePos = Cur->Pos;
+	RectangleShape A;
+	A.setFillColor(Color(193, 148, 243));
+	A.setPosition(NodePos.x + 46, NodePos.y + 18);
+
+	int Elapsed = 0;
+	int Duration = 700;
+	Clock clock;
+
+	while (Elapsed <= Duration) {
+		app.clear();
+		gui.draw();
+
+		A.setSize(Vector2f((Util::DistanceBetweenNodes(Cur->Pos, Cur->nxt->Pos) - 50) * (double)Elapsed / Duration, 5));
+		app.draw(A);
+		drawList(app);
+
+		Elapsed = clock.getElapsedTime().asMilliseconds();
+		app.display();
+	}
+	
+}
+
+
 void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & NewNode)
 {
 	if (!Head) {
@@ -99,10 +129,10 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 
 		Cur->NodeState = Visited;
 
-		Cur = Cur->nxt;
-
 		app.display();
-		Util::Wait();
+		drawArrowFlow(app, gui, Cur);
+
+		Cur = Cur->nxt;
 	}
 
 	Cur->NodeState = Selecting;
@@ -426,7 +456,7 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 	//Move Cur down
 	int Elapsed = 0;
 	Clock clock;
-	int Duration = 300;
+	int Duration = 700;
 
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
@@ -520,8 +550,6 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 	tgui::EditBox::Ptr UserInput = gui.get<tgui::EditBox>("EditBox1");
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
-
-	cout << "get rekt\n";
 
 	InsertButton->onPress([=] {
 		InsertPos->setVisible(1 - InsertPos->isVisible());

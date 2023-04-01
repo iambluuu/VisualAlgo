@@ -43,12 +43,14 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		NodeShape.setFillColor(Color(30, 215, 96, Opacity));
 
 		Value.setFillColor(Color(255, 255, 255, Opacity));
+		break;
 
 	case Remove:
 		NodeShape.setOutlineColor(Color(229, 9, 20, Opacity));
 		NodeShape.setFillColor(Color(229, 9, 20, Opacity));
 
 		Value.setFillColor(Color(255, 255, 255, Opacity));
+		break;
 		
 	}
 
