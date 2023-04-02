@@ -15,6 +15,7 @@ enum Nodestate {
 struct Node {
 
 	Nodestate NodeState;
+	Nodestate ArrowState;
 
 	string Val;
 	Node* nxt;
@@ -31,8 +32,11 @@ struct Node {
 
 	Texture ArrowTexture;
 	Sprite Arrow;
+	Sprite TmpArrow;
 	 
 	Node() {
+		ArrowState = Normal;
+
 		NodeState = Normal;
 		Pos = { 0, 0 };
 		Val = "0";
@@ -56,6 +60,8 @@ struct Node {
 
 		Arrow.setTexture(ArrowTexture);
 		Arrow.setPosition(Pos.x + 40, Pos.y + 15);
+		TmpArrow.setTexture(ArrowTexture);
+		TmpArrow.setColor(Color(193, 148, 243));
 
 		changeNodePosition(DefaultPosX, DefaultPosY);
 	}
@@ -64,4 +70,7 @@ struct Node {
 	void updateArrow(float x, float y);
 	void changeNodeValue(int val);
 	void drawNode(RenderWindow& app, int Opacity);
+	void drawArrow(RenderWindow& app);
+	void drawArrow(RenderWindow& app, int Opacity);
+
 };

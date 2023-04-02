@@ -73,6 +73,46 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 	app.draw(Value);
 }
 
+void Node::drawArrow(RenderWindow& app)
+{
+	switch (ArrowState) {
+	case Normal:
+		Arrow.setColor(Color(0, 0, 0));
+		break;
+	case Visited:
+		Arrow.setColor(Color(193, 148, 243));
+		break;
+	case New:
+		Arrow.setColor(Color(30, 215, 96));
+		break;
+	case Remove:
+		Arrow.setColor(Color(229, 9, 20));
+		break;
+	}
+
+	app.draw(Arrow);
+}
+
+void Node::drawArrow(RenderWindow& app, int Opacity)
+{
+	switch (ArrowState) {
+	case Normal:
+		Arrow.setColor(Color(0, 0, 0, Opacity));
+		break;
+	case Visited:
+		Arrow.setColor(Color(193, 148, 243, Opacity));
+		break;
+	case New:
+		Arrow.setColor(Color(30, 215, 96, Opacity));
+		break;
+	case Remove:
+		Arrow.setColor(Color(229, 9, 20, Opacity));
+		break;
+	}
+
+	app.draw(Arrow);
+}
+
 void Node::updateArrow(float x, float y)
 {
 	if (!nxt)

@@ -1,4 +1,5 @@
 #include "SinglyLinkedList.h"
+#include <math.h>
 
 using namespace std;
 using namespace sf;
@@ -8,15 +9,17 @@ void SinglyLinkedList::drawList(RenderWindow& app)
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 
 		if (tmp->nxt)
-			app.draw(tmp->Arrow);
+			tmp->drawArrow(app);
 
 		tmp->drawNode(app, 255);
 	}
 }
 
 void SinglyLinkedList::initList(RenderWindow& app) {
-	for (Node* tmp = Head; tmp; tmp = tmp->nxt)
+	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 		tmp->NodeState = Normal;
+		tmp->ArrowState = Normal;
+	}
 
 	drawList(app);
 }
@@ -60,7 +63,7 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 			if (tmp->nxt) {
 				int ArrowLength = (int)((Util::DistanceBetweenNodes(tmp->Pos, tmp->nxt->Pos) - 40) * Elapsed / Duration);
 				tmp->Arrow.setTextureRect(IntRect(100 - ArrowLength, 0, ArrowLength, 10));
-				app.draw(tmp->Arrow);
+				tmp->drawArrow(app);
 			}
 
 			tmp->drawNode(app, 255);		
@@ -80,7 +83,7 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 	if (parts.size() == 0)
 		return;
 
-	NodeNumber = parts.size();
+	NodeNumber = min((int)parts.size(), maxNodeNumber);
 
 	for (int i = 0; i < parts.size(); i++) {
 		int tmp;
@@ -120,7 +123,7 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 			if (tmp->nxt) {
 				int ArrowLength = (int)((Util::DistanceBetweenNodes(tmp->Pos, tmp->nxt->Pos) - 40) * Elapsed / Duration);
 				tmp->Arrow.setTextureRect(IntRect(100 - ArrowLength, 0, ArrowLength, 10));
-				app.draw(tmp->Arrow);
+				tmp->drawArrow(app);
 			}
 
 			tmp->drawNode(app, 255);
@@ -133,17 +136,15 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 
 }
 
-
 void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur)
 {
 	if (!Cur->nxt)
 		return;
 
-	Vector2f NodePos = Cur->Pos;
-	RectangleShape A;
-	A.setFillColor(Color(193, 148, 243));
-	A.setPosition(NodePos.x + 46, NodePos.y + 18);
+	Cur->TmpArrow.setPosition(Cur->Arrow.getPosition());
+	Cur->TmpArrow.setRotation(Cur->Arrow.getRotation());
 
+	int ArrowLength = (int)(Util::DistanceBetweenNodes(Cur->Pos, Cur->nxt->Pos) - 40);
 	int Elapsed = 0;
 	Clock clock;
 
@@ -151,16 +152,17 @@ void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cu
 		app.clear();
 		gui.draw();
 
-		A.setSize(Vector2f((Util::DistanceBetweenNodes(Cur->Pos, Cur->nxt->Pos) - 50) * (double)Elapsed / Duration, 5));
-		app.draw(A);
-		drawList(app);
+		this->drawList(app);
+
+		Cur->TmpArrow.setTextureRect(IntRect(100 - ArrowLength, 0, (int)(ArrowLength * (double)Elapsed / Duration), 10));
+		app.draw(Cur->TmpArrow);
 
 		Elapsed = clock.getElapsedTime().asMilliseconds();
 		app.display();
 	}
-	
-}
 
+	Cur->ArrowState = Visited;
+}
 
 void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & NewNode)
 {
@@ -176,24 +178,19 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 	Clock clock;
 
 	while (Cur && Cur->nxt) {
-		app.clear();
-		gui.draw();
-
 		Cur->NodeState = Selecting;
 		
 		drawList(app);
-
-		Cur->NodeState = Visited;
-
-		app.display();
 		drawArrowFlow(app, gui, Cur);
 
+		Cur->NodeState = Visited;
 		Cur = Cur->nxt;
 	}
-
-	Cur->NodeState = Selecting;
-	Util::Wait();
 	
+	Cur->NodeState = Selecting;
+	drawList(app);
+	
+	Cur->ArrowState = New;
 	NewNode->changeNodePosition(Cur->Pos.x + 95, DefaultPosY);
 	
 	//NewNode apppears
@@ -231,12 +228,12 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 		if (NewNode->prev) {
 			int Length = (int)((Util::DistanceBetweenNodes(NewNode->prev->Pos, NewNode->Pos) - 40) * Elapsed / Duration);
 			NewNode->prev->Arrow.setTextureRect(IntRect(100 - Length, 0, Length, 10));
-			app.draw(NewNode->prev->Arrow);
+			NewNode->prev->drawArrow(app);
 		}
 
 		for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 			if (tmp->nxt && tmp != NewNode && tmp != NewNode->prev)
-				app.draw(tmp->Arrow);
+				tmp->drawArrow(app);
 
 			tmp->drawNode(app, 255);			
 		}
@@ -275,21 +272,17 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	int Elapsed = 0;
 
 	for (int j = 0; j < i; j++) {
-		app.clear();
-		gui.draw();
-
 		Cur->NodeState = Selecting;
 
 		drawList(app);
 
-		if (j < i - 1)
+		if (j < i - 1) {
+			drawArrowFlow(app, gui, Cur);
 			Cur->NodeState = Visited;
+		}
 		Cur = Cur->nxt;
-
-		app.display();
-		Util::Wait();
 	}
-
+	
 	NewNode->changeNodePosition(Cur->Pos.x, Cur->Pos.y + 100);
 
 	//NewNode appears
@@ -311,10 +304,13 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 
 	//Connect Nodes	
 	NewNode->nxt = Cur;
+	NewNode->ArrowState = New;
+
 	NewNode->prev = Cur->prev;
 
 	if (Cur->prev) {
 		Cur->prev->nxt = NewNode;
+		Cur->prev->ArrowState = New;
 	}
 	else {
 		Head = NewNode;
@@ -334,12 +330,12 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 		if (NewNode->prev) {
 			int Length1 = (int)((Util::DistanceBetweenNodes(NewNode->prev->Pos, NewNode->Pos) - 40) * Elapsed / Duration);
 			NewNode->prev->Arrow.setTextureRect(IntRect(100 - Length1, 0, Length1, 10));
-			app.draw(NewNode->prev->Arrow);
+			NewNode->prev->drawArrow(app);
 		}
 		
 		int Length2 = (int)((Util::DistanceBetweenNodes(NewNode->Pos, NewNode->nxt->Pos) - 40) * Elapsed / Duration);
 		NewNode->Arrow.setTextureRect(IntRect(100 - Length2, 0, Length2, 10));
-		app.draw(NewNode->Arrow);
+		NewNode->drawArrow(app);
 
 		drawList(app);
 
@@ -384,7 +380,7 @@ void SinglyLinkedList::removeAtBeginning(RenderWindow& app, tgui::Gui& gui) {
 
 		for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 			if (tmp->nxt)
-				app.draw(tmp->Arrow);
+				tmp->drawArrow(app);
 
 			if (tmp == Cur)
 				tmp->drawNode(app, (int)(255 * (1 - (double)Elapsed / Duration)));
@@ -440,7 +436,7 @@ void SinglyLinkedList::removeAtEnd(RenderWindow& app, tgui::Gui& gui, Node*& Cur
 
 		for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 			if (tmp->nxt)
-				app.draw(tmp->Arrow);
+				tmp->drawArrow(app);
 
 			if (tmp == Cur) 
 				tmp->drawNode(app, (int)(255 * (1 - (double)Elapsed / Duration)));
@@ -474,18 +470,14 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 	Node* Cur = Head;
 
 	for (int j = 0; j < i; j++) {
-		app.clear();
-		gui.draw();
-	
 		Cur->NodeState = Selecting;
 		drawList(app);
 
-		if (j < i - 1)
+		if (j < i - 1) {
+			drawArrowFlow(app, gui, Cur);
 			Cur->NodeState = Visited;
+		}
 		Cur = Cur->nxt;
-
-		app.display();
-		Util::Wait();
 	}
 
 	Node* Dell = Cur;
@@ -539,7 +531,7 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 
 		drawList(app);
 
-		app.draw(Cur->Arrow);
+		Cur->drawArrow(app);
 		Cur->drawNode(app, 255);
 
 		Elapsed = clock.getElapsedTime().asMilliseconds();
@@ -550,12 +542,14 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 	Elapsed = 0;
 	clock.restart();
 
+	Cur->ArrowState = Remove;
+
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
 		gui.draw();
 
-		Cur->Arrow.setColor(Color(0, 0, 0, (int)(255 * (1 - (double)Elapsed / Duration))));
-		app.draw(Cur->Arrow);
+		Cur->drawArrow(app, (int)(255 * (1 - (double)Elapsed / Duration)));
+
 		Cur->drawNode(app, (int)(255 * (1 - (double)Elapsed / Duration)));
 
 		Cur->nxt->changeNodePosition(Cur->Pos.x + (int)(95 * (1 - (double)Elapsed / Duration)), DefaultPosY);
