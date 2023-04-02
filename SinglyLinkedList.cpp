@@ -28,6 +28,17 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 {
 	srand(time(0));
 
+	//Release old List
+	Node* tmp = Head;
+
+	while (tmp) {
+		Node* Dummy = tmp;
+		tmp = tmp->nxt;
+		delete Dummy;
+	}
+
+	//Gen new list
+
 	NodeNumber = rand() % 10;
 
 	while (NodeNumber == 0)
@@ -91,8 +102,16 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 		if (!parts[i].attemptToInt(tmp))
 			return;
 	}
+	//Release old List
+	Node* tmp = Head;
 
+	while (tmp) {
+		Node* Dummy = tmp;
+		tmp = tmp->nxt;
+		delete Dummy;
+	}
 
+	//Gen new list
 	Head = new Node;
 	Head->changeNodeValue(parts[0].toInt());
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
