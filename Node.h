@@ -22,7 +22,9 @@ struct Node {
 
 	Vector2f Pos;
 
-	CircleShape NodeShape;
+	Texture Circle;
+	Sprite NodeShape;
+	CircleShape NodeBack;
 
 	Font font;
 	Text Value;
@@ -42,12 +44,12 @@ struct Node {
 		Value.setFillColor(Color(0, 0, 0));
 		Value.setString(Val);
 
-		NodeShape.setRadius(20);
-		NodeShape.setFillColor(Color(255, 255, 255));
-		NodeShape.setOutlineThickness(3);
-
-		//NodeShape.setFillColor(Color(102, 255, 102));
-		NodeShape.setOutlineColor(Color(0, 0, 0));
+		Circle.loadFromFile("assets/Circle.png");
+		Circle.setSmooth(true);
+		NodeShape.setTexture(Circle);
+		NodeShape.setColor(Color(0, 0, 0));
+		NodeBack.setRadius(21);
+		NodeBack.setFillColor(Color(255, 255, 255));
 
 		ArrowTexture.loadFromFile("assets/arrow.png");
 		ArrowTexture.setSmooth(true);

@@ -1,8 +1,6 @@
 #include "Node.h"
-#include "Global.h"
 
 #include <iostream>
-#include <string>
 
 using namespace std;
 using namespace sf;
@@ -16,44 +14,61 @@ void Node::changeNodeValue(int val)
 
 void Node::drawNode(RenderWindow& app, int Opacity)
 {
+	//change value position
+	switch (Val.length()) {
+	case 1:
+		Value.setPosition(Pos.x + 13, Pos.y + 7);
+		Value.setCharacterSize(28);
+		break;
+	case 2:
+		Value.setPosition(Pos.x + 7, Pos.y + 7);
+		Value.setCharacterSize(25);
+		break;
+	case 3:
+		Value.setPosition(Pos.x + 1, Pos.y + 7);
+		Value.setCharacterSize(22);
+		break;
+	}
+
 	switch (NodeState) {
 	case Normal:
-		NodeShape.setOutlineColor(Color(0, 0, 0, Opacity));
-		NodeShape.setFillColor(Color(255, 255, 255, Opacity));
+		NodeShape.setColor(Color(0, 0, 0, Opacity));
+		NodeBack.setFillColor(Color(255, 255, 255, Opacity));
 
 		Value.setFillColor(Color(0, 0, 0, Opacity));
 		break;
 
 	case Visited:
-		NodeShape.setOutlineColor(Color(193, 148, 243, Opacity));
-		NodeShape.setFillColor(Color(255, 255, 255, Opacity));
+		NodeShape.setColor(Color(193, 148, 243, Opacity));
+		NodeBack.setFillColor(Color(255, 255, 255, Opacity));
 
 		Value.setFillColor(Color(193, 148, 243, Opacity));
 		break;
 
 	case Selecting:
-		NodeShape.setOutlineColor(Color(193, 148, 243, Opacity));
-		NodeShape.setFillColor(Color(193, 148, 243, Opacity));
+		NodeShape.setColor(Color(193, 148, 243, Opacity));
+		NodeBack.setFillColor(Color(193, 148, 243, Opacity));
 
 		Value.setFillColor(Color(255, 255, 255, Opacity));
 		break;
 
 	case New:
-		NodeShape.setOutlineColor(Color(30, 215, 96, Opacity));
-		NodeShape.setFillColor(Color(30, 215, 96, Opacity));
+		NodeShape.setColor(Color(30, 215, 96, Opacity));
+		NodeBack.setFillColor(Color(30, 215, 96, Opacity));
 
 		Value.setFillColor(Color(255, 255, 255, Opacity));
 		break;
 
 	case Remove:
-		NodeShape.setOutlineColor(Color(229, 9, 20, Opacity));
-		NodeShape.setFillColor(Color(229, 9, 20, Opacity));
+		NodeShape.setColor(Color(229, 9, 20, Opacity));
+		NodeBack.setFillColor(Color(229, 9, 20, Opacity));
 
 		Value.setFillColor(Color(255, 255, 255, Opacity));
 		break;
 		
 	}
 
+	app.draw(NodeBack);
 	app.draw(NodeShape);
 	app.draw(Value);
 }
@@ -82,6 +97,7 @@ void Node::changeNodePosition(float x, float y)
 
 	//change circle position
 	NodeShape.setPosition(x, y);
+	NodeBack.setPosition(x + 2, y + 2);
 
 	//change arrow position
 	Arrow.setPosition(Pos.x + 40, Pos.y + 15);
@@ -92,19 +108,5 @@ void Node::changeNodePosition(float x, float y)
 	if (prev)
 		prev->updateArrow(prev->Pos.x, prev->Pos.y);
 
-	//change value position
-	switch (Val.length()) {
-	case 1:
-		Value.setPosition(Pos.x + 12, Pos.y + 3);
-		Value.setCharacterSize(28);
-		break;
-	case 2:
-		Value.setPosition(Pos.x + 7, Pos.y + 4);
-		Value.setCharacterSize(25);
-		break;
-	case 3:
-		Value.setPosition(Pos.x + 1, Pos.y + 4);
-		Value.setCharacterSize(22);
-		break;
-	}
+
 }

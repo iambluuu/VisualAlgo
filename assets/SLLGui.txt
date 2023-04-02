@@ -170,12 +170,12 @@ ChildWindow.PseudoCode {
     MaximumSize = (470, 356.06);
     MinimumSize = (360, 16.06);
     MouseCursor = Hand;
-    Position = (910, 431.507);
+    Position = (780, 671.507);
     Resizable = true;
-    Size = (360, 277.52);
+    Size = (360, 17.52);
     Title = "Pseudo Code";
     TitleAlignment = Left;
-    TitleButtons = Minimize | Maximize;
+    TitleButtons = Minimize;
     TitleTextSize = 13;
 
     Renderer {
@@ -193,7 +193,7 @@ ChildWindow.PseudoCode {
         TitleBarColor = white;
         TitleColor = #5F84FF;
 
-        CloseButton {
+        MaximizeButton {
             BackgroundColor = #F5F5F5;
             BackgroundColorDown = #EBEBEB;
             BackgroundColorHover = white;
@@ -213,7 +213,7 @@ ChildWindow.PseudoCode {
             TextureHover = None;
         }
 
-        MaximizeButton {
+        CloseButton {
             BackgroundColor = #F5F5F5;
             BackgroundColorDown = #EBEBEB;
             BackgroundColorHover = white;
@@ -258,7 +258,7 @@ ChildWindow.PseudoCode {
 EditBox.DeletePos {
     DefaultText = "i = . . .";
     InputValidator = Int;
-    MaximumCharacters = 3;
+    MaximumCharacters = 2;
     MouseCursor = Text;
     Position = (190, 480);
     Size = (60, 30.1714);
@@ -432,4 +432,128 @@ Button.DeleteEx {
     Text = GO;
     TextSize = 13;
     Visible = false;
+}
+
+Button.UserInputEx {
+    Position = (370, 660);
+    Size = (30, 30);
+    Text = GO;
+    TextSize = 13;
+    Visible = false;
+
+    Renderer {
+        BackgroundColor = #313893;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #071831;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (1, 1, 1, 1);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #ECF7FF;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+ComboBox.ComboBox1 {
+    ChangeItemOnScroll = false;
+    Items = [SLL, DLL, CLL, ""];
+    ItemsToDisplay = 0;
+    MaximumItems = 0;
+    Position = (30, 20);
+    Size = (140, 22);
+    TextSize = 13;
+
+    Renderer {
+        ArrowBackgroundColor = #F5F5F5;
+        ArrowBackgroundColorHover = white;
+        ArrowColor = #3C3C3C;
+        ArrowColorHover = black;
+        BackgroundColor = #F5F5F5;
+        BorderColor = black;
+        Borders = (1, 1, 1, 1);
+        Padding = (0, 0, 0, 0);
+        TextColor = #3C3C3C;
+        TextureArrow = None;
+        TextureArrowDisabled = None;
+        TextureArrowHover = None;
+        TextureBackground = None;
+        TextureBackgroundDisabled = None;
+
+        ListBox {
+            BackgroundColor = #F5F5F5;
+            BackgroundColorHover = white;
+            BorderColor = black;
+            Borders = (1, 1, 1, 1);
+            Padding = (0, 0, 0, 0);
+            SelectedBackgroundColor = #006EFF;
+            SelectedBackgroundColorHover = #1E96FF;
+            SelectedTextColor = white;
+            TextColor = #3C3C3C;
+            TextColorHover = black;
+            TextureBackground = None;
+
+            Scrollbar {
+                ArrowBackgroundColor = #F5F5F5;
+                ArrowBackgroundColorHover = white;
+                ArrowColor = #3C3C3C;
+                ArrowColorHover = black;
+                TextureArrowDown = None;
+                TextureArrowDownHover = None;
+                TextureArrowUp = None;
+                TextureArrowUpHover = None;
+                TextureThumb = None;
+                TextureThumbHover = None;
+                TextureTrack = None;
+                TextureTrackHover = None;
+                ThumbColor = #DCDCDC;
+                ThumbColorHover = #E6E6E6;
+                TrackColor = #F5F5F5;
+            }
+        }
+    }
+}
+
+Button.Button1 {
+    MouseCursor = Hand;
+    Position = (1240, 480);
+    Size = (40, 132);
+    Text = "<";
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = black;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (1, 1, 1, 1);
+        TextColor = white;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
 }

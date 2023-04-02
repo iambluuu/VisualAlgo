@@ -9,22 +9,14 @@
 using namespace std;
 using namespace sf;
 
-enum ScreenState {
-	SLL, DLL, CLL, Stack, Queue, DArray, Array
-};
-
-
 int main()
 {
 	
 	RenderWindow app(VideoMode(1280, 720), "VisualAlgo", Style::Close);
 
-	app.setFramerateLimit(60);
+	app.setFramerateLimit(120);
 
 	tgui::Gui gui(app);
-
-
-	ScreenState State = SLL;
 
 	SinglyLinkedList A;
 	//A.genList(app, gui);
@@ -32,15 +24,20 @@ int main()
 	while (app.isOpen()) {
 		switch (State) {
 		case SLL:
+			gui.removeAllWidgets();
 			gui.loadWidgetsFromFile("assets/SLLGui.txt");
 			A.initButtons(app, gui);
 
 			while (State == SLL) 
 				A.interactSLL(app, gui);
-
+			
 			break;
 		case DLL:
+			app.clear();
+			app.display();
+			gui.removeAllWidgets();
 			cout << "DLL\n";
+
 			break;
 		case CLL:
 			cout << "CLL\n";
@@ -59,5 +56,6 @@ int main()
 			break;
 		}
 	}
-		
+	
+	
 }

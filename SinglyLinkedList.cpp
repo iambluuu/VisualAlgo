@@ -1,5 +1,4 @@
 #include "SinglyLinkedList.h"
-#include "Global.h"
 
 using namespace std;
 using namespace sf;
@@ -50,7 +49,6 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 
 	
 	int Elapsed = 0;
-	int Duration = 700;
 	Clock clock;
 
 	while (Elapsed <= Duration) {
@@ -75,6 +73,66 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 
 }
 
+void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::String s)
+{
+	vector<tgui::String> parts = tgui::String(s).split(',', true);
+
+	if (parts.size() == 0)
+		return;
+
+	NodeNumber = parts.size();
+
+	for (int i = 0; i < parts.size(); i++) {
+		int tmp;
+
+		if (!parts[i].attemptToInt(tmp))
+			return;
+	}
+
+
+	Head = new Node;
+	Head->changeNodeValue(parts[0].toInt());
+	Head->changeNodePosition(DefaultPosX, DefaultPosY);
+
+	Node* Cur = Head;
+
+	for (int i = 1; i < NodeNumber; i++) {
+		Cur->nxt = new Node;
+		Node* tmp = Cur;
+
+		Cur = Cur->nxt;
+		Cur->prev = tmp;
+
+		Cur->changeNodeValue(parts[i].toInt());
+		Cur->changeNodePosition(tmp->Pos.x + 95, tmp->Pos.y);
+	}
+
+
+	int Elapsed = 0;
+	Clock clock;
+
+	while (Elapsed <= Duration) {
+		app.clear(Color::White);
+
+		gui.draw();
+
+		for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
+			if (tmp->nxt) {
+				int ArrowLength = (int)((Util::DistanceBetweenNodes(tmp->Pos, tmp->nxt->Pos) - 40) * Elapsed / Duration);
+				tmp->Arrow.setTextureRect(IntRect(100 - ArrowLength, 0, ArrowLength, 10));
+				app.draw(tmp->Arrow);
+			}
+
+			tmp->drawNode(app, 255);
+		}
+
+		app.display();
+
+		Elapsed = clock.getElapsedTime().asMilliseconds();
+	}
+
+}
+
 
 void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur)
 {
@@ -87,7 +145,6 @@ void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cu
 	A.setPosition(NodePos.x + 46, NodePos.y + 18);
 
 	int Elapsed = 0;
-	int Duration = 700;
 	Clock clock;
 
 	while (Elapsed <= Duration) {
@@ -116,7 +173,6 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 
 	//Run To Node
 	int Elapsed = 0;
-	int Duration = 500;
 	Clock clock;
 
 	while (Cur && Cur->nxt) {
@@ -142,7 +198,6 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 	
 	//NewNode apppears
 	Elapsed = 0;
-	Duration = 700;
 	clock.restart();
 
 	while (Elapsed <= Duration) {
@@ -164,7 +219,6 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 
 	//Connect NewNode
 	Elapsed = 0;
-	Duration = 700;
 	clock.restart();
 
 	NewNode->changeNodePosition(NewNode->Pos.x, NewNode->Pos.y);
@@ -219,7 +273,6 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 
 	Clock clock;
 	int Elapsed = 0;
-	int Duration = 700;
 
 	for (int j = 0; j < i; j++) {
 		app.clear();
@@ -241,7 +294,6 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 
 	//NewNode appears
 	Elapsed = 0;
-	Duration = 700;
 	clock.restart();
 
 	while (Elapsed <= Duration) {
@@ -274,7 +326,6 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	
 	Elapsed = 0;
 	clock.restart();
-	Duration = 700;
 
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
@@ -299,7 +350,6 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	//Move NewNode up
 	Elapsed = 0;
 	clock.restart();
-	Duration = 700;
 
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
@@ -322,7 +372,6 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 
 void SinglyLinkedList::removeAtBeginning(RenderWindow& app, tgui::Gui& gui) {
 	int Elapsed = 0;
-	int Duration = 700;
 	Clock clock;
 
 	Node* Cur = Head;
@@ -380,7 +429,6 @@ void SinglyLinkedList::removeAtBeginning(RenderWindow& app, tgui::Gui& gui) {
 
 void SinglyLinkedList::removeAtEnd(RenderWindow& app, tgui::Gui& gui, Node*& Cur) {
 	int Elapsed = 0;
-	int Duration = 1000;
 	Clock clock;
 
 	while (Elapsed <= Duration) {
@@ -456,7 +504,6 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 	//Move Cur down
 	int Elapsed = 0;
 	Clock clock;
-	int Duration = 700;
 
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
@@ -481,7 +528,6 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 
 	Elapsed = 0;
 	clock.restart();
-	Duration = 700;
 	
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
@@ -503,7 +549,6 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 	//Update Nodes position
 	Elapsed = 0;
 	clock.restart();
-	Duration = 700;
 
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
@@ -548,6 +593,7 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 	tgui::Button::Ptr RandomGen = gui.get<tgui::Button>("RandomGen");
 	tgui::Button::Ptr InputGen = gui.get<tgui::Button>("InputGen");
 	tgui::EditBox::Ptr UserInput = gui.get<tgui::EditBox>("EditBox1");
+	tgui::Button::Ptr UserInputEx = gui.get<tgui::Button>("UserInputEx");
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 
@@ -566,10 +612,17 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 		RandomGen->setVisible(1 - RandomGen->isVisible());
 		InputGen->setVisible(1 - InputGen->isVisible());
 		UserInput->setVisible(1 - UserInput->isVisible());
+		UserInputEx->setVisible(1 - UserInputEx->isVisible());
 		});
 
 	RandomGen->onPress([&] {
 		genList(app, gui);
+		});
+
+	UserInputEx->onPress([=, &app, &gui] {
+		tgui::String s = UserInput->getText();
+
+		genList(app, gui, s);
 		});
 
 	InsertEx->onPress([=, &app, &gui]  {
@@ -584,7 +637,16 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 
 		removeNode(app, gui, Pos);
 		});
+
+	PseudoCode->onMinimize([=] {
+		Vector2f MinSiz = PseudoCode->getMinimumSize();
+		Vector2f CurSiz = PseudoCode->getSize();
 	
+		if (CurSiz.x > MinSiz.x || CurSiz.y > MinSiz.y)
+			PseudoCode->setSize({ MinSiz.x, MinSiz.y });
+		else
+			PseudoCode->setSize({ 360, 277.52 });
+		});
 }
 
 
@@ -595,6 +657,7 @@ void SinglyLinkedList::interactSLL(RenderWindow& app, tgui::Gui& gui)
 	while (app.pollEvent(e)) {
 		if (e.type == Event::Closed) {
 			app.close();
+			State = EndProgram;
 			return;
 		}
 

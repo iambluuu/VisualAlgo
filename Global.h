@@ -12,13 +12,19 @@ using namespace std;
 
 const double PI = 3.14159265359;
 const float DefaultPosX = 350;
-const float DefaultPosY = 270;
+const float DefaultPosY = 250;
 
 const int maxNodeNumber = 10;
 const int waitTime = 700;
 
+enum ScreenState {
+	SLL, DLL, CLL, Stack, Queue, DArray, Array, EndProgram
+};
+
+__declspec(selectany) ScreenState State = SLL;
 
 namespace Util {
+
 	inline void Wait() {
 		int Elapsed = 0;
 		Clock clock;
