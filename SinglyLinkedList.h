@@ -23,6 +23,8 @@ struct SinglyLinkedList {
 		}
 	}
 
+	int getSize();
+
 	void initButtons(RenderWindow& app, tgui::Gui& gui);
 	void interactSLL(RenderWindow& app, tgui::Gui& gui);
 	 

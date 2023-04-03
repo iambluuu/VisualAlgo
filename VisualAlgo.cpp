@@ -11,7 +11,6 @@ using namespace sf;
 
 int main()
 {
-	
 	RenderWindow app(VideoMode(1280, 720), "VisualAlgo", Style::Close);
 
 	app.setFramerateLimit(120);

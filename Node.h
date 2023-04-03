@@ -13,7 +13,6 @@ enum Nodestate {
 
 
 struct Node {
-
 	Nodestate NodeState;
 	Nodestate ArrowState;
 
@@ -33,11 +32,14 @@ struct Node {
 	Texture ArrowTexture;
 	Sprite Arrow;
 	Sprite TmpArrow;
-	 
+	
+	int NumberInList;
+	Text Title;
+
 	Node() {
 		ArrowState = Normal;
-
 		NodeState = Normal;
+
 		Pos = { 0, 0 };
 		Val = "0";
 		nxt = nullptr;
@@ -64,6 +66,12 @@ struct Node {
 		TmpArrow.setColor(Color(193, 148, 243));
 
 		changeNodePosition(DefaultPosX, DefaultPosY);
+
+		NumberInList = -1;
+		Title.setFont(font);
+		Title.setCharacterSize(15);
+		Title.setFillColor(Color(229, 9, 20));
+		Title.setOutlineColor(Color::Black);
 	}
 	
 	void changeNodePosition(float x, float y);

@@ -4,19 +4,25 @@
 using namespace std;
 using namespace sf;
 
+int SinglyLinkedList::getSize()
+{
+	return NodeNumber;
+}
+
 void SinglyLinkedList::drawList(RenderWindow& app)
 {
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
-
-		if (tmp->nxt)
-			tmp->drawArrow(app);
-
+		tmp->drawArrow(app);
 		tmp->drawNode(app, 255);
 	}
 }
 
 void SinglyLinkedList::initList(RenderWindow& app) {
+	int i = 0;
+
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
+		tmp->NumberInList = i++;
+
 		tmp->NodeState = Normal;
 		tmp->ArrowState = Normal;
 	}
@@ -45,6 +51,7 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 		NodeNumber = rand() % 10;
 
 	Head = new Node;
+	Head->NumberInList = 0;
 	Head->changeNodeValue(rand() % 100);
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
 	
@@ -56,6 +63,8 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 
 		Cur = Cur->nxt;
 		Cur->prev = tmp;
+
+		Cur->NumberInList = i;
 		
 		Cur->changeNodeValue(rand() % 100);
 		Cur->changeNodePosition(tmp->Pos.x + 95, tmp->Pos.y);
@@ -113,6 +122,7 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 
 	//Gen new list
 	Head = new Node;
+	Head->NumberInList = 0;
 	Head->changeNodeValue(parts[0].toInt());
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
 
@@ -124,6 +134,8 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 
 		Cur = Cur->nxt;
 		Cur->prev = tmp;
+
+		Cur->NumberInList = i;
 
 		Cur->changeNodeValue(parts[i].toInt());
 		Cur->changeNodePosition(tmp->Pos.x + 95, tmp->Pos.y);
@@ -277,6 +289,7 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 
 	NodeNumber++;
 
+	NewNode->NumberInList = i;
 	NewNode->changeNodeValue(v);
 	NewNode->NodeState = New;
 
@@ -623,6 +636,12 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 	DeleteButton->onPress([=] {
 		DeletePos->setVisible(1 - DeletePos->isVisible());
 		DeleteEx->setVisible(1 - DeleteEx->isVisible());
+
+		tgui::String s = DeletePos->getText();
+
+		if (s.length() == 0 || s.toInt() > getSize() - 1)
+			DeletePos->setText(tgui::String(to_string(rand() % getSize())));
+
 		});
 
 	CreateButton->onPress([=] {

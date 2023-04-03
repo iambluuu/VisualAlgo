@@ -14,28 +14,18 @@ void Node::changeNodeValue(int val)
 
 void Node::drawNode(RenderWindow& app, int Opacity)
 {
-	//change value position
-	switch (Val.length()) {
-	case 1:
-		Value.setPosition(Pos.x + 13, Pos.y + 7);
-		Value.setCharacterSize(28);
-		break;
-	case 2:
-		Value.setPosition(Pos.x + 7, Pos.y + 7);
-		Value.setCharacterSize(25);
-		break;
-	case 3:
-		Value.setPosition(Pos.x + 1, Pos.y + 7);
-		Value.setCharacterSize(22);
-		break;
-	}
-
 	switch (NodeState) {
 	case Normal:
 		NodeShape.setColor(Color(0, 0, 0, Opacity));
 		NodeBack.setFillColor(Color(255, 255, 255, Opacity));
 
 		Value.setFillColor(Color(0, 0, 0, Opacity));
+
+		if (NumberInList != 0)
+			Title.setString(String(""));
+		else
+			Title.setString(String("Head"));
+
 		break;
 
 	case Visited:
@@ -43,6 +33,12 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		NodeBack.setFillColor(Color(255, 255, 255, Opacity));
 
 		Value.setFillColor(Color(193, 148, 243, Opacity));
+
+		if (NumberInList != 0)
+			Title.setString(String(""));
+		else
+			Title.setString(String("Head"));
+
 		break;
 
 	case Selecting:
@@ -50,6 +46,11 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		NodeBack.setFillColor(Color(193, 148, 243, Opacity));
 
 		Value.setFillColor(Color(255, 255, 255, Opacity));
+
+		if (NumberInList == 0)
+			Title.setString(String("Cur/Head"));
+		else
+			Title.setString(String("Cur/") + String(to_string(NumberInList)));
 		break;
 
 	case New:
@@ -57,6 +58,11 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		NodeBack.setFillColor(Color(30, 215, 96, Opacity));
 
 		Value.setFillColor(Color(255, 255, 255, Opacity));
+
+		if (NumberInList == 0)
+			Title.setString(String("New/Head"));
+		else
+			Title.setString(String("New/") + String(to_string(NumberInList)));
 		break;
 
 	case Remove:
@@ -68,6 +74,7 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		
 	}
 
+	app.draw(Title);
 	app.draw(NodeBack);
 	app.draw(NodeShape);
 	app.draw(Value);
@@ -75,6 +82,9 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 
 void Node::drawArrow(RenderWindow& app)
 {
+	if (!nxt)
+		return;
+
 	switch (ArrowState) {
 	case Normal:
 		Arrow.setColor(Color(0, 0, 0));
@@ -148,5 +158,23 @@ void Node::changeNodePosition(float x, float y)
 	if (prev)
 		prev->updateArrow(prev->Pos.x, prev->Pos.y);
 
+	//change value position
+	switch (Val.length()) {
+	case 1:
+		Value.setPosition(Pos.x + 13, Pos.y + 7);
+		Value.setCharacterSize(28);
+		break;
+	case 2:
+		Value.setPosition(Pos.x + 7, Pos.y + 7);
+		Value.setCharacterSize(25);
+		break;
+	case 3:
+		Value.setPosition(Pos.x + 1, Pos.y + 7);
+		Value.setCharacterSize(22);
+		break;
+	}
+
+	//change title position
+	Title.setPosition(Vector2f(Pos.x + 5, Pos.y + 50));
 
 }

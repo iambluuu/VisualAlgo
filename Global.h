@@ -11,7 +11,7 @@ using namespace sf;
 using namespace std;
 
 const double PI = 3.14159265359;
-const float DefaultPosX = 350;
+const float DefaultPosX = 250;
 const float DefaultPosY = 250;
 
 const int maxNodeNumber = 10;
