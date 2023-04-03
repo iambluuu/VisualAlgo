@@ -390,16 +390,15 @@ void SinglyLinkedList::removeAtBeginning(RenderWindow& app, tgui::Gui& gui) {
 	Clock clock;
 
 	Node* Cur = Head;
+	Cur->ArrowState = Remove;
 
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
 		gui.draw();
 
-		Cur->Arrow.setColor(Color(0, 0, 0,  (int)(255 * (1 - (double)Elapsed / Duration))));
-
 		for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 			if (tmp->nxt)
-				tmp->drawArrow(app);
+				tmp->drawArrow(app, (int)(255 * (1 - (double)Elapsed / Duration)));
 
 			if (tmp == Cur)
 				tmp->drawNode(app, (int)(255 * (1 - (double)Elapsed / Duration)));
@@ -610,6 +609,11 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 
+	tgui::Button::Ptr SlideIn = gui.get<tgui::Button>("SlideIn");
+	tgui::Button::Ptr SlideOut = gui.get<tgui::Button>("SlideOut");
+	tgui::Panel::Ptr EditPanel = gui.get<tgui::Panel>("EditPanel");
+	EditPanel->loadWidgetsFromFile("assets/ControlPanel.txt");
+
 	InsertButton->onPress([=] {
 		InsertPos->setVisible(1 - InsertPos->isVisible());
 		InsertVal->setVisible(1 - InsertVal->isVisible());
@@ -659,6 +663,16 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 			PseudoCode->setSize({ MinSiz.x, MinSiz.y });
 		else
 			PseudoCode->setSize({ 360, 277.52 });
+		});
+
+	SlideOut->onClick([=] {
+		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
+		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
+		});
+
+	SlideIn->onClick([=] {
+		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
+		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		});
 }
 

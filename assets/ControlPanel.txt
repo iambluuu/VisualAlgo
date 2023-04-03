@@ -1,0 +1,83 @@
+Slider.Slider1 {
+    ChangeValueOnScroll = true;
+    InvertedDirection = false;
+    Maximum = 10;
+    Minimum = 0;
+    Position = (80, 160);
+    Size = (120, 6);
+    Step = 4;
+    Value = 0;
+
+    Renderer {
+        BorderColor = #3C3C3C;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextureThumb = None;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = None;
+        ThumbColorHover = white;
+        TrackColor = white;
+        TrackColorHover = white;
+    }
+}
+
+TextArea.TextArea1 {
+    DefaultText = Speed;
+    HorizontalScrollbarPolicy = Never;
+    MaximumCharacters = 0;
+    Position = (20, 150);
+    ReadOnly = true;
+    Size = (58, 25);
+    Text = Speed;
+    TextSize = 15;
+    VerticalScrollbarPolicy = Never;
+
+    Renderer {
+        BackgroundColor = None;
+        BorderColor = black;
+        Borders = (0, 0, 0, 0);
+        CaretColor = black;
+        CaretWidth = 0;
+        DefaultTextColor = #A0A0A0;
+        Padding = (0, 0, 0, 0);
+        SelectedTextBackgroundColor = #006EFF;
+        SelectedTextColor = white;
+        TextColor = white;
+        TextureBackground = None;
+    }
+}
+
+RadioButton.RadioButton1 {
+    MouseCursor = Hand;
+    Position = (90, 80);
+    Size = (38, 38);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = None;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        CheckColor = #3C3C3C;
+        CheckColorDisabled = #7D7D7D;
+        CheckColorHover = black;
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorHover = black;
+        TextDistanceRatio = 0.2;
+        TextureChecked = "PauseButton.png" Smooth;
+        TextureCheckedDisabled = None;
+        TextureCheckedFocused = None;
+        TextureCheckedHover = None;
+        TextureUnchecked = "PlayButton.png" Smooth;
+        TextureUncheckedDisabled = None;
+        TextureUncheckedFocused = None;
+        TextureUncheckedHover = None;
+    }
+}
