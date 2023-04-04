@@ -19,7 +19,7 @@ const int waitTime = 700;
 
 enum ScreenState {
 	SLL, DLL, CLL, Stack, Queue, DArray, Array, EndProgram
-};
+};	
 
 __declspec(selectany) ScreenState State = SLL;
 

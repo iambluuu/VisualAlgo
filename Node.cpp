@@ -21,10 +21,10 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 
 		Value.setFillColor(Color(0, 0, 0, Opacity));
 
-		if (NumberInList != 0)
-			Title.setString(String(""));
-		else
+		if (NumberInList == 0)
 			Title.setString(String("Head"));
+		else
+			Title.setString(String(""));
 
 		break;
 
@@ -34,10 +34,10 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 
 		Value.setFillColor(Color(193, 148, 243, Opacity));
 
-		if (NumberInList != 0)
-			Title.setString(String(""));
-		else
+		if (NumberInList == 0)
 			Title.setString(String("Head"));
+		else 
+			Title.setString(String(""));
 
 		break;
 
@@ -61,8 +61,10 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 
 		if (NumberInList == 0)
 			Title.setString(String("New/Head"));
-		else
+		else if (NumberInList > 0)
 			Title.setString(String("New/") + String(to_string(NumberInList)));
+		else
+			Title.setString(String("New"));
 		break;
 
 	case Remove:
