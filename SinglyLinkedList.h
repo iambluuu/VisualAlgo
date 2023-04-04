@@ -30,6 +30,7 @@ struct SinglyLinkedList {
 	 
 	void initList(RenderWindow& app);
 	void drawList(RenderWindow& app);
+	void changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur, Nodestate NextState);
 	void drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur);
 
 	void NodeAppear(RenderWindow& app, tgui::Gui& gui, Node* Cur);

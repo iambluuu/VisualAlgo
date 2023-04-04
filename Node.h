@@ -75,8 +75,9 @@ struct Node {
 	}
 	
 	void changeNodePosition(float x, float y);
-	void updateArrow(float x, float y);
+	void updateArrow(Node* Nxt);
 	void changeNodeValue(int val);
+	void changeNodeValue(String val);
 	void drawNode(RenderWindow& app, int Opacity);
 	void drawArrow(RenderWindow& app);
 	void drawArrow(RenderWindow& app, int Opacity);

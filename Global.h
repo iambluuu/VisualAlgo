@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 
+#include "TGUI/TGUI.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
 
@@ -16,6 +17,11 @@ const float DefaultPosY = 250;
 
 const int maxNodeNumber = 10;
 const int waitTime = 700;
+
+static Color VSPurple(193, 148, 243);
+static Color SGreen(30, 215, 96);
+static Color NRed(229, 9, 20);
+static Color FBlue(66, 103, 178);
 
 enum ScreenState {
 	SLL, DLL, CLL, Stack, Queue, DArray, Array, EndProgram

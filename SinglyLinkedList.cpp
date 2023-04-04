@@ -167,6 +167,39 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 
 }
 
+void SinglyLinkedList::changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur, Nodestate NextState)
+{
+	Node* tmp = new Node;
+	tmp->NodeState = NextState;
+	tmp->changeNodeValue(Cur->Val);
+	tmp->changeNodePosition(Cur->Pos.x, Cur->Pos.y);
+
+	int Elapsed = 0;
+	int duration = 700;
+	Clock clock;
+
+	while (Elapsed <= duration) {
+		app.clear();
+		gui.draw();
+
+		drawList(app);
+
+		cerr << (int)(255 * (1 - (double)Elapsed / duration)) << "\n";
+
+		tmp->drawNode(app, (int)(255 * (double)Elapsed / duration));
+		Cur->drawNode(app, (int)(255 * (1 - (double)Elapsed / duration)));
+
+		Elapsed = clock.getElapsedTime().asMilliseconds();
+
+		app.display();
+	}
+
+	Cur->NodeState = NextState;
+	Cur->drawNode(app, 255);
+
+	delete tmp;
+}
+
 void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur)
 {
 	if (!Cur->nxt)
@@ -183,7 +216,7 @@ void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cu
 		app.clear();
 		gui.draw();
 
-		this->drawList(app);
+		drawList(app);
 
 		Cur->TmpArrow.setTextureRect(IntRect(100 - ArrowLength, 0, (int)(ArrowLength * (double)Elapsed / Duration), 10));
 		app.draw(Cur->TmpArrow);
@@ -216,7 +249,7 @@ void SinglyLinkedList::NodeAppear(RenderWindow& app, tgui::Gui& gui, Node* Cur)
 
 void SinglyLinkedList::ConnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B)
 {
-	A->updateArrow(A->Pos.x, A->Pos.y);
+	A->updateArrow(B);
 
 	int Elapsed = 0;
 	Clock clock;
@@ -298,7 +331,6 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 	while (Cur && Cur->nxt) {
 		Cur->NodeState = Selecting;
 		
-		drawList(app);
 		drawArrowFlow(app, gui, Cur);
 
 		Cur->NodeState = Visited;
@@ -306,7 +338,6 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 	}
 	
 	Cur->NodeState = Selecting;
-	drawList(app);
 	
 	Cur->ArrowState = New;
 	NewNode->changeNodePosition(Cur->Pos.x + 95, DefaultPosY);
@@ -365,6 +396,7 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 		Cur = Cur->nxt;
 	}
 	
+	changeState(app, gui, Cur, Next);
 	NewNode->changeNodePosition(Cur->Pos.x, Cur->Pos.y + 100);
 
 	//NewNode appears
@@ -398,20 +430,18 @@ void SinglyLinkedList::removeAtBeginning(RenderWindow& app, tgui::Gui& gui) {
 	Node* Cur = Head;
 	Cur->ArrowState = Remove;
 
+	Head = Cur->nxt;
+	if (Head)
+		Head->NumberInList = 0;
+
 	while (Elapsed <= Duration) {
 		app.clear(Color::White);
 		gui.draw();
 
-		for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
-			if (tmp->nxt)
-				tmp->drawArrow(app, (int)(255 * (1 - (double)Elapsed / Duration)));
-
-			if (tmp == Cur)
-				tmp->drawNode(app, (int)(255 * (1 - (double)Elapsed / Duration)));
-			else
-				tmp->drawNode(app, 255);
+		drawList(app);
+		Cur->drawNode(app, (int)(255 * (1 - (double)Elapsed / Duration)));
+		Cur->drawArrow(app, (int)(255 * (1 - (double)Elapsed / Duration)));
 		
-		}
 
 		app.display();
 		Elapsed = clock.getElapsedTime().asMilliseconds();
@@ -420,7 +450,7 @@ void SinglyLinkedList::removeAtBeginning(RenderWindow& app, tgui::Gui& gui) {
 	Elapsed = 0;
 	clock.restart();
 
-	Head = Cur->nxt;
+	
 	delete Cur;
 
 	if (Head)
@@ -505,7 +535,8 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 	}
 
 	Node* Dell = Cur;
-	Dell->NodeState = Remove;
+	Dell->NumberInList = -1;
+	changeState(app, gui, Dell, Remove);
 
 	if (i == 0) {
 		removeAtBeginning(app, gui);
@@ -534,16 +565,9 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 	}
 
 	//Update Next
-	if (Cur->prev)
-		Cur->prev->nxt = Cur->nxt;
-	
-	if (Cur->nxt)
-		Cur->nxt->prev = Cur->prev;
-
-	Elapsed = 0;
-	clock.restart();
-	
 	ConnectNode(app, gui, Cur->prev, Cur->nxt);
+	Cur->prev->nxt = Cur->nxt;
+	Cur->nxt->prev = Cur->prev;
 
 	//Update Nodes position
 	Elapsed = 0;

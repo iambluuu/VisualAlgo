@@ -12,13 +12,24 @@ void Node::changeNodeValue(int val)
 	Value.setString(Val);
 }
 
+void Node::changeNodeValue(String val)
+{
+	Val = val;
+	
+	Value.setString(Val);
+}
+
 void Node::drawNode(RenderWindow& app, int Opacity)
 {
+	VSPurple.a = Opacity;
+	SGreen.a = Opacity;
+	NRed.a = Opacity;
+	FBlue.a = Opacity;
+
 	switch (NodeState) {
 	case Normal:
 		NodeShape.setColor(Color(0, 0, 0, Opacity));
 		NodeBack.setFillColor(Color(255, 255, 255, Opacity));
-
 		Value.setFillColor(Color(0, 0, 0, Opacity));
 
 		if (NumberInList == 0)
@@ -29,10 +40,9 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		break;
 
 	case Visited:
-		NodeShape.setColor(Color(193, 148, 243, Opacity));
+		NodeShape.setColor(VSPurple);
 		NodeBack.setFillColor(Color(255, 255, 255, Opacity));
-
-		Value.setFillColor(Color(193, 148, 243, Opacity));
+		Value.setFillColor(VSPurple);
 
 		if (NumberInList == 0)
 			Title.setString(String("Head"));
@@ -42,9 +52,8 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		break;
 
 	case Selecting:
-		NodeShape.setColor(Color(193, 148, 243, Opacity));
-		NodeBack.setFillColor(Color(193, 148, 243, Opacity));
-
+		NodeShape.setColor(VSPurple);
+		NodeBack.setFillColor(VSPurple);
 		Value.setFillColor(Color(255, 255, 255, Opacity));
 
 		if (NumberInList == 0)
@@ -54,9 +63,8 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		break;
 
 	case New:
-		NodeShape.setColor(Color(30, 215, 96, Opacity));
-		NodeBack.setFillColor(Color(30, 215, 96, Opacity));
-
+		NodeShape.setColor(SGreen);
+		NodeBack.setFillColor(SGreen);
 		Value.setFillColor(Color(255, 255, 255, Opacity));
 
 		if (NumberInList == 0)
@@ -68,12 +76,25 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		break;
 
 	case Remove:
-		NodeShape.setColor(Color(229, 9, 20, Opacity));
-		NodeBack.setFillColor(Color(229, 9, 20, Opacity));
-
+		NodeShape.setColor(NRed);
+		NodeBack.setFillColor(NRed);
 		Value.setFillColor(Color(255, 255, 255, Opacity));
+
 		break;
 		
+	case Next:
+		NodeShape.setColor(FBlue);
+		NodeBack.setFillColor(FBlue);
+		Value.setFillColor(Color(255, 255, 255, Opacity));
+
+		if (NumberInList > 0)
+			Title.setString(String("Aft/") + String(to_string(NumberInList)));
+		else if (NumberInList == 0)
+			Title.setString(String("Head"));
+		else
+			Title.setString(String("Aft"));
+
+		break;
 	}
 
 	app.draw(Title);
@@ -125,13 +146,15 @@ void Node::drawArrow(RenderWindow& app, int Opacity)
 	app.draw(Arrow);
 }
 
-void Node::updateArrow(float x, float y)
+void Node::updateArrow(Node* Nxt)
 {
-	if (!nxt)
+	if (!Nxt)
 		return;
 
-	int ArrowLength = (int)(Util::DistanceBetweenNodes(Pos, nxt->Pos) - 40);
-	float Angle = Util::AngleOfArrow(Pos, nxt->Pos);
+	Arrow.setPosition(Pos.x + 40, Pos.y + 15);
+
+	int ArrowLength = (int)(Util::DistanceBetweenNodes(Pos, Nxt->Pos) - 40);
+	float Angle = Util::AngleOfArrow(Pos, Nxt->Pos);
 
 	Arrow.setTextureRect(IntRect(100 - ArrowLength, 0, ArrowLength, 10));
 
@@ -152,13 +175,11 @@ void Node::changeNodePosition(float x, float y)
 	NodeBack.setPosition(x + 2, y + 2);
 
 	//change arrow position
-	Arrow.setPosition(Pos.x + 40, Pos.y + 15);
-
-	updateArrow(x, y);
+	updateArrow(nxt);
 
 	//update previous note
 	if (prev)
-		prev->updateArrow(prev->Pos.x, prev->Pos.y);
+		prev->updateArrow(prev->nxt);
 
 	//change value position
 	switch (Val.length()) {
