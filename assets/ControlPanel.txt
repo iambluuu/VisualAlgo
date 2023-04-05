@@ -1,11 +1,11 @@
 Slider.Slider1 {
     ChangeValueOnScroll = true;
     InvertedDirection = false;
-    Maximum = 10;
+    Maximum = 4;
     Minimum = 0;
-    Position = (80, 160);
+    Position = (80, 157);
     Size = (120, 6);
-    Step = 4;
+    Step = 1;
     Value = 0;
 
     Renderer {
@@ -16,7 +16,7 @@ Slider.Slider1 {
         TextureThumbHover = None;
         TextureTrack = None;
         TextureTrackHover = None;
-        ThumbColor = None;
+        ThumbColor = white;
         ThumbColorHover = white;
         TrackColor = white;
         TrackColorHover = white;
@@ -41,6 +41,7 @@ TextArea.TextArea1 {
         CaretColor = black;
         CaretWidth = 0;
         DefaultTextColor = #A0A0A0;
+        Font = "SpaceGrotesk-Bold.ttf";
         Padding = (0, 0, 0, 0);
         SelectedTextBackgroundColor = #006EFF;
         SelectedTextColor = white;

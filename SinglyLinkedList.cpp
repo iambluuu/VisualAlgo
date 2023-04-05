@@ -684,6 +684,11 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 			PseudoCode->setSize({ 360, 277.52 });
 		});
 
+	PseudoCode->onMaximize([=] {
+		Vector2f MaxSiz = PseudoCode->getMaximumSize();
+		PseudoCode->setSize({ MaxSiz.x, MaxSiz.y });
+		});
+
 	SlideOut->onClick([=] {
 		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);

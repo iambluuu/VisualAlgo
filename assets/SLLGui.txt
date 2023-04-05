@@ -50,7 +50,7 @@ Renderer.2 {
 }
 
 Picture.Background {
-    Size = (1280, 720);
+    Size = (1600, 900);
 
     Renderer {
         Texture = "Background.png" Smooth;
@@ -59,7 +59,7 @@ Picture.Background {
 }
 
 Button.InsertButton {
-    Position = (30, 400);
+    Position = (20, 590);
     Size = (140, 51.3333);
     Text = "Insert Node";
     TextSize = 15;
@@ -96,7 +96,7 @@ Button.InsertButton {
 }
 
 Button.DeleteButton {
-    Position = (30, 470);
+    Position = (20, 650);
     Size = (140, 51.3333);
     Text = "Delete Node";
     TextSize = 15;
@@ -133,7 +133,7 @@ Button.DeleteButton {
 }
 
 Button.CreateButton {
-    Position = (30, 540);
+    Position = (20, 710);
     Size = (140, 51.3333);
     Text = "Create List";
     TextSize = 15;
@@ -174,10 +174,9 @@ EditBox.DeletePos {
     InputValidator = Int;
     MaximumCharacters = 2;
     MouseCursor = Text;
-    Position = (190, 480);
+    Position = (180, 660);
     Size = (60, 30.1714);
     TextSize = 13;
-    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -210,10 +209,9 @@ EditBox.InsertPos {
     InputValidator = Int;
     MaximumCharacters = 3;
     MouseCursor = Text;
-    Position = (190, 410);
+    Position = (180, 600);
     Size = (60, 30.1714);
     TextSize = 13;
-    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -246,10 +244,9 @@ EditBox.InsertVal {
     InputValidator = Int;
     MaximumCharacters = 2;
     MouseCursor = Text;
-    Position = (260, 410);
+    Position = (250, 600);
     Size = (60, 30.1714);
     TextSize = 13;
-    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -278,30 +275,27 @@ EditBox.InsertVal {
 }
 
 Button.RandomGen {
-    Position = (30, 600);
+    Position = (20, 770);
     Renderer = &1;
     Size = (110, 40.3333);
     Text = Random;
     TextSize = 13;
-    Visible = false;
 }
 
 Button.InputGen {
-    Position = (30, 650);
+    Position = (20, 820);
     Renderer = &1;
     Size = (110, 50.3333);
     Text = Input;
     TextSize = 13;
-    Visible = false;
 }
 
 EditBox.EditBox1 {
     DefaultText = "Val1, Val2, Val3, . . . ";
     MouseCursor = Text;
-    Position = (150, 660);
+    Position = (140, 830);
     Size = (200, 30.1714);
     TextSize = 13;
-    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -331,29 +325,26 @@ EditBox.EditBox1 {
 }
 
 Button.InsertEx {
-    Position = (340, 410);
+    Position = (320, 600);
     Renderer = &2;
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
-    Visible = false;
 }
 
 Button.DeleteEx {
-    Position = (270, 480);
+    Position = (250, 660);
     Renderer = &2;
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
-    Visible = false;
 }
 
 Button.UserInputEx {
-    Position = (370, 660);
+    Position = (350, 830);
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
-    Visible = false;
 
     Renderer {
         BackgroundColor = #313893;
@@ -442,7 +433,7 @@ ComboBox.ComboBox1 {
 
 Button.SlideOut {
     MouseCursor = Hand;
-    Position = (1240, 440);
+    Position = (1560, 610);
     Size = (40, 180);
     TextSize = 13;
 
@@ -472,9 +463,8 @@ Button.SlideOut {
 }
 
 Panel.EditPanel {
-    Position = (830, 440);
+    Position = (1150, 610);
     Size = (450, 180);
-    Visible = false;
 
     Renderer {
         BackgroundColor = #8E6FFF;
@@ -486,10 +476,9 @@ Panel.EditPanel {
 
 Button.SlideIn {
     MouseCursor = Hand;
-    Position = (790, 440);
+    Position = (1110, 610);
     Size = (40, 180);
     TextSize = 13;
-    Visible = false;
 
     Renderer {
         BackgroundColor = black;
@@ -520,12 +509,12 @@ ChildWindow.PseudoCode {
     MaximumSize = (470, 356.06);
     MinimumSize = (360, 20);
     MouseCursor = Hand;
-    Position = (840, 681.507);
+    Position = (1180, 831.507);
     Resizable = true;
     Size = (360, 20);
     Title = "Pseudo Code";
     TitleAlignment = Left;
-    TitleButtons = Minimize;
+    TitleButtons = Minimize | Maximize;
     TitleTextSize = 13;
 
     Renderer {
@@ -543,7 +532,7 @@ ChildWindow.PseudoCode {
         TitleBarColor = white;
         TitleColor = #5F84FF;
 
-        MaximizeButton {
+        CloseButton {
             BackgroundColor = #F5F5F5;
             BackgroundColorDown = #EBEBEB;
             BackgroundColorHover = white;
@@ -563,7 +552,7 @@ ChildWindow.PseudoCode {
             TextureHover = None;
         }
 
-        CloseButton {
+        MaximizeButton {
             BackgroundColor = #F5F5F5;
             BackgroundColorDown = #EBEBEB;
             BackgroundColorHover = white;
