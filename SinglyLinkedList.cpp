@@ -50,15 +50,14 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 	while (NodeNumber == 0)
 		NodeNumber = rand() % 10;
 
-	Head = new Node;
+	Head = new Node(rand() % 100);
 	Head->NumberInList = 0;
-	Head->changeNodeValue(rand() % 100);
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
 	
 	Node* Cur = Head;
 
 	for (int i = 1; i < NodeNumber; i++) {
-		Cur->nxt = new Node;
+		Cur->nxt = new Node(rand() % 100);
 		Node* tmp = Cur;
 
 		Cur = Cur->nxt;
@@ -66,7 +65,6 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 
 		Cur->NumberInList = i;
 		
-		Cur->changeNodeValue(rand() % 100);
 		Cur->changeNodePosition(tmp->Pos.x + 95, tmp->Pos.y);
 	}
 
@@ -121,23 +119,20 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 	}
 
 	//Gen new list
-	Head = new Node;
+	Head = new Node(parts[0].toInt());
 	Head->NumberInList = 0;
-	Head->changeNodeValue(parts[0].toInt());
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
 
 	Node* Cur = Head;
 
 	for (int i = 1; i < NodeNumber; i++) {
-		Cur->nxt = new Node;
+		Cur->nxt = new Node(parts[i].toInt());
 		Node* tmp = Cur;
 
 		Cur = Cur->nxt;
 		Cur->prev = tmp;
 
 		Cur->NumberInList = i;
-
-		Cur->changeNodeValue(parts[i].toInt());
 		Cur->changeNodePosition(tmp->Pos.x + 95, tmp->Pos.y);
 	}
 
@@ -169,9 +164,8 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 
 void SinglyLinkedList::changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur, Nodestate NextState)
 {
-	Node* tmp = new Node;
+	Node* tmp = new Node(Cur->Val);
 	tmp->NodeState = NextState;
-	tmp->changeNodeValue(Cur->Val);
 	tmp->changeNodePosition(Cur->Pos.x, Cur->Pos.y);
 
 	int Elapsed = 0;
@@ -298,6 +292,21 @@ void SinglyLinkedList::InsertNode(RenderWindow& app, tgui::Gui& gui, Node* A)
 
 void SinglyLinkedList::insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node*& NewNode)
 {
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+
+	PseudoCode->removeAllWidgets();
+	PseudoCode->loadWidgetsFromFile("C:/Users/Admin/source/repos/iambluuu/VisualAlgo/assets/Description/SLLInsertAtBeginning.txt");
+
+	tgui::TextArea::Ptr Line1 = PseudoCode->get<tgui::TextArea>("Line1");
+	tgui::TextArea::Ptr Line2 = PseudoCode->get<tgui::TextArea>("Line2");
+	tgui::TextArea::Ptr Line3 = PseudoCode->get<tgui::TextArea>("Line3");
+	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
+
+	TextHighlight->setVisible(1);
+
+	TextHighlight->setSize(Line1->getSize());
+	TextHighlight->setPosition(Line1->getPosition());
+
 	if (Head) {
 		NewNode->changeNodePosition(DefaultPosX, DefaultPosY + 100);
 		NodeAppear(app, gui, NewNode);
@@ -308,16 +317,27 @@ void SinglyLinkedList::insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node
 		Head->NumberInList++;
 	} else {
 		NewNode->changeNodePosition(DefaultPosX, DefaultPosY);
+
 		NodeAppear(app, gui, NewNode);
 	}
 		
 	Head = NewNode;
 
-	if (NewNode->nxt) {
+	TextHighlight->setSize(Line2->getSize());
+	TextHighlight->setPosition(Line2->getPosition());
+	if (NewNode->nxt)
 		ConnectNode(app, gui, NewNode, NewNode->nxt);
+	else
+		Util::Wait();
+
+	TextHighlight->setSize(Line3->getSize());
+	TextHighlight->setPosition(Line3->getPosition());
+	if (NewNode->nxt) {
 		NewNode->NumberInList = 0;
 		InsertNode(app, gui, NewNode);
 	}
+
+	
 }
 
 void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & NewNode)
@@ -361,7 +381,7 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	initList(app);
 
 	Node* Cur = Head;
-	Node* NewNode = new Node;
+	Node* NewNode = new Node(v);
 
 	NodeNumber++;
 
@@ -379,27 +399,48 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 		return 1;
 	}
 
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+
+	PseudoCode->removeAllWidgets();
+	PseudoCode->loadWidgetsFromFile("C:/Users/Admin/source/repos/iambluuu/VisualAlgo/assets/Description/SLLInsert.txt");
+
+	tgui::TextArea::Ptr Line1 = PseudoCode->get<tgui::TextArea>("Line1");
+
+	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
+	TextHighlight->setVisible(1);
+
+	int Height = TextHighlight->getSize().y;
+
 	//run to node
 
 	Clock clock;
 	int Elapsed = 0;
 
 	for (int j = 0; j < i; j++) {
+		if (j > 0) 
+			TextHighlight->setPosition({0, Height * 1});
+
+		PseudoCode->draw();
+			
 		Cur->NodeState = Selecting;
 
 		drawList(app);
 
 		if (j < i - 1) {
+			TextHighlight->setPosition({ 0, Height * 2 });
 			drawArrowFlow(app, gui, Cur);
 			Cur->NodeState = Visited;
 		}
 		Cur = Cur->nxt;
 	}
 	
+	TextHighlight->setPosition({ 0, Height * 3 });
 	changeState(app, gui, Cur, Next);
 	NewNode->changeNodePosition(Cur->Pos.x, Cur->Pos.y + 100);
 
 	//NewNode appears
+
+	TextHighlight->setPosition({ 0, Height * 4 });
 	NodeAppear(app, gui, NewNode);
 
 	//Connect Nodes	
@@ -409,12 +450,14 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	Cur->prev->nxt = NewNode;
 	Cur->prev = NewNode;
 
+	TextHighlight->setPosition({ 0, Height * 5 });
 	ConnectNode(app, gui, NewNode, Cur);
 
 	NewNode->prev->ArrowState = New;
 	NewNode->NumberInList = i;
 	NewNode->nxt->NumberInList++;
 
+	TextHighlight->setPosition({ 0, Height * 6 });
 	ConnectNode(app, gui, NewNode->prev, NewNode);
 	
 	//Move NewNode up

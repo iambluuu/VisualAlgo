@@ -8,11 +8,14 @@ struct SinglyLinkedList {
 	int NodeNumber;
 	int Duration;
 	Node* Head;
+	RectangleShape TextHighlight;
 
 	SinglyLinkedList() {
 		Head = nullptr;
 		NodeNumber = 0;
 		Duration = 700;
+
+		TextHighlight.setFillColor(Color(0,0,0,0));
 	}
 
 	~SinglyLinkedList() {
@@ -22,6 +25,7 @@ struct SinglyLinkedList {
 			Head = tmp;
 		}
 	}
+
 
 	int getSize();
 

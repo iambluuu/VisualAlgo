@@ -15,7 +15,7 @@ const double PI = 3.14159265359;
 const float DefaultPosX = 250;
 const float DefaultPosY = 250;
 
-const int maxNodeNumber = 10;
+const int maxNodeNumber = 15;
 const int waitTime = 700;
 
 static Color VSPurple(193, 148, 243);

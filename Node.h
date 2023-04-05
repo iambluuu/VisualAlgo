@@ -36,7 +36,7 @@ struct Node {
 	int NumberInList;
 	Text Title;
 
-	Node() {
+	Node(int v) {
 		ArrowState = Normal;
 		NodeState = Normal;
 
@@ -48,7 +48,45 @@ struct Node {
 		font.loadFromFile("assets/SpaceGrotesk-Bold.ttf");
 		Value.setFont(font);
 		Value.setFillColor(Color(0, 0, 0));
-		Value.setString(Val);
+		changeNodeValue(v);
+
+		Circle.loadFromFile("assets/Circle.png");
+		Circle.setSmooth(true);
+		NodeShape.setTexture(Circle);
+		NodeShape.setColor(Color(0, 0, 0));
+		NodeBack.setRadius(21);
+		NodeBack.setFillColor(Color(255, 255, 255));
+
+		ArrowTexture.loadFromFile("assets/arrow.png");
+		ArrowTexture.setSmooth(true);
+
+		Arrow.setTexture(ArrowTexture);
+		Arrow.setPosition(Pos.x + 40, Pos.y + 15);
+		TmpArrow.setTexture(ArrowTexture);
+		TmpArrow.setColor(Color(193, 148, 243));
+
+		changeNodePosition(DefaultPosX, DefaultPosY);
+
+		NumberInList = -1;
+		Title.setFont(font);
+		Title.setCharacterSize(15);
+		Title.setFillColor(Color(229, 9, 20));
+		Title.setOutlineColor(Color::Black);
+	}
+
+	Node(String v) {
+		ArrowState = Normal;
+		NodeState = Normal;
+
+		Pos = { 0, 0 };
+		Val = "0";
+		nxt = nullptr;
+		prev = nullptr;
+
+		font.loadFromFile("assets/SpaceGrotesk-Bold.ttf");
+		Value.setFont(font);
+		Value.setFillColor(Color(0, 0, 0));
+		changeNodeValue(v);
 
 		Circle.loadFromFile("assets/Circle.png");
 		Circle.setSmooth(true);
