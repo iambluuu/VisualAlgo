@@ -9,15 +9,6 @@ int SinglyLinkedList::getSize()
 	return NodeNumber;
 }
 
-void SinglyLinkedList::setPos(tgui::Gui& gui)
-{
-	tgui::EditBox::Ptr InsertPos = gui.get<tgui::EditBox>("InsertPos");
-	tgui::EditBox::Ptr DeletePos = gui.get<tgui::EditBox>("DeletePos");
-
-	InsertPos->setText(tgui::String(to_string(EditPos)));
-	DeletePos->setText(tgui::String(to_string(EditPos)));
-}
-
 void SinglyLinkedList::drawList(RenderWindow& app)
 {
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
@@ -39,7 +30,7 @@ void SinglyLinkedList::initList(RenderWindow& app) {
 	drawList(app);
 }
 
-void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
+void SinglyLinkedList::genList(RenderWindow& app)
 {
 	srand(time(0));
 
@@ -103,7 +94,7 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui)
 
 }
 
-void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::String s)
+void SinglyLinkedList::genList(RenderWindow& app, const tgui::String s)
 {
 	vector<tgui::String> parts = tgui::String(s).split(',', true);
 
@@ -171,7 +162,7 @@ void SinglyLinkedList::genList(RenderWindow& app, tgui::Gui& gui, const tgui::St
 
 }
 
-void SinglyLinkedList::changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur, Nodestate NextState)
+void SinglyLinkedList::changeState(RenderWindow& app, Node*& Cur, Nodestate NextState)
 {
 	Node* tmp = new Node(Cur->Val);
 	tmp->NodeState = NextState;
@@ -201,7 +192,7 @@ void SinglyLinkedList::changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur
 	delete tmp;
 }
 
-void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur)
+void SinglyLinkedList::drawArrowFlow(RenderWindow& app,  Node* Cur)
 {
 	if (!Cur->nxt)
 		return;
@@ -229,7 +220,7 @@ void SinglyLinkedList::drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cu
 	Cur->ArrowState = Visited;
 }
 
-void SinglyLinkedList::NodeAppear(RenderWindow& app, tgui::Gui& gui, Node* Cur)
+void SinglyLinkedList::NodeAppear(RenderWindow& app,  Node* Cur)
 {
 	int Elapsed = 0;
 	Clock clock;
@@ -248,7 +239,7 @@ void SinglyLinkedList::NodeAppear(RenderWindow& app, tgui::Gui& gui, Node* Cur)
 	}
 }
 
-void SinglyLinkedList::NodeDisappear(RenderWindow& app, tgui::Gui& gui, Node* Cur)
+void SinglyLinkedList::NodeDisappear(RenderWindow& app,  Node* Cur)
 {
 	int Elapsed = 0;
 	Clock clock;
@@ -267,7 +258,7 @@ void SinglyLinkedList::NodeDisappear(RenderWindow& app, tgui::Gui& gui, Node* Cu
 	}
 }
 
-void SinglyLinkedList::ConnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B)
+void SinglyLinkedList::ConnectNode(RenderWindow& app,  Node* A, Node* B)
 {
 	A->updateArrow(B);
 
@@ -289,7 +280,7 @@ void SinglyLinkedList::ConnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, N
 	}
 }
 
-void SinglyLinkedList::DisconnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B)
+void SinglyLinkedList::DisconnectNode(RenderWindow& app,  Node* A, Node* B)
 {
 	A->updateArrow(B);
 
@@ -311,7 +302,7 @@ void SinglyLinkedList::DisconnectNode(RenderWindow& app, tgui::Gui& gui, Node* A
 	}
 }
 
-void SinglyLinkedList::InsertNode(RenderWindow& app, tgui::Gui& gui, Node* A)
+void SinglyLinkedList::InsertNode(RenderWindow& app,  Node* A)
 {
 	int Elapsed = 0;
 	Clock clock;
@@ -338,7 +329,7 @@ void SinglyLinkedList::InsertNode(RenderWindow& app, tgui::Gui& gui, Node* A)
 	}
 }
 
-void SinglyLinkedList::insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node*& NewNode)
+void SinglyLinkedList::insertAtBeginning(RenderWindow& app,  Node*& NewNode)
 {
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 
@@ -357,7 +348,7 @@ void SinglyLinkedList::insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node
 
 	if (Head) {
 		NewNode->changeNodePosition(DefaultPosX, DefaultPosY + 100);
-		NodeAppear(app, gui, NewNode);
+		NodeAppear(app,  NewNode);
 
 		NewNode->nxt = Head;
 		Head->prev = NewNode;
@@ -366,7 +357,7 @@ void SinglyLinkedList::insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node
 	} else {
 		NewNode->changeNodePosition(DefaultPosX, DefaultPosY);
 
-		NodeAppear(app, gui, NewNode);
+		NodeAppear(app,  NewNode);
 	}
 		
 	Head = NewNode;
@@ -374,7 +365,7 @@ void SinglyLinkedList::insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node
 	TextHighlight->setSize(Line2->getSize());
 	TextHighlight->setPosition(Line2->getPosition());
 	if (NewNode->nxt)
-		ConnectNode(app, gui, NewNode, NewNode->nxt);
+		ConnectNode(app,  NewNode, NewNode->nxt);
 	else
 		Util::Wait();
 
@@ -382,13 +373,14 @@ void SinglyLinkedList::insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node
 	TextHighlight->setPosition(Line3->getPosition());
 	if (NewNode->nxt) {
 		NewNode->NumberInList = 0;
-		InsertNode(app, gui, NewNode);
+		InsertNode(app,  NewNode);
 	}
 
-	
+	for (Node* tmp = Head->nxt; tmp; tmp = tmp->nxt)
+		tmp->NumberInList++;
 }
 
-void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & NewNode)
+void SinglyLinkedList::insertAtEnd(RenderWindow& app,  Node* & NewNode)
 {
 	Node* Cur = Head;
 
@@ -399,7 +391,7 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 	while (Cur && Cur->nxt) {
 		Cur->NodeState = Selecting;
 		
-		drawArrowFlow(app, gui, Cur);
+		drawArrowFlow(app,  Cur);
 
 		Cur->NodeState = Visited;
 		Cur = Cur->nxt;
@@ -411,17 +403,19 @@ void SinglyLinkedList::insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node* & Ne
 	NewNode->changeNodePosition(Cur->Pos.x + 95, DefaultPosY);
 	
 	//NewNode apppears
-	NodeAppear(app, gui, NewNode);
+	NodeAppear(app,  NewNode);
 	
 	Cur->nxt = NewNode;
 	NewNode->prev = Cur;
 
 	//Connect NewNode
 	NewNode->NumberInList = NodeNumber - 1;
-	ConnectNode(app, gui, NewNode->prev, NewNode);
+	ConnectNode(app,  NewNode->prev, NewNode);
+
+
 }
 
-bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int v)
+bool SinglyLinkedList::insertNode(RenderWindow& app, int i, int v)
 {
 	if (i > NodeNumber || i < 0 || NodeNumber == maxNodeNumber)
 		return 0;
@@ -438,56 +432,54 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	NewNode->ArrowState = New;
 
 	if (i == 0) {
-		insertAtBeginning(app, gui, NewNode);
+		insertAtBeginning(app, NewNode);
 		return 1;
 	}
 
 	if (i == NodeNumber - 1) {
-		insertAtEnd(app, gui, NewNode);
+		insertAtEnd(app, NewNode);
 		return 1;
 	}
 
-	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	//tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 
-	PseudoCode->removeAllWidgets();
-	PseudoCode->loadWidgetsFromFile("assets/Description/SLLInsert.txt");
+	//PseudoCode->removeAllWidgets();
+	//PseudoCode->loadWidgetsFromFile("assets/Description/SLLInsert.txt");
 
-	tgui::TextArea::Ptr Line1 = PseudoCode->get<tgui::TextArea>("Line1");
+	//tgui::TextArea::Ptr Line1 = PseudoCode->get<tgui::TextArea>("Line1");
 
-	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
-	TextHighlight->setVisible(1);
+	//tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
+	//TextHighlight->setVisible(1);
 
-	int Height = TextHighlight->getSize().y;
+	//int Height = TextHighlight->getSize().y;
 
 	//run to node
 
-	Clock clock;
-	int Elapsed = 0;
-
 	for (int j = 0; j < i; j++) {
-		if (j > 0)
-			TextHighlight->setPosition({ 0, Height * 1 });
+		if (j > 0) {
+			//TextHighlight->setPosition({ 0, Height * 1 });
+		}
 
 		drawList(app);
 		
-		changeState(app, gui, Cur, Selecting);
+		changeState(app, Cur, Selecting);
 
 		if (j < i - 1) {
-			TextHighlight->setPosition({ 0, Height * 2 });
-			drawArrowFlow(app, gui, Cur);
+			//TextHighlight->setPosition({ 0, Height * 2 });
+			drawArrowFlow(app,  Cur);
 			Cur->NodeState = Visited;
 		}
 		Cur = Cur->nxt;
 	}
 	
-	TextHighlight->setPosition({ 0, Height * 3 });
-	changeState(app, gui, Cur, Next);
+	//TextHighlight->setPosition({ 0, Height * 3 });
+	changeState(app, Cur, Next);
 	NewNode->changeNodePosition(Cur->Pos.x, Cur->Pos.y + 100);
 
 	//NewNode appears
 
-	TextHighlight->setPosition({ 0, Height * 4 });
-	NodeAppear(app, gui, NewNode);
+	//TextHighlight->setPosition({ 0, Height * 4 });
+	NodeAppear(app,  NewNode);
 
 	//Connect Nodes	
 	NewNode->nxt = Cur;
@@ -496,23 +488,28 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	Cur->prev->nxt = NewNode;
 	Cur->prev = NewNode;
 
-	TextHighlight->setPosition({ 0, Height * 5 });
-	ConnectNode(app, gui, NewNode, Cur);
+	//TextHighlight->setPosition({ 0, Height * 5 });
+	ConnectNode(app,  NewNode, Cur);
 
 	NewNode->prev->ArrowState = New;
 	NewNode->NumberInList = i;
 	NewNode->nxt->NumberInList++;
 
-	TextHighlight->setPosition({ 0, Height * 6 });
-	ConnectNode(app, gui, NewNode->prev, NewNode);
+	//TextHighlight->setPosition({ 0, Height * 6 });
+	ConnectNode(app, NewNode->prev, NewNode);
 	
 	//Move NewNode up
-	InsertNode(app, gui, NewNode);
+	InsertNode(app, NewNode);
+
+	int cnt = 0;
+	for (Node* tmp = Head; tmp; tmp = tmp->nxt, i++) {
+		tmp->NumberInList = cnt++;
+	}
 
 	return 1;
 }
 
-void SinglyLinkedList::removeAtBeginning(RenderWindow& app, tgui::Gui& gui) {
+void SinglyLinkedList::removeAtBeginning(RenderWindow& app) {
 	int Elapsed = 0;
 	Clock clock;
 
@@ -566,7 +563,7 @@ void SinglyLinkedList::removeAtBeginning(RenderWindow& app, tgui::Gui& gui) {
 	return;
 }
 
-void SinglyLinkedList::removeAtEnd(RenderWindow& app, tgui::Gui& gui, Node*& Cur) {
+void SinglyLinkedList::removeAtEnd(RenderWindow& app,  Node*& Cur) {
 	int Elapsed = 0;
 	Clock clock;
 
@@ -600,7 +597,7 @@ void SinglyLinkedList::removeAtEnd(RenderWindow& app, tgui::Gui& gui, Node*& Cur
 	return;
 }
 
-bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
+bool SinglyLinkedList::removeNode(RenderWindow& app, int i)
 {
 	if (i >= NodeNumber || i < 0)
 		return 0;
@@ -617,7 +614,7 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 		drawList(app);
 
 		if (j < i - 1) {
-			drawArrowFlow(app, gui, Cur);
+			drawArrowFlow(app,  Cur);
 			Cur->NodeState = Visited;
 		}
 		Cur = Cur->nxt;
@@ -625,15 +622,15 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 
 	Node* Dell = Cur;
 	Dell->NumberInList = -1;
-	changeState(app, gui, Dell, Remove);
+	changeState(app, Dell, Remove);
 
 	if (i == 0) {
-		removeAtBeginning(app, gui);
+		removeAtBeginning(app);
 		return 1;
 	}
 
 	if (i == NodeNumber) {
-		removeAtEnd(app, gui, Dell);
+		removeAtEnd(app, Dell);
 		return 1;
 	}
 	
@@ -654,7 +651,7 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 	}
 
 	//Update Next
-	ConnectNode(app, gui, Cur->prev, Cur->nxt);
+	ConnectNode(app,  Cur->prev, Cur->nxt);
 	Cur->prev->nxt = Cur->nxt;
 	Cur->nxt->prev = Cur->prev;
 
@@ -692,7 +689,7 @@ bool SinglyLinkedList::removeNode(RenderWindow& app, tgui::Gui& gui, int i)
 }
 
 
-void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
+void SinglyLinkedList::initButtons(RenderWindow& app)
 {
 	tgui::Button::Ptr InsertEx = gui.get<tgui::Button>("InsertEx");
 	tgui::Button::Ptr InsertButton = gui.get<tgui::Button>("InsertButton");
@@ -741,26 +738,26 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 		});
 
 	RandomGen->onPress([&] {
-		genList(app, gui);
+		genList(app);
 		});
 
-	UserInputEx->onPress([=, &app, &gui] {
+	UserInputEx->onPress([=, &app] {
 		tgui::String s = UserInput->getText();
 
-		genList(app, gui, s);
+		genList(app,  s);
 		});
 
-	InsertEx->onPress([=, &app, &gui]  {
+	InsertEx->onPress([=, &app]  {
 		int Pos = InsertPos->getText().toInt();
 		int Val = InsertVal->getText().toInt();
 
-		insertNode(app, gui, Pos, Val);
+		insertNode(app, Pos, Val);
 		});
 
-	DeleteEx->onPress([=, &app, &gui] {
+	DeleteEx->onPress([=, &app] {
 		int Pos = DeletePos->getText().toInt();
 
-		removeNode(app, gui, Pos);
+		removeNode(app, Pos);
 		});
 
 	PseudoCode->onMinimize([=] {
@@ -790,7 +787,7 @@ void SinglyLinkedList::initButtons(RenderWindow& app, tgui::Gui& gui)
 }
 
 
-void SinglyLinkedList::interactSLL(RenderWindow& app, tgui::Gui& gui)
+void SinglyLinkedList::interactSLL(RenderWindow& app)
 {
 	Event e;
 

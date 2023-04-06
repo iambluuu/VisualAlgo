@@ -13,6 +13,8 @@ enum Nodestate {
 
 
 struct Node {
+	tgui::Button::Ptr Hitbox;
+
 	Nodestate NodeState;
 	Nodestate ArrowState;
 
@@ -37,6 +39,19 @@ struct Node {
 	Text Title;
 
 	Node(int v) {
+		Hitbox = tgui::Button::create();
+		Hitbox->setSize({ 46, 46 });
+		Hitbox->getRenderer()->setRoundedBorderRadius(23);
+		gui.add(Hitbox);
+
+		Hitbox->onPress([=] {
+			tgui::EditBox::Ptr InsertPos = gui.get<tgui::EditBox>("InsertPos");
+			tgui::EditBox::Ptr DeletePos = gui.get<tgui::EditBox>("DeletePos");
+
+			InsertPos->setText(tgui::String(to_string(NumberInList)));
+			DeletePos->setText(tgui::String(to_string(NumberInList)));
+			});
+
 		ArrowState = Normal;
 		NodeState = Normal;
 
@@ -75,6 +90,19 @@ struct Node {
 	}
 
 	Node(String v) {
+		Hitbox = tgui::Button::create();
+		Hitbox->setSize({ 46, 46 });
+		Hitbox->getRenderer()->setRoundedBorderRadius(23);
+		gui.add(Hitbox);
+
+		Hitbox->onPress([=] {
+			tgui::EditBox::Ptr InsertPos = gui.get<tgui::EditBox>("InsertPos");
+			tgui::EditBox::Ptr DeletePos = gui.get<tgui::EditBox>("DeletePos");
+
+			InsertPos->setText(tgui::String(to_string(NumberInList)));
+			DeletePos->setText(tgui::String(to_string(NumberInList)));
+			});
+
 		ArrowState = Normal;
 		NodeState = Normal;
 
@@ -110,6 +138,10 @@ struct Node {
 		Title.setCharacterSize(15);
 		Title.setFillColor(Color(229, 9, 20));
 		Title.setOutlineColor(Color::Black);
+	}
+
+	~Node() {
+		gui.remove(Hitbox);
 	}
 	
 	void changeNodePosition(float x, float y);

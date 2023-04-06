@@ -173,6 +173,9 @@ void Node::changeNodePosition(float x, float y)
 	Pos.x = x;
 	Pos.y = y;
 
+	//change hitbox position
+	Hitbox->setPosition({ x, y });
+
 	//change circle position
 	NodeShape.setPosition(x, y);
 	NodeBack.setPosition(x + 2, y + 2);

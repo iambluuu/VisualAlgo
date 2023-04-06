@@ -6,7 +6,6 @@
 
 struct SinglyLinkedList {
 	int NodeNumber;
-	int EditPos;
 	int Duration;
 	Node* Head;
 	RectangleShape TextHighlight;
@@ -14,7 +13,6 @@ struct SinglyLinkedList {
 	SinglyLinkedList() {
 		Head = nullptr;
 		NodeNumber = 0;
-		EditPos = 0;
 		Duration = 700;
 
 		TextHighlight.setFillColor(Color(0,0,0,0));
@@ -31,30 +29,29 @@ struct SinglyLinkedList {
 
 	int getSize();
 
-	void initButtons(RenderWindow& app, tgui::Gui& gui);
-	void setPos(tgui::Gui& gui);
-	void interactSLL(RenderWindow& app, tgui::Gui& gui);
+	void initButtons(RenderWindow& app);
+	void interactSLL(RenderWindow& app);
 	 
 	void initList(RenderWindow& app);
 	void drawList(RenderWindow& app);
-	void changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur, Nodestate NextState);
-	void drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur);
+	void changeState(RenderWindow& app, Node*& Cur, Nodestate NextState);
+	void drawArrowFlow(RenderWindow& app, Node* Cur);
 
-	void NodeDisappear(RenderWindow& app, tgui::Gui& gui, Node* Cur);
-	void NodeAppear(RenderWindow& app, tgui::Gui& gui, Node* Cur);
-	void ConnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B);
-	void DisconnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B);
-	void InsertNode(RenderWindow& app, tgui::Gui& gui, Node* A);
+	void NodeDisappear(RenderWindow& app, Node* Cur);
+	void NodeAppear(RenderWindow& app, Node* Cur);
+	void ConnectNode(RenderWindow& app, Node* A, Node* B);
+	void DisconnectNode(RenderWindow& app, Node* A, Node* B);
+	void InsertNode(RenderWindow& app, Node* A);
 
-	void genList(RenderWindow& app, tgui::Gui& gui);
-	void genList(RenderWindow& app, tgui::Gui& gui, const tgui::String s);
+	void genList(RenderWindow& app);
+	void genList(RenderWindow& app, const tgui::String s);
 
-	void insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node*& NewNode);
-	void insertAtEnd(RenderWindow& app, tgui::Gui& gui, Node*& NewNode);
-	bool insertNode(RenderWindow& app, tgui::Gui& gui, int i, int v);
+	void insertAtBeginning(RenderWindow& app, Node*& NewNode);
+	void insertAtEnd(RenderWindow& app, Node*& NewNode);
+	bool insertNode(RenderWindow& app,  int i, int v);
 
-	bool removeNode(RenderWindow& app, tgui::Gui& gui, int i);
-	void removeAtBeginning(RenderWindow& app, tgui::Gui& gui);
-	void removeAtEnd(RenderWindow& app, tgui::Gui& gui, Node*& Cur);
+	bool removeNode(RenderWindow& app, int i);
+	void removeAtBeginning(RenderWindow& app);
+	void removeAtEnd(RenderWindow& app, Node*& Cur);
 
 };

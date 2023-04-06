@@ -4,6 +4,7 @@
 #include "SFML/System.hpp"
 #include "SFML/Audio.hpp"
 
+#include "Global.h"
 #include "SinglyLinkedList.h"
 
 using namespace std;
@@ -15,7 +16,7 @@ int main()
 
 	app.setFramerateLimit(120);
 
-	tgui::Gui gui(app);
+	gui.setTarget(app);
 
 	SinglyLinkedList A;
 	//A.genList(app, gui);
@@ -25,10 +26,10 @@ int main()
 		case SLL:
 			gui.removeAllWidgets();
 			gui.loadWidgetsFromFile("assets/SLLGui.txt");
-			A.initButtons(app, gui);
+			A.initButtons(app);
 
 			while (State == SLL) 
-				A.interactSLL(app, gui);
+				A.interactSLL(app);
 			
 			break;
 		case DLL:
