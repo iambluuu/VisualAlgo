@@ -9,6 +9,15 @@ int SinglyLinkedList::getSize()
 	return NodeNumber;
 }
 
+void SinglyLinkedList::setPos(tgui::Gui& gui)
+{
+	tgui::EditBox::Ptr InsertPos = gui.get<tgui::EditBox>("InsertPos");
+	tgui::EditBox::Ptr DeletePos = gui.get<tgui::EditBox>("DeletePos");
+
+	InsertPos->setText(tgui::String(to_string(EditPos)));
+	DeletePos->setText(tgui::String(to_string(EditPos)));
+}
+
 void SinglyLinkedList::drawList(RenderWindow& app)
 {
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
@@ -169,7 +178,7 @@ void SinglyLinkedList::changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur
 	tmp->changeNodePosition(Cur->Pos.x, Cur->Pos.y);
 
 	int Elapsed = 0;
-	int duration = 700;
+	int duration = 300;
 	Clock clock;
 
 	while (Elapsed <= duration) {
@@ -177,8 +186,6 @@ void SinglyLinkedList::changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur
 		gui.draw();
 
 		drawList(app);
-
-		cerr << (int)(255 * (1 - (double)Elapsed / duration)) << "\n";
 
 		tmp->drawNode(app, (int)(255 * (double)Elapsed / duration));
 		Cur->drawNode(app, (int)(255 * (1 - (double)Elapsed / duration)));
@@ -241,6 +248,25 @@ void SinglyLinkedList::NodeAppear(RenderWindow& app, tgui::Gui& gui, Node* Cur)
 	}
 }
 
+void SinglyLinkedList::NodeDisappear(RenderWindow& app, tgui::Gui& gui, Node* Cur)
+{
+	int Elapsed = 0;
+	Clock clock;
+
+	while (Elapsed <= Duration) {
+
+		app.clear(Color::White);
+		gui.draw();
+
+		Cur->drawNode(app, (int)(255 * (1 - (double)Elapsed / Duration)));
+
+		drawList(app);
+
+		app.display();
+		Elapsed = clock.getElapsedTime().asMilliseconds();
+	}
+}
+
 void SinglyLinkedList::ConnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B)
 {
 	A->updateArrow(B);
@@ -253,6 +279,28 @@ void SinglyLinkedList::ConnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, N
 		gui.draw();
 
 		int Length = (int)((Util::DistanceBetweenNodes(A->Pos, B->Pos) - 40) * Elapsed / Duration);
+		A->Arrow.setTextureRect(IntRect(100 - Length, 0, Length, 10));
+		A->drawArrow(app);
+
+		drawList(app);
+
+		app.display();
+		Elapsed = clock.getElapsedTime().asMilliseconds();
+	}
+}
+
+void SinglyLinkedList::DisconnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B)
+{
+	A->updateArrow(B);
+
+	int Elapsed = 0;
+	Clock clock;
+
+	while (Elapsed <= Duration) {
+		app.clear(Color::White);
+		gui.draw();
+
+		int Length = (int)((Util::DistanceBetweenNodes(A->Pos, B->Pos) - 40) * (1 - (double) Elapsed / Duration));
 		A->Arrow.setTextureRect(IntRect(100 - Length, 0, Length, 10));
 		A->drawArrow(app);
 
@@ -295,7 +343,7 @@ void SinglyLinkedList::insertAtBeginning(RenderWindow& app, tgui::Gui& gui, Node
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 
 	PseudoCode->removeAllWidgets();
-	PseudoCode->loadWidgetsFromFile("C:/Users/Admin/source/repos/iambluuu/VisualAlgo/assets/Description/SLLInsertAtBeginning.txt");
+	PseudoCode->loadWidgetsFromFile("assets/Description/SLLInsertAtBeginning.txt");
 
 	tgui::TextArea::Ptr Line1 = PseudoCode->get<tgui::TextArea>("Line1");
 	tgui::TextArea::Ptr Line2 = PseudoCode->get<tgui::TextArea>("Line2");
@@ -402,7 +450,7 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 
 	PseudoCode->removeAllWidgets();
-	PseudoCode->loadWidgetsFromFile("C:/Users/Admin/source/repos/iambluuu/VisualAlgo/assets/Description/SLLInsert.txt");
+	PseudoCode->loadWidgetsFromFile("assets/Description/SLLInsert.txt");
 
 	tgui::TextArea::Ptr Line1 = PseudoCode->get<tgui::TextArea>("Line1");
 
@@ -417,14 +465,12 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, tgui::Gui& gui, int i, int 
 	int Elapsed = 0;
 
 	for (int j = 0; j < i; j++) {
-		if (j > 0) 
-			TextHighlight->setPosition({0, Height * 1});
-
-		PseudoCode->draw();
-			
-		Cur->NodeState = Selecting;
+		if (j > 0)
+			TextHighlight->setPosition({ 0, Height * 1 });
 
 		drawList(app);
+		
+		changeState(app, gui, Cur, Selecting);
 
 		if (j < i - 1) {
 			TextHighlight->setPosition({ 0, Height * 2 });
@@ -754,7 +800,6 @@ void SinglyLinkedList::interactSLL(RenderWindow& app, tgui::Gui& gui)
 			State = EndProgram;
 			return;
 		}
-
 		gui.handleEvent(e);
 		
 	}

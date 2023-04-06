@@ -6,6 +6,7 @@
 
 struct SinglyLinkedList {
 	int NodeNumber;
+	int EditPos;
 	int Duration;
 	Node* Head;
 	RectangleShape TextHighlight;
@@ -13,6 +14,7 @@ struct SinglyLinkedList {
 	SinglyLinkedList() {
 		Head = nullptr;
 		NodeNumber = 0;
+		EditPos = 0;
 		Duration = 700;
 
 		TextHighlight.setFillColor(Color(0,0,0,0));
@@ -30,6 +32,7 @@ struct SinglyLinkedList {
 	int getSize();
 
 	void initButtons(RenderWindow& app, tgui::Gui& gui);
+	void setPos(tgui::Gui& gui);
 	void interactSLL(RenderWindow& app, tgui::Gui& gui);
 	 
 	void initList(RenderWindow& app);
@@ -37,8 +40,10 @@ struct SinglyLinkedList {
 	void changeState(RenderWindow& app, tgui::Gui& gui, Node*& Cur, Nodestate NextState);
 	void drawArrowFlow(RenderWindow& app, tgui::Gui& gui, Node* Cur);
 
+	void NodeDisappear(RenderWindow& app, tgui::Gui& gui, Node* Cur);
 	void NodeAppear(RenderWindow& app, tgui::Gui& gui, Node* Cur);
 	void ConnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B);
+	void DisconnectNode(RenderWindow& app, tgui::Gui& gui, Node* A, Node* B);
 	void InsertNode(RenderWindow& app, tgui::Gui& gui, Node* A);
 
 	void genList(RenderWindow& app, tgui::Gui& gui);
