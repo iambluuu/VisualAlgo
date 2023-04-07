@@ -9,8 +9,7 @@ enum SIGNAL {
 };
 
 struct SinglyLinkedList {
-	vector<int> step;
-	vector<function<void()> > action;
+	vector<vector<function<void(int)> > > action;
 
 	SIGNAL Signal;
 
@@ -18,15 +17,13 @@ struct SinglyLinkedList {
 	int NodeNumber;
 	int Duration;
 	Node* Head;
-	Node* Current;
-	Node* NNewNode;
+
 	RectangleShape TextHighlight;
 
 	SinglyLinkedList() {
 		Signal = PENDING;
 		Head = nullptr;
-		Current = nullptr;
-		NNewNode = nullptr;
+
 		CurFrame = 0;
 		NodeNumber = 0;
 		Duration = 700;
@@ -51,10 +48,10 @@ struct SinglyLinkedList {
 	void interactSLL(RenderWindow& app);
 	 
 	void initList(RenderWindow& app);
-	void drawList(RenderWindow& app, Node* A, Node* B, Nodestate State, Nodestate ArrowState);
+	void drawList(RenderWindow& app, Node* A, Node* B, Nodestate State, Nodestate ArrowState, int Elapsed);
 
 	void changeState(RenderWindow& app, Node*& Cur, Nodestate CurState, Nodestate NextState, int Elapsed);
-	void drawArrowFlow(RenderWindow& app, Node* Cur, int Elapsed);
+	void drawArrowFlow(RenderWindow& app, Node* Cur, Node* NewNode, int Elapsed);
 
 	void ConnectNode(RenderWindow& app, Node* A, Node* B, int Elapsed);
 
@@ -65,7 +62,7 @@ struct SinglyLinkedList {
 
 	//void insertAtBeginning(RenderWindow& app, Node*& NewNode);
 	//void insertAtEnd(RenderWindow& app, Node*& NewNode);
-	bool insertNode(RenderWindow& app,  int i, int v, Node*& Cur, Node*& NewNode);
+	bool insertNode(RenderWindow& app,  int i, int v);
 
 	bool removeNode(RenderWindow& app, int i);
 	void removeAtBeginning(RenderWindow& app);

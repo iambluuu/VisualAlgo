@@ -9,12 +9,14 @@ int SinglyLinkedList::getSize()
 	return NodeNumber;
 }
 
-void SinglyLinkedList::drawList(RenderWindow& app, Node* A, Node* B, Nodestate State, Nodestate ArrowState)
+void SinglyLinkedList::drawList(RenderWindow& app, Node* A, Node* B, Nodestate State, Nodestate ArrowState, int Elapsed)
 {
 	if (!A)
 		return;
 	
+	std::cout << "2 1 " << A << " " << B << "\n";
 	for (Node* tmp = A; tmp != B; tmp = tmp->nxt) {
+		std::cout << "2 2 " << tmp << "\n";
 		tmp->drawArrow(app, ArrowState);
 		tmp->drawNode(app, State, 255);
 	}
@@ -28,7 +30,7 @@ void SinglyLinkedList::initList(RenderWindow& app) {
 		tmp->NumberInList = i++;
 	}
 
-	drawList(app, Head, nullptr, Normal, Normal);
+	drawList(app, Head, nullptr, Normal, Normal, 1);
 }
 
 void SinglyLinkedList::genList(RenderWindow& app)
@@ -175,11 +177,13 @@ void SinglyLinkedList::changeState(RenderWindow& app, Node*& Cur, Nodestate CurS
 	delete tmp;
 }
 
-void SinglyLinkedList::drawArrowFlow(RenderWindow& app,  Node* Cur, int Elapsed)
+void SinglyLinkedList::drawArrowFlow(RenderWindow& app,  Node* Cur, Node* NewNode, int Elapsed)
 {
 	if (!Cur->nxt)
 		return;
 
+	Cur->drawNode(app, Selecting, 255);
+	Cur->drawArrow(app, Normal);
 	Cur->TmpArrow.setPosition(Cur->Arrow.getPosition());
 	Cur->TmpArrow.setRotation(Cur->Arrow.getRotation());
 
@@ -213,7 +217,7 @@ void SinglyLinkedList::MoveNodeToList(RenderWindow& app,  Node* A, int Elapsed)
 			tmp->changeNodePosition(tmp->prev->Pos.x + 95, DefaultPosY);
 		}
 
-		drawList(app, A->nxt->nxt, nullptr, Normal, Normal);
+		drawList(app, A->nxt->nxt, nullptr, Normal, Normal, 1);
 	}
 		
 }
@@ -304,16 +308,15 @@ void SinglyLinkedList::MoveNodeToList(RenderWindow& app,  Node* A, int Elapsed)
 //
 //}
 
-bool SinglyLinkedList::insertNode(RenderWindow& app, int i, int v, Node*& Cur, Node*& NewNode)
+bool SinglyLinkedList::insertNode(RenderWindow& app, int i, int v)
 {
 	if (i > NodeNumber || i < 0 || NodeNumber == maxNodeNumber)
 		return 0;
 
 	initList(app);
 
-
-	Cur = Head;
-	NewNode = new Node(v);
+	Node* Current = Head;
+	Node* NewNode = new Node(v);
 
 	NodeNumber++;
 
@@ -331,120 +334,104 @@ bool SinglyLinkedList::insertNode(RenderWindow& app, int i, int v, Node*& Cur, N
 
 	//actually insert
 	for (int j = 0; j < i - 1; j++) {
-		Cur = Cur->nxt;
+		Current = Current->nxt;
 	}
 
-	NewNode->nxt = Cur;
-	NewNode->prev = Cur->prev;
+	NewNode->prev = Current;
+	NewNode->nxt = Current->nxt;
+
+	Current->nxt->prev = NewNode;
+	Current->nxt = NewNode;
 
 	int duration = 300;
-	Cur = Head;
+	Current = Head;
 
 	//Anchor
-	Node* Stationary = NewNode->prev;
+	Node* Stationary = Current;
 
 	NewNode->nxt->changeNodePosition(Stationary->Pos.x + 95, DefaultPosY);
 	Stationary->updateArrow(NewNode->nxt);
 
 	//Run to node
 	for (int j = 0; j < i - 1; j++) {
-		
+	
 		//Switch state to Selecting
-		for (double Elapsed = 0.0; (int)Elapsed <= duration; Elapsed += (double)100 / 6) {
-
-			action.push_back([=, &app, &Cur, &NewNode]() {
-				drawList(app, Head, Cur, Visited, Visited);
-				changeState(app, Cur, Normal, Selecting, Elapsed);
-				drawList(app, Cur, NewNode, Normal, Normal);
-				drawList(app, NewNode->nxt, nullptr, Normal, Normal);
-			});
-		}
-
-		step.push_back((int)action.size() - 1);
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&drawList, this, app, Head, Current, Visited, Visited, std::placeholders::_1));
+		action.back().push_back(bind(&changeState, this, app, Current, Normal, Selecting, std::placeholders::_1));
+		action.back().push_back(bind(&drawList, this, app, Current->nxt, NewNode, Normal, Normal, std::placeholders::_1));
+		action.back().push_back(bind(&drawList, this, app, NewNode->nxt, nullptr, Normal, Normal, std::placeholders::_1));
 
 		//Flow to next Node
-		for (double Elapsed = 0.0; (int)Elapsed <= duration; Elapsed += (double)100 / 6) {
-			action.push_back([=, &app, &Cur, &NewNode]() {
-				drawList(app, Head, Cur, Visited, Visited);
-				Cur->drawNode(app, Selecting, 255);
-				Cur->drawArrow(app, Normal);
-				drawArrowFlow(app, Cur, Elapsed);
+		action.push_back(vector<function<void(int)> >());
 
-				drawList(app, Cur, NewNode, Normal, Normal);
-				drawList(app, NewNode->nxt, nullptr, Normal, Normal);
-			});
-		}
+		action.back().push_back(std::bind(&drawList, this, app, Head, Current->nxt, Visited, Visited, std::placeholders::_1));		
+		action.back().push_back(std::bind(&drawArrowFlow, this, app, Current, Current->nxt, std::placeholders::_1));
+		action.back().push_back(std::bind(&drawList, this, app, Current->nxt, NewNode, Normal, Normal, placeholders::_1));
+		action.back().push_back(std::bind(&drawList, this, app, NewNode->nxt, nullptr, Normal, Normal, placeholders::_1));
 
-		step.push_back((int)action.size() - 1);
-
-		Cur = Cur->nxt;
+		Current = Current->nxt;
 	}
-	Cur = Cur->nxt;
+
+	std::cerr << "Finished Run to node\n";
 
 	//Switch state Aft to Next
 	for (double Elapsed = 0.0; (int)Elapsed <= duration; Elapsed += (double)100 / 6) {
-		action.push_back([=, &app, &Cur, &NewNode]() {
-			drawList(app, Head, NewNode, Visited, Visited);
-			changeState(app, Cur, Normal, Next, Elapsed);
-			drawList(app, Cur, nullptr, Visited, Visited);
+		action.push_back([=, &app]() {
+			drawList(app, Head, NewNode, Visited, Visited, 1);
+			changeState(app, Current, Normal, Next, Elapsed);
+			drawList(app, Current, nullptr, Visited, Visited, 1);
 		});
 	}
 
-	step.push_back((int)action.size() - 1);
+
 
 	//NewNode appears
-	NewNode->changeNodePosition(Cur->Pos.x, Cur->Pos.y + 100);
+	NewNode->changeNodePosition(Current->Pos.x, Current->Pos.y + 100);
 
 	for (double Elapsed = 0.0; (int)Elapsed <= Duration; Elapsed += (double)100 / 6) {
-		action.push_back([=, &app, &Cur, &NewNode]() {
-			drawList(app, Head, NewNode, Visited, Visited);
+		action.push_back([=, &app]() {
+			drawList(app, Head, NewNode, Visited, Visited, 1);
 			NewNode->drawNode(app, New, (int)(255 * Elapsed / Duration));
-			drawList(app, Cur, nullptr, Visited, Visited);
+			drawList(app, Current, nullptr, Visited, Visited, 1);
 			});
 	}
 
-	step.push_back((int)action.size() - 1);
 
 	//Connect NewNode to Aft
 	for (double Elapsed = 0.0; (int)Elapsed <= Duration; Elapsed += (double)100 / 6) {
-		action.push_back([=, &app, &Cur, &NewNode]() {
+		action.push_back([=, &app]() {
 			Stationary->updateArrow(NewNode->nxt);
 
-			drawList(app, Head, NewNode, Visited, Visited);
+			drawList(app, Head, NewNode, Visited, Visited, 1);
 			NewNode->drawNode(app, New, 255);
-			ConnectNode(app, NewNode, Cur, Elapsed);
-			drawList(app, Cur, nullptr, Visited, Visited);
+			ConnectNode(app, NewNode, Current, Elapsed);
+			drawList(app, Current, nullptr, Visited, Visited, 1);
 			});
 	}
-
-	step.push_back((int)action.size() - 1);
 
 	//Connect Prev to NewNode
 	for (double Elapsed = 0.0; (int)Elapsed <= Duration; Elapsed += (double)100 / 6) {
-		action.push_back([=, &app, &Cur, &NewNode]() {
+		action.push_back([=, &app]() {
 			Stationary->updateArrow(NewNode);
 
-			drawList(app, Head, NewNode, Visited, Visited);
+			drawList(app, Head, NewNode, Visited, Visited, 1);
 
 			NewNode->drawNode(app, New, 255);
-			ConnectNode(app, NewNode, Cur, Elapsed);
-			drawList(app, Cur, nullptr, Visited, Visited);
+			ConnectNode(app, NewNode, Current, Elapsed);
+			drawList(app, Current, nullptr, Visited, Visited, 1);
 			});
 	}
-
-	step.push_back((int)action.size() - 1);
 
 	//Move NewNode up
 
 	for (double Elapsed = 0.0; (int)Elapsed <= Duration; Elapsed += (double)100 / 6) {
-		action.push_back([=, &app, &Cur, &NewNode]() {
+		action.push_back([=, &app]() {
 			MoveNodeToList(app, NewNode, Elapsed);
 
-			drawList(app, Head, nullptr, Visited, Visited);
+			drawList(app, Head, nullptr, Visited, Visited, 1);
 			});
 	}
-
-	step.push_back((int)action.size() - 1);
 
 	return 1;
 }
@@ -692,12 +679,11 @@ void SinglyLinkedList::initButtons(RenderWindow& app)
 
 		CurFrame = 0;
 		action.clear();
-		step.clear();
 
 		int Pos = InsertPos->getText().toInt();
 		int Val = InsertVal->getText().toInt();
 
-		insertNode(app, Pos, Val, Current, NNewNode);
+		insertNode(app, Pos, Val);
 		});
 
 	DeleteEx->onPress([=, &app] {
@@ -732,11 +718,7 @@ void SinglyLinkedList::initButtons(RenderWindow& app)
 
 void SinglyLinkedList::drawAll(RenderWindow& app, int Position)
 {
-	gui.draw();
 
-	for (int i = 0; i < Position; i++) {
-		action[i]();
-	}
 }
 
 void SinglyLinkedList::HandleEvent(RenderWindow& app, Event& e)
@@ -745,7 +727,7 @@ void SinglyLinkedList::HandleEvent(RenderWindow& app, Event& e)
 
 	switch (Signal) {
 	case PENDING:
-		drawList(app, Head, nullptr, Normal, Normal);
+		drawList(app, Head, nullptr, Normal, Normal, 1);
 		break;
 
 	case INSERT_NODE:
@@ -754,7 +736,7 @@ void SinglyLinkedList::HandleEvent(RenderWindow& app, Event& e)
 			Signal = PENDING;
 		}
 		else {
-			action[CurFrame]();
+			action[CurFrame](CurFrame);
 		}
 
 		break;
