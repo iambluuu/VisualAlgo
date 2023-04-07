@@ -13,7 +13,8 @@ struct SinglyLinkedList {
 
 	SIGNAL Signal;
 
-	int CurFrame;
+	Clock timer;
+	int CurStep;
 	int NodeNumber;
 	int Duration;
 	Node* Head;
@@ -24,7 +25,7 @@ struct SinglyLinkedList {
 		Signal = PENDING;
 		Head = nullptr;
 
-		CurFrame = 0;
+		CurStep = 0;
 		NodeNumber = 0;
 		Duration = 700;
 
@@ -52,6 +53,8 @@ struct SinglyLinkedList {
 
 	void changeState(RenderWindow& app, Node*& Cur, Nodestate CurState, Nodestate NextState, int Elapsed);
 	void drawArrowFlow(RenderWindow& app, Node* Cur, Node* NewNode, int Elapsed);
+	void drawNode(RenderWindow& app, Node* Cur, Nodestate NodeState, int Elapsed, bool Mode);
+	void drawArrow(RenderWindow& app, Node* Cur, Node* Nxt, Nodestate ArrowState, int Elapsed);
 
 	void ConnectNode(RenderWindow& app, Node* A, Node* B, int Elapsed);
 
