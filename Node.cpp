@@ -19,7 +19,7 @@ void Node::changeNodeValue(String val)
 	Value.setString(Val);
 }
 
-void Node::drawNode(RenderWindow& app, int Opacity)
+void Node::drawNode(RenderWindow& app, Nodestate NodeState, int Opacity)
 {
 	VSPurple.a = Opacity;
 	SGreen.a = Opacity;
@@ -106,7 +106,7 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 	app.draw(Value);
 }
 
-void Node::drawArrow(RenderWindow& app)
+void Node::drawArrow(RenderWindow& app, Nodestate ArrowState)
 {
 	if (!nxt)
 		return;
@@ -123,26 +123,6 @@ void Node::drawArrow(RenderWindow& app)
 		break;
 	case Remove:
 		Arrow.setColor(Color(229, 9, 20));
-		break;
-	}
-
-	app.draw(Arrow);
-}
-
-void Node::drawArrow(RenderWindow& app, int Opacity)
-{
-	switch (ArrowState) {
-	case Normal:
-		Arrow.setColor(Color(0, 0, 0, Opacity));
-		break;
-	case Visited:
-		Arrow.setColor(Color(193, 148, 243, Opacity));
-		break;
-	case New:
-		Arrow.setColor(Color(30, 215, 96, Opacity));
-		break;
-	case Remove:
-		Arrow.setColor(Color(229, 9, 20, Opacity));
 		break;
 	}
 

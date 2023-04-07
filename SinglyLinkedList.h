@@ -4,14 +4,30 @@
 
 #include "Node.h"
 
+enum SIGNAL {
+	PENDING, INSERT_NODE, DELETE_NODE, CREATE_LIST, CREATE_LIST_RANDOM
+};
+
 struct SinglyLinkedList {
+	vector<int> step;
+	vector<function<void()> > action;
+
+	SIGNAL Signal;
+
+	int CurFrame;
 	int NodeNumber;
 	int Duration;
 	Node* Head;
+	Node* Current;
+	Node* NNewNode;
 	RectangleShape TextHighlight;
 
 	SinglyLinkedList() {
+		Signal = PENDING;
 		Head = nullptr;
+		Current = nullptr;
+		NNewNode = nullptr;
+		CurFrame = 0;
 		NodeNumber = 0;
 		Duration = 700;
 
@@ -26,6 +42,8 @@ struct SinglyLinkedList {
 		}
 	}
 
+	void HandleEvent(RenderWindow& app, Event& e);
+	void drawAll(RenderWindow& app, int Position);
 
 	int getSize();
 
@@ -33,22 +51,21 @@ struct SinglyLinkedList {
 	void interactSLL(RenderWindow& app);
 	 
 	void initList(RenderWindow& app);
-	void drawList(RenderWindow& app);
-	void changeState(RenderWindow& app, Node*& Cur, Nodestate NextState);
-	void drawArrowFlow(RenderWindow& app, Node* Cur);
+	void drawList(RenderWindow& app, Node* A, Node* B, Nodestate State, Nodestate ArrowState);
 
-	void NodeDisappear(RenderWindow& app, Node* Cur);
-	void NodeAppear(RenderWindow& app, Node* Cur);
-	void ConnectNode(RenderWindow& app, Node* A, Node* B);
-	void DisconnectNode(RenderWindow& app, Node* A, Node* B);
-	void InsertNode(RenderWindow& app, Node* A);
+	void changeState(RenderWindow& app, Node*& Cur, Nodestate CurState, Nodestate NextState, int Elapsed);
+	void drawArrowFlow(RenderWindow& app, Node* Cur, int Elapsed);
+
+	void ConnectNode(RenderWindow& app, Node* A, Node* B, int Elapsed);
+
+	void MoveNodeToList(RenderWindow& app, Node* A, int Elapsed);
 
 	void genList(RenderWindow& app);
 	void genList(RenderWindow& app, const tgui::String s);
 
-	void insertAtBeginning(RenderWindow& app, Node*& NewNode);
-	void insertAtEnd(RenderWindow& app, Node*& NewNode);
-	bool insertNode(RenderWindow& app,  int i, int v);
+	//void insertAtBeginning(RenderWindow& app, Node*& NewNode);
+	//void insertAtEnd(RenderWindow& app, Node*& NewNode);
+	bool insertNode(RenderWindow& app,  int i, int v, Node*& Cur, Node*& NewNode);
 
 	bool removeNode(RenderWindow& app, int i);
 	void removeAtBeginning(RenderWindow& app);

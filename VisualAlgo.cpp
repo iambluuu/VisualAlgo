@@ -14,7 +14,7 @@ int main()
 {
 	RenderWindow app(VideoMode(1600, 900), "VisualAlgo", Style::Close);
 
-	app.setFramerateLimit(120);
+	app.setFramerateLimit(60);
 
 	gui.setTarget(app);
 

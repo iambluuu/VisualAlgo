@@ -11,7 +11,7 @@
 using namespace sf;
 using namespace std;
 
-__declspec(selectany) tgui::Gui gui;
+__declspec(selectany)tgui::Gui gui;
 
 const double PI = 3.14159265359;
 const float DefaultPosX = 250;

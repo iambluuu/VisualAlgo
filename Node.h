@@ -15,9 +15,6 @@ enum Nodestate {
 struct Node {
 	tgui::Button::Ptr Hitbox;
 
-	Nodestate NodeState;
-	Nodestate ArrowState;
-
 	string Val;
 	Node* nxt;
 	Node* prev;
@@ -51,9 +48,6 @@ struct Node {
 			InsertPos->setText(tgui::String(to_string(NumberInList)));
 			DeletePos->setText(tgui::String(to_string(NumberInList)));
 			});
-
-		ArrowState = Normal;
-		NodeState = Normal;
 
 		Pos = { 0, 0 };
 		Val = "0";
@@ -103,8 +97,6 @@ struct Node {
 			DeletePos->setText(tgui::String(to_string(NumberInList)));
 			});
 
-		ArrowState = Normal;
-		NodeState = Normal;
 
 		Pos = { 0, 0 };
 		Val = "0";
@@ -148,8 +140,7 @@ struct Node {
 	void updateArrow(Node* Nxt);
 	void changeNodeValue(int val);
 	void changeNodeValue(String val);
-	void drawNode(RenderWindow& app, int Opacity);
-	void drawArrow(RenderWindow& app);
-	void drawArrow(RenderWindow& app, int Opacity);
+	void drawNode(RenderWindow& app, Nodestate NodeState, int Opacity);
+	void drawArrow(RenderWindow& app, Nodestate ArrowState);
 
 };
