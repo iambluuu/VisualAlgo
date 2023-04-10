@@ -19,7 +19,7 @@ void Node::changeNodeValue(String val)
 	Value.setString(Val);
 }
 
-void Node::drawNode(RenderWindow& app, int Opacity)
+void Node::drawNode(int Opacity)
 {
 	VSPurple.a = Opacity;
 	SGreen.a = Opacity;
@@ -86,10 +86,8 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 		NodeShape.setColor(FBlue);
 		NodeBack.setFillColor(FBlue);
 		Value.setFillColor(Color(255, 255, 255, Opacity));
-
-		if (NumberInList > 0)
-			Title.setString(String("Aft/") + String(to_string(NumberInList)));
-		else if (NumberInList == 0)
+	
+		if (NumberInList == 0)
 			Title.setString(String("Head"));
 		else
 			Title.setString(String("Aft"));
@@ -100,13 +98,13 @@ void Node::drawNode(RenderWindow& app, int Opacity)
 	if (Opacity != 255)
 		Title.setString(String(""));
 
-	app.draw(Title);
+	//app.draw(Title);
 	app.draw(NodeBack);
 	app.draw(NodeShape);
 	app.draw(Value);
 }
 
-void Node::drawArrow(RenderWindow& app)
+void Node::drawArrow()
 {
 	if (!nxt)
 		return;
@@ -129,7 +127,7 @@ void Node::drawArrow(RenderWindow& app)
 	app.draw(Arrow);
 }
 
-void Node::drawArrow(RenderWindow& app, int Opacity)
+void Node::drawArrow(int Opacity)
 {
 	switch (ArrowState) {
 	case Normal:
@@ -174,7 +172,7 @@ void Node::changeNodePosition(float x, float y)
 	Pos.y = y;
 
 	//change hitbox position
-	Hitbox->setPosition({ x, y });
+	Hitbox->setPosition({ x , y });
 
 	//change circle position
 	NodeShape.setPosition(x, y);

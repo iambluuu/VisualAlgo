@@ -12,7 +12,6 @@ using namespace sf;
 
 int main()
 {
-	RenderWindow app(VideoMode(1600, 900), "VisualAlgo", Style::Close);
 
 	app.setFramerateLimit(120);
 
@@ -26,10 +25,10 @@ int main()
 		case SLL:
 			gui.removeAllWidgets();
 			gui.loadWidgetsFromFile("assets/SLLGui.txt");
-			A.initButtons(app);
+			A.initButtons();
 
 			while (State == SLL) 
-				A.interactSLL(app);
+				A.interactSLL();
 			
 			break;
 		case DLL:

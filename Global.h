@@ -2,7 +2,9 @@
 #include <iostream>
 #include <algorithm>
 #include <math.h>
+#include <vector>
 #include <string.h>
+#include <functional>
 
 #include "TGUI/TGUI.hpp"
 #include "SFML/Graphics.hpp"
@@ -12,6 +14,7 @@ using namespace sf;
 using namespace std;
 
 __declspec(selectany) tgui::Gui gui;
+__declspec(selectany) RenderWindow app(VideoMode(1600, 900), "VisualAlgo", Style::Close);
 
 const double PI = 3.14159265359;
 const float DefaultPosX = 250;

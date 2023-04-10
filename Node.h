@@ -41,6 +41,7 @@ struct Node {
 	Node(int v) {
 		Hitbox = tgui::Button::create();
 		Hitbox->setSize({ 46, 46 });
+		Hitbox->getRenderer()->setOpacity(0);
 		Hitbox->getRenderer()->setRoundedBorderRadius(23);
 		gui.add(Hitbox);
 
@@ -148,8 +149,8 @@ struct Node {
 	void updateArrow(Node* Nxt);
 	void changeNodeValue(int val);
 	void changeNodeValue(String val);
-	void drawNode(RenderWindow& app, int Opacity);
-	void drawArrow(RenderWindow& app);
-	void drawArrow(RenderWindow& app, int Opacity);
+	void drawNode(int Opacity);
+	void drawArrow();
+	void drawArrow(int Opacity);
 
 };
