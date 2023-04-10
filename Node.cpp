@@ -95,9 +95,6 @@ void Node::drawNode(int Opacity)
 		break;
 	}
 
-	if (Opacity != 255)
-		Title.setString(String(""));
-
 	//app.draw(Title);
 	app.draw(NodeBack);
 	app.draw(NodeShape);

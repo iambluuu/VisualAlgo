@@ -29,10 +29,10 @@ static Color NRed(229, 9, 20);
 static Color FBlue(66, 103, 178);
 
 enum ScreenState {
-	SLL, DLL, CLL, Stack, Queue, DArray, Array, EndProgram
+	_SLL, _DLList, _CLL, _Stack, _Queue, _DArray, _Array, _EndProgram
 };	
 
-__declspec(selectany) ScreenState State = SLL;
+__declspec(selectany) ScreenState State = _SLL;
 
 namespace Util {
 

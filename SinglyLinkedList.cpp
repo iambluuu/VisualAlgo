@@ -5,27 +5,27 @@
 using namespace std;
 using namespace sf;
 
-int SinglyLinkedList::getSize()
+int SLL::getSize()
 {
 	return NodeNumber;
 }
 
-void SinglyLinkedList::changePosition(Node* Cur, float x, float y)
+void SLL::changePosition(Node* Cur, float x, float y)
 {
 	Cur->changeNodePosition(x, y);
 }
 
-void SinglyLinkedList::NodeAppear(Node* Cur, int Elapsed)
+void SLL::NodeAppear(Node* Cur, int Elapsed)
 {
 	Cur->drawNode((int)(255 * (double)Elapsed / Duration));
 }
 
-void SinglyLinkedList::drawNode(Node * Cur, int Dummy)
+void SLL::drawNode(Node * Cur, int Dummy)
 {
 	Cur->drawNode(255);
 }
 
-void SinglyLinkedList::setNodeState(Node* Cur, Nodestate NodeState, int Dummy)
+void SLL::setNodeState(Node* Cur, Nodestate NodeState, int Dummy)
 {
 	if (!Cur)
 		return;
@@ -39,12 +39,12 @@ void SinglyLinkedList::setNodeState(Node* Cur, Nodestate NodeState, int Dummy)
 	Cur->NodeState = NodeState;
 }
 
-void SinglyLinkedList::MoveNode( Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed)
+void SLL::MoveNode( Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed)
 {
 	Cur->changeNodePosition(CurX + (NxtX - CurX) * (double)Elapsed / Duration, CurY + (NxtY - CurY) * (double)Elapsed / Duration);
 }
 
-void SinglyLinkedList::SlideNodes( Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed)
+void SLL::SlideNodes( Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed)
 {
 	MoveNode(Cur, CurX, CurY, NxtX, NxtY, Elapsed);
 
@@ -53,7 +53,7 @@ void SinglyLinkedList::SlideNodes( Node* Cur, float CurX, float CurY, float NxtX
 
 }
 
-void SinglyLinkedList::SetNodesNormal(Node* A, Node* B, int Dummy)
+void SLL::SetNodesNormal(Node* A, Node* B, int Dummy)
 {
 	for (Node* tmp = A; tmp != B; tmp = tmp->nxt) {
 		tmp->ArrowState = Normal;
@@ -63,7 +63,7 @@ void SinglyLinkedList::SetNodesNormal(Node* A, Node* B, int Dummy)
 	B->ArrowState = Normal;
 }
 
-void SinglyLinkedList::ClearAction()
+void SLL::ClearAction()
 {
 	for (int i = 0; i < action.size(); i++)
 		for (int j = 0; j < action[i].size(); j++)
@@ -73,8 +73,11 @@ void SinglyLinkedList::ClearAction()
 		action.pop_back();
 }
 
-void SinglyLinkedList::drawList(int Dummy)
+void SLL::drawList(int Dummy)
 {
+	if (Head)
+		app.draw(Head->Title);
+
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 		tmp->updateArrow(tmp->nxt);
 		tmp->drawArrow();
@@ -82,7 +85,62 @@ void SinglyLinkedList::drawList(int Dummy)
 	}
 }
 
-void SinglyLinkedList::drawListPartial(Node* A, Node* B, int Dummy)
+void SLL::drawTitle(Node* Cur, Nodestate NodeState, int Elapsed)
+{
+	if (!Cur)
+		return;
+
+	Cur->Title.setFillColor(Color(229, 9, 20, (int)(255 * (double)Elapsed / Duration)));
+	switch (NodeState) {
+	case Normal:
+		if (Cur->NumberInList == 0)
+			Cur->Title.setString(String("Head"));
+		else
+			Cur->Title.setString(String(""));
+
+		break;
+
+	case Visited:
+		if (Cur->NumberInList == 0)
+			Cur->Title.setString(String("Head"));
+		else
+			Cur->Title.setString(String(""));
+
+		break;
+
+	case Selecting:
+		if (Cur->NumberInList == 0)
+			Cur->Title.setString(String("Cur/Head"));
+		else
+			Cur->Title.setString(String("Cur/") + String(to_string(Cur->NumberInList)));
+		break;
+
+	case New:
+
+		if (Cur->NumberInList == 0)
+			Cur->Title.setString(String("New/Head"));
+		else if (Cur->NumberInList > 0)
+			Cur->Title.setString(String("New/") + String(to_string(Cur->NumberInList)));
+		else
+			Cur->Title.setString(String("New"));
+		break;
+
+	case Remove:
+
+		break;
+
+	case Next:
+		if (Cur->NumberInList == 0)
+			Cur->Title.setString(String("Head"));
+		else
+			Cur->Title.setString(String("Aft"));
+
+		break;
+	}
+	app.draw(Cur->Title);
+}
+
+void SLL::drawListPartial(Node* A, Node* B, int Dummy)
 {
 	if (!A || !B) 
 		return;
@@ -97,7 +155,7 @@ void SinglyLinkedList::drawListPartial(Node* A, Node* B, int Dummy)
 		B->drawNode(255);
 }
 
-void SinglyLinkedList::drawListExcept(Node* ExceptNode, int Dummy) 
+void SLL::drawListExcept(Node* ExceptNode, int Dummy) 
 {
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 		if (tmp == ExceptNode)
@@ -116,7 +174,7 @@ void SinglyLinkedList::drawListExcept(Node* ExceptNode, int Dummy)
 	}
 }
 
-void SinglyLinkedList::initList() {
+void SLL::initList() {
 	int i = 0;
 
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
@@ -129,7 +187,7 @@ void SinglyLinkedList::initList() {
 	drawList(1);
 }
 
-void SinglyLinkedList::genList()
+void SLL::genList()
 {
 	srand(time(0));
 
@@ -193,7 +251,7 @@ void SinglyLinkedList::genList()
 
 }
 
-void SinglyLinkedList::genList( const tgui::String s)
+void SLL::genList( const tgui::String s)
 {
 	vector<tgui::String> parts = tgui::String(s).split(',', true);
 
@@ -263,7 +321,7 @@ void SinglyLinkedList::genList( const tgui::String s)
 
 }
 
-void SinglyLinkedList::ChangeState(Node* Cur, Nodestate CurState, Nodestate NextState, int Elapsed)
+void SLL::ChangeState(Node* Cur, Nodestate CurState, Nodestate NextState, int Elapsed)
 {
 	if (!Cur)
 		return;
@@ -289,7 +347,7 @@ void SinglyLinkedList::ChangeState(Node* Cur, Nodestate CurState, Nodestate Next
 	delete tmp;
 }
 
-void SinglyLinkedList::drawArrowFlow(Node* Cur, int Elapsed)
+void SLL::drawArrowFlow(Node* Cur, int Elapsed)
 {
 	if (!Cur->nxt)
 		return;
@@ -304,7 +362,7 @@ void SinglyLinkedList::drawArrowFlow(Node* Cur, int Elapsed)
 	
 }
 
-void SinglyLinkedList::ConnectNode( Node* A, Node* B, int Elapsed)
+void SLL::ConnectNode( Node* A, Node* B, int Elapsed)
 {
 	if (!B)
 		return;
@@ -318,7 +376,7 @@ void SinglyLinkedList::ConnectNode( Node* A, Node* B, int Elapsed)
 
 }
 
-//void SinglyLinkedList::InsertNode(Node* A)
+//void SLL::InsertNode(Node* A)
 //{
 //	int Elapsed = 0;
 //	Clock clock;
@@ -345,7 +403,7 @@ void SinglyLinkedList::ConnectNode( Node* A, Node* B, int Elapsed)
 //	}
 //}
 
-void SinglyLinkedList::insertAtBeginning(Node*& NewNode)
+void SLL::insertAtBeginning(Node*& NewNode)
 {
 	//tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 
@@ -380,29 +438,30 @@ void SinglyLinkedList::insertAtBeginning(Node*& NewNode)
 	
 	//NewNode appears
 	action.push_back(vector<function<void(int) > >());
-	action.back().push_back(std::bind(&SinglyLinkedList::drawListExcept, this, NewNode, std::placeholders::_1));
-	action.back().push_back(std::bind(&SinglyLinkedList::NodeAppear, this, NewNode, std::placeholders::_1));
+	action.back().push_back(std::bind(&SLL::drawListExcept, this, NewNode, std::placeholders::_1));
+	action.back().push_back(bind(&SLL::drawTitle, this, NewNode, New, placeholders::_1));
+	action.back().push_back(std::bind(&SLL::NodeAppear, this, NewNode, std::placeholders::_1));
 	
 	//TextHighlight->setSize(Line2->getSize());
 	//TextHighlight->setPosition(Line2->getPosition());
 	
 	//Connect NewNode to Head
 	action.push_back(vector<function<void(int) > > ());
-	action.back().push_back(std::bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(std::bind(&SinglyLinkedList::drawNode, this, NewNode, placeholders::_1));
-	action.back().push_back(std::bind(&SinglyLinkedList::ConnectNode, this,NewNode, NewNode->nxt, placeholders::_1));
+	action.back().push_back(std::bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(std::bind(&SLL::drawNode, this, NewNode, placeholders::_1));
+	action.back().push_back(std::bind(&SLL::ConnectNode, this,NewNode, NewNode->nxt, placeholders::_1));
 
 	//TextHighlight->setSize(Line3->getSize());
 	//TextHighlight->setPosition(Line3->getPosition());
 	if (NewNode->nxt) {
 		action.push_back(vector<function<void(int) > >());
-		action.back().push_back(std::bind(&SinglyLinkedList::MoveNode, this, NewNode, DefaultPosX, DefaultPosY + 100, DefaultPosX, DefaultPosY, placeholders::_1));
-		action.back().push_back(std::bind(&SinglyLinkedList::SlideNodes, this,NewNode->nxt, DefaultPosX, DefaultPosY, DefaultPosX + 95, DefaultPosY, placeholders::_1));
-		action.back().push_back(std::bind(&SinglyLinkedList::drawList, this, placeholders::_1));
+		action.back().push_back(std::bind(&SLL::MoveNode, this, NewNode, DefaultPosX, DefaultPosY + 100, DefaultPosX, DefaultPosY, placeholders::_1));
+		action.back().push_back(std::bind(&SLL::SlideNodes, this,NewNode->nxt, DefaultPosX, DefaultPosY, DefaultPosX + 95, DefaultPosY, placeholders::_1));
+		action.back().push_back(std::bind(&SLL::drawList, this, placeholders::_1));
 	}
 }
 
-void SinglyLinkedList::insertAtEnd(Node* & NewNode)
+void SLL::insertAtEnd(Node* & NewNode)
 {
 	Node* Cur = Head;
 
@@ -418,40 +477,40 @@ void SinglyLinkedList::insertAtEnd(Node* & NewNode)
 	
 	Cur = Head;
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
 
 	while (Cur->nxt != NewNode) {
 
 		action.push_back(vector<function<void(int)> >());
-		action.back().push_back(bind(&SinglyLinkedList::SetNodesNormal, this, Cur, Tail, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, Cur->prev, Visited, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, Cur, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
+		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
+		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
 
-		action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::drawArrowFlow, this, Cur, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
+		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
+		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 
 		Cur = Cur->nxt;
 	}
 
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, Cur->prev, Visited, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
 
-	action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::NodeAppear, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::NodeAppear, this, NewNode, placeholders::_1));
 
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&SinglyLinkedList::ConnectNode, this, NewNode->prev, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(std::bind(&SinglyLinkedList::drawNode, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::ConnectNode, this, NewNode->prev, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(std::bind(&SLL::drawNode, this, NewNode, placeholders::_1));
 	
 }
 
-bool SinglyLinkedList::insertNode( int i, int v)
+bool SLL::insertNode( int i, int v)
 {
 	if (i > NodeNumber || i < 0 || NodeNumber == maxNodeNumber)
 		return 0;
@@ -507,69 +566,71 @@ bool SinglyLinkedList::insertNode( int i, int v)
 	//run to node
 	Cur = Head;
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawTitle, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
 
 	while (Cur->nxt != NewNode) {
-
 		action.push_back(vector<function<void(int)> >());
-		action.back().push_back(bind(&SinglyLinkedList::SetNodesNormal, this, Cur, Tail, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, Cur->prev, Visited, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, Cur, Selecting, placeholders::_1));
+			action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
+		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
+		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
 	
-		action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::drawArrowFlow, this, Cur, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
-		action.back().push_back(bind(&SinglyLinkedList::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
+		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 
 		Cur = Cur->nxt;
 	}
 
 	//Change Aft State
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, Cur->prev, Visited, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, Cur, Selecting, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
 
-	action.back().push_back(bind(&SinglyLinkedList::ChangeState, this, NewNode->nxt, Normal, Next, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawTitle, this, NewNode->nxt, Next, placeholders::_1));
+	action.back().push_back(bind(&SLL::ChangeState, this, NewNode->nxt, Normal, Next, placeholders::_1));
 
 	//NewNode appears
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, NewNode, New, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, NewNode->nxt, Next, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::NodeAppear, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, NewNode->nxt, Next, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::NodeAppear, this, NewNode, placeholders::_1));
 		
 	//Connect Nodes	
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&SinglyLinkedList::SetNodesNormal, this, Cur, Tail, placeholders::_1));
+	action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, NewNode, New, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::ConnectNode, this, NewNode, NewNode->nxt, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::drawNode, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::ConnectNode, this, NewNode, NewNode->nxt, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawNode, this, NewNode, placeholders::_1));
 
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&SinglyLinkedList::SetNodesNormal, this, Cur, Tail, placeholders::_1));
+	action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, NewNode, New, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::ConnectNode, this, Cur, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::drawListPartial, this, Head, NewNode->prev, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::drawListPartial, this, NewNode, Tail, placeholders::_1));
-	action.back().push_back(bind(&SinglyLinkedList::drawNode, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&SLL::ConnectNode, this, Cur, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListPartial, this, Head, NewNode->prev, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListPartial, this, NewNode, Tail, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawNode, this, NewNode, placeholders::_1));
 	
 	//Move NewNode up
 	action.push_back(vector<function<void(int) > >());
-	action.back().push_back(bind(&SinglyLinkedList::setNodeState, this, NewNode, New, placeholders::_1));
-	action.back().push_back(std::bind(&SinglyLinkedList::MoveNode, this, NewNode, Cur->Pos.x + 95, Cur->Pos.y + 100, Cur->Pos.x + 95, Cur->Pos.y, placeholders::_1));
-	action.back().push_back(std::bind(&SinglyLinkedList::SlideNodes, this, NewNode->nxt, Cur->Pos.x + 95, Cur->Pos.y, Cur->Pos.x + 95 + 95, DefaultPosY, placeholders::_1));
-	action.back().push_back(std::bind(&SinglyLinkedList::drawList, this, placeholders::_1));
+	action.back().push_back(bind(&SLL::setNodeState, this, NewNode, New, placeholders::_1));
+	action.back().push_back(std::bind(&SLL::MoveNode, this, NewNode, Cur->Pos.x + 95, Cur->Pos.y + 100, Cur->Pos.x + 95, Cur->Pos.y, placeholders::_1));
+	action.back().push_back(std::bind(&SLL::SlideNodes, this, NewNode->nxt, Cur->Pos.x + 95, Cur->Pos.y, Cur->Pos.x + 95 + 95, DefaultPosY, placeholders::_1));
+	action.back().push_back(std::bind(&SLL::drawList, this, placeholders::_1));
 
 	return 1;
 }
 
-//void SinglyLinkedList::removeAtBeginning(RenderWindow& app) {
+//void SLL::removeAtBeginning(RenderWindow& app) {
 //	int Elapsed = 0;
 //	Clock clock;
 //
@@ -623,7 +684,7 @@ bool SinglyLinkedList::insertNode( int i, int v)
 //	return;
 //}
 //
-//void SinglyLinkedList::removeAtEnd(  Node*& Cur) {
+//void SLL::removeAtEnd(  Node*& Cur) {
 //	int Elapsed = 0;
 //	Clock clock;
 //
@@ -657,7 +718,7 @@ bool SinglyLinkedList::insertNode( int i, int v)
 //	return;
 //}
 
-//bool SinglyLinkedList::removeNode( int i)
+//bool SLL::removeNode( int i)
 //{
 //	if (i >= NodeNumber || i < 0)
 //		return 0;
@@ -749,7 +810,7 @@ bool SinglyLinkedList::insertNode( int i, int v)
 //}
 
 
-void SinglyLinkedList::initButtons()
+void SLL::initButtons()
 {
 	tgui::Button::Ptr InsertEx = gui.get<tgui::Button>("InsertEx");
 	tgui::Button::Ptr InsertButton = gui.get<tgui::Button>("InsertButton");
@@ -811,7 +872,10 @@ void SinglyLinkedList::initButtons()
 		genList(s);
 		});
 
-	InsertEx->onPress([=]  {
+	InsertEx->onPress([=] {
+		if (NodeNumber == maxNodeNumber)
+		return;
+
 		Signal = Inserting;
 		timer.restart();
 	
@@ -826,6 +890,9 @@ void SinglyLinkedList::initButtons()
 		});
 
 	DeleteEx->onPress([=] {
+		if (NodeNumber == 0)
+		return;
+
 		ClearAction();
 
 		int Pos = DeletePos->getText().toInt();
@@ -859,7 +926,7 @@ void SinglyLinkedList::initButtons()
 		});
 }
 
-void SinglyLinkedList::HandleEvent(Event& e)
+void SLL::HandleEvent(Event& e)
 {
 
 	switch (Signal) {
@@ -894,26 +961,46 @@ void SinglyLinkedList::HandleEvent(Event& e)
 					if (ShowDirection == 1) {
 						ShowDirection = 0;
 						Elapsed = (Duration - Elapsed);
+						timer.restart();
 					}
 					else {
-						CurStep = min(CurStep + 1, (int)action.size() - 1);
-						Elapsed = 0;
+						if (CurStep + 1 == (int)action.size()) {
+							Elapsed = Duration;
+						}
+						else {
+							for (int i = 0; i < (int)action[CurStep].size(); i++)
+								action[CurStep][i](Duration);
+
+							CurStep++;
+
+							Elapsed = 0;
+					
+							timer.restart();
+						}
 					}
 
-					timer.restart();
 					break;
 
 				case Keyboard::Left:
 					if (ShowDirection == 0) {
 						ShowDirection = 1;
 						Elapsed = (Duration - Elapsed);
+						timer.restart();
 					}
 					else {
-						CurStep = max(CurStep - 1, 0);
-						Elapsed = Duration;
+						if (CurStep == 0) {
+							Elapsed = 0;
+						}
+						else {
+							for (int i = 0; i < (int)action[CurStep].size(); i++)
+								action[CurStep][i](0);
+
+							CurStep--;
+							Elapsed = Duration;
+							timer.restart();
+						}
 					}
 
-					timer.restart();
 					break;
 				default:
 					break;
@@ -926,7 +1013,7 @@ void SinglyLinkedList::HandleEvent(Event& e)
 }
 
 
-void SinglyLinkedList::interactSLL()
+void SLL::interactSLL()
 {
 	app.clear();
 	gui.draw();
@@ -942,7 +1029,7 @@ void SinglyLinkedList::interactSLL()
 	while (app.pollEvent(e)) {
 		if (e.type == Event::Closed) {
 			app.close();
-			State = EndProgram;
+			State = _EndProgram;
 			return;
 		}
 		HandleEvent(e);

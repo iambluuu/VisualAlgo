@@ -17,40 +17,40 @@ int main()
 
 	gui.setTarget(app);
 
-	SinglyLinkedList A;
+	SLL A;
 	//A.genList(app, gui);
 	
 	while (app.isOpen()) {
 		switch (State) {
-		case SLL:
+		case _SLL:
 			gui.removeAllWidgets();
 			gui.loadWidgetsFromFile("assets/SLLGui.txt");
 			A.initButtons();
 
-			while (State == SLL) 
+			while (State == _SLL) 
 				A.interactSLL();
 			
 			break;
-		case DLL:
+		case _DLL:
 			app.clear();
 			app.display();
 			gui.removeAllWidgets();
 			cout << "DLL\n";
 
 			break;
-		case CLL:
+		case _CLL:
 			cout << "CLL\n";
 			break;
-		case Stack:
+		case _Stack:
 			cout << "Stack\n";
 			break;
-		case Queue:
+		case _Queue:
 			cout << "Queue\n";
 			break;
-		case DArray:
+		case _DArray:
 			cout << "Dynamic Array\n";
 			break;
-		case Array:
+		case _Array:
 			cout << "Array\n";
 			break;
 		}

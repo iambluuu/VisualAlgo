@@ -8,7 +8,7 @@ enum signal {
 	Pending, Inserting, Removing, Searching
 };
 
-struct SinglyLinkedList {
+struct SLL {
 	vector<vector<function<void (int)> > >  action;
 	signal Signal;
 	Clock timer;
@@ -24,7 +24,7 @@ struct SinglyLinkedList {
 	Node* Tail;
 	RectangleShape TextHighlight;
 
-	SinglyLinkedList() {
+	SLL() {
 		Head = nullptr;
 		Tail = nullptr;
 		Signal = Pending;
@@ -39,7 +39,7 @@ struct SinglyLinkedList {
 		TextHighlight.setFillColor(Color(0,0,0,0));
 	}
 
-	~SinglyLinkedList() {
+	~SLL() {
 		while (Head) {
 			Node* tmp = Head->nxt;
 			delete Head;
@@ -57,6 +57,7 @@ struct SinglyLinkedList {
 	 
 	void initList();
 	void drawList(int Dummy);
+	void drawTitle(Node* Cur, Nodestate NodeState, int Elapsed);
 	void drawListPartial(Node* A, Node* B, int Dummy);
 	void drawListExcept(Node* ExceptNode, int Dummy);
 	void drawArrowFlow( Node* Cur, int Elapsed);
