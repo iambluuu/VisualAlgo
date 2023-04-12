@@ -16,6 +16,10 @@ struct SLL {
 	bool ShowMode;
 	bool ShowDirection;
 
+	int InsertModes;
+	int DeleteModes;
+	int GenModes;
+
 	int CurStep;
 	int NodeNumber;
 	int Elapsed;
@@ -32,6 +36,10 @@ struct SLL {
 		Elapsed = 0;
 		Duration = 700;
 		CurStep = 0;
+
+		InsertModes = 0;
+		DeleteModes = 0;
+		GenModes = 0;
 
 		ShowMode = 1;
 		ShowDirection = 0;
@@ -64,12 +72,15 @@ struct SLL {
 
 	void changePosition(Node* Cur, float x, float y);
 	void NodeAppear( Node* Cur, int Elapsed);
+	void NodeDisappear( Node* Cur, int Elapsed);
 	void drawNode( Node* Cur, int Dummy);
 	void setNodeState(Node* Cur, Nodestate NodeState, int Dummy);
 
 	void ChangeState(Node* Cur, Nodestate CurState, Nodestate NextState, int Elapsed);
+	void ChangeValue(Node* Cur, sf::String preVal, sf::String nextVal, int Elapsed);
 	void SetNodesNormal(Node* A, Node* B, int Dummy);
 	void ConnectNode( Node* A, Node* B, int Elapsed);
+	void DisconnectNode( Node* A, Node* B, int Elapsed);
 	void MoveNode( Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed);
 	void SlideNodes( Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed);
 
@@ -83,5 +94,8 @@ struct SLL {
 	bool removeNode(int i);
 	void removeAtBeginning();
 	void removeAtEnd();
+	void DeleteNode(Node*& Cur, int Dummy);
 
+	void searchNode(tgui::String v);
+	void updateNode(int i, int v);
 };

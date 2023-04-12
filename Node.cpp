@@ -149,15 +149,15 @@ void Node::updateArrow(Node* Nxt)
 	if (!Nxt)
 		return;
 
-	Arrow.setPosition(Pos.x + 40, Pos.y + 15);
+	Arrow.setPosition(Pos.x + 46, Pos.y + 15);
 
-	int ArrowLength = (int)(Util::DistanceBetweenNodes(Pos, Nxt->Pos) - 40);
+	int ArrowLength = (int)(Util::DistanceBetweenNodes(Pos, Nxt->Pos) - 46);
 	float Angle = Util::AngleOfArrow(Pos, Nxt->Pos);
 
 	Arrow.setTextureRect(IntRect(100 - ArrowLength, 0, ArrowLength, 10));
 
 	if (abs(Angle) > 0.000001f) {
-		Arrow.setPosition(Pos.x + 20 + 20 * cos(Angle) + 5 * sin(Angle), Pos.y + 20 - 5 * cos(Angle) + 20 * sin(Angle));
+		Arrow.setPosition(Pos.x + 23 + 23 * cos(Angle) + 5 * sin(Angle), Pos.y + 23 - 5 * cos(Angle) + 23 * sin(Angle));
 	}
 
 	Arrow.setRotation(Angle / PI * 180);
