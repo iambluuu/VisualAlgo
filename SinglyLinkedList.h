@@ -65,7 +65,7 @@ struct SLL {
 	 
 	void initList();
 	void drawList(int Dummy);
-	void drawTitle(Node* Cur, Nodestate NodeState, int Elapsed);
+	void drawTitle(Node* Cur, Nodestate NodeState, int Dummy);
 	void drawListPartial(Node* A, Node* B, int Dummy);
 	void drawListExcept(Node* ExceptNode, int Dummy);
 	void drawArrowFlow( Node* Cur, int Elapsed);
@@ -73,6 +73,8 @@ struct SLL {
 	void changePosition(Node* Cur, float x, float y);
 	void NodeAppear( Node* Cur, int Elapsed);
 	void NodeDisappear( Node* Cur, int Elapsed);
+	void TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed);
+	void TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed);
 	void drawNode( Node* Cur, int Dummy);
 	void setNodeState(Node* Cur, Nodestate NodeState, int Dummy);
 

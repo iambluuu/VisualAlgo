@@ -1,4 +1,4 @@
-Slider.Slider1 {
+Slider.Speed {
     ChangeValueOnScroll = true;
     InvertedDirection = false;
     Maximum = 4;

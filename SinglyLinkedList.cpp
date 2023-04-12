@@ -100,7 +100,7 @@ void SLL::drawList(int Dummy)
 	}
 }
 
-void SLL::drawTitle(Node* Cur, Nodestate NodeState, int Elapsed)
+void SLL::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 {
 	if (!Cur)
 		return;
@@ -153,6 +153,11 @@ void SLL::drawTitle(Node* Cur, Nodestate NodeState, int Elapsed)
 		break;
 	}
 	app.draw(Cur->Title);
+}
+
+void SLL::TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed)
+{
+	TitleAppear(Cur, NodeState, Duration - Elapsed);
 }
 
 void SLL::drawListPartial(Node* A, Node* B, int Dummy)
@@ -446,33 +451,6 @@ void SLL::DisconnectNode(Node* A, Node* B, int Elapsed)
 	A->drawArrow();
 }
 
-//void SLL::InsertNode(Node* A)
-//{
-//	int Elapsed = 0;
-//	Clock clock;
-//
-//	while (Elapsed <= Duration) {
-//		app.clear(Color::White);
-//		gui.draw();
-//
-//		drawList(app);
-//
-//		app.display();
-//
-//		A->changeNodePosition(A->Pos.x, DefaultPosY + 100 * (1 - ((double)Elapsed / Duration)));
-//		
-//		if (A->nxt) {
-//			A->nxt->changeNodePosition(A->Pos.x + 100 * (double)Elapsed / Duration, DefaultPosY);
-//
-//			for (Node* tmp = A->nxt->nxt; tmp; tmp = tmp->nxt)
-//				tmp->changeNodePosition(tmp->prev->Pos.x + 95, DefaultPosY);
-//		}
-//		
-//
-//		Elapsed = clock.getElapsedTime().asMilliseconds();
-//	}
-//}
-
 void SLL::insertAtBeginning(Node*& NewNode)
 {
 	//tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
@@ -509,7 +487,7 @@ void SLL::insertAtBeginning(Node*& NewNode)
 	//NewNode appears
 	action.push_back(vector<function<void(int) > >());
 	action.back().push_back(std::bind(&SLL::drawListExcept, this, NewNode, std::placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, NewNode, New, placeholders::_1));
 	action.back().push_back(std::bind(&SLL::NodeAppear, this, NewNode, std::placeholders::_1));
 
 	if (!Head->nxt)
@@ -551,7 +529,7 @@ void SLL::insertAtEnd(Node* & NewNode)
 	Cur = Head;
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
 
@@ -561,7 +539,8 @@ void SLL::insertAtEnd(Node* & NewNode)
 		action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
-		action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
 		
@@ -576,7 +555,7 @@ void SLL::insertAtEnd(Node* & NewNode)
 	action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
 
 	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, NewNode, New, placeholders::_1));
 	action.back().push_back(bind(&SLL::NodeAppear, this, NewNode, placeholders::_1));
 
 	action.push_back(vector<function<void(int)> >());
@@ -645,7 +624,7 @@ bool SLL::insertNode( int i, int v)
 	Cur = Head;
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
 
@@ -657,7 +636,8 @@ bool SLL::insertNode( int i, int v)
 	
 		action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
-		action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 
@@ -670,14 +650,14 @@ bool SLL::insertNode( int i, int v)
 	action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
 
-	action.back().push_back(bind(&SLL::drawTitle, this, NewNode->nxt, Next, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, NewNode->nxt, Next, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, NewNode->nxt, Normal, Next, placeholders::_1));
 
 	//NewNode appears
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::setNodeState, this, NewNode, New, placeholders::_1));
 	action.back().push_back(bind(&SLL::setNodeState, this, NewNode->nxt, Next, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, NewNode, New, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
 	action.back().push_back(bind(&SLL::NodeAppear, this, NewNode, placeholders::_1));
 		
@@ -711,18 +691,26 @@ bool SLL::insertNode( int i, int v)
 
 void SLL::removeAtBeginning() {
 	Node* Dell = Head;
+	Dell->NumberInList = 0;
 
 	for (Node* tmp = Dell->nxt; tmp; tmp = tmp->nxt)
 		tmp->NumberInList--;
+
+	//tmp = Head
+	action.push_back(vector<function<void(int)> >());
+	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
+	action.back().push_back(bind(&SLL::ChangeState, this, Dell, Normal, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Dell, Selecting, placeholders::_1));
+
+	//Next = Head
 
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::SetNodesNormal, this, Dell, Tail, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Dell, Normal, Remove, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Dell->nxt, Normal, Next, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, Dell->nxt, Next, placeholders::_1));
-	
-	
+	action.back().push_back(bind(&SLL::TitleAppear, this, Dell->nxt, Next, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleDisappear, this, Dell, Selecting, placeholders::_1));
 
 	//Update Nodes position
 	action.push_back(vector<function<void(int)> >());
@@ -746,7 +734,7 @@ void SLL::removeAtEnd() {
 	Node* Cur = Head;
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Next, placeholders::_1));
 
@@ -761,7 +749,8 @@ void SLL::removeAtEnd() {
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Next, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt->nxt, Normal, Next, placeholders::_1));
-		action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur->nxt, Selecting, placeholders::_1));
 
 		Cur = Cur->nxt;
 	}
@@ -819,7 +808,7 @@ bool SLL::removeNode(int i)
 	Cur = Head;
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
 	while (Cur->nxt != Dell) {
@@ -830,7 +819,8 @@ bool SLL::removeNode(int i)
 
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
-		action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 
@@ -891,7 +881,7 @@ void SLL::searchNode(tgui::String v)
 	Node* Cur = Head;
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
 	while (Cur->nxt != nullptr && Cur->Val != s) {
@@ -903,7 +893,8 @@ void SLL::searchNode(tgui::String v)
 
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
-		action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 
@@ -934,7 +925,7 @@ void SLL:: updateNode(int i, int v)
 	Cur = Head;
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawTitle, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
 
@@ -946,7 +937,8 @@ void SLL:: updateNode(int i, int v)
 
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
-		action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 
@@ -962,7 +954,7 @@ void SLL:: updateNode(int i, int v)
 	action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 
-	action.back().push_back(bind(&SLL::drawTitle, this, Cur->nxt, Next, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Next, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeValue, this, Cur->nxt, preVal, String(to_string(v)), placeholders::_1));
 	
 	initList();
@@ -997,6 +989,10 @@ void SLL::initButtons()
 	tgui::Panel::Ptr EditPanel = gui.get<tgui::Panel>("EditPanel");
 	EditPanel->loadWidgetsFromFile("assets/ControlPanel.txt");
 
+	tgui::Slider::Ptr Speed = EditPanel->get<tgui::Slider>("Speed");
+
+	Speed->setValue(2);
+
 	InsertButton->onPress([=] {
 		InsertMode->setVisible(1 - InsertMode->isVisible());
 
@@ -1025,7 +1021,6 @@ void SLL::initButtons()
 		case 1:
 			InsertMode->setText(tgui::String("Head"));
 			InsertPos->setVisible(0);
-			InsertPos->setText(tgui::String("0"));
 			InsertVal->setPosition({ "InsertMode.right + 10", "InsertMode.top" });
 			InsertEx->setPosition({ "InsertVal.right + 10", "InsertMode.top" });
 
@@ -1034,7 +1029,6 @@ void SLL::initButtons()
 		case 2:
 			InsertMode->setText(tgui::String("Tail"));
 			InsertPos->setVisible(0);
-			InsertPos->setText(tgui::String(to_string(NodeNumber)));
 			InsertVal->setPosition({ "InsertMode.right + 10", "InsertMode.top" });
 			InsertEx->setPosition({ "InsertVal.right + 10", "InsertMode.top" });
 
@@ -1073,7 +1067,6 @@ void SLL::initButtons()
 		case 1:
 			DeleteMode->setText(tgui::String("Head"));
 			DeletePos->setVisible(0);
-			DeletePos->setText(tgui::String("0"));
 			DeleteEx->setPosition({ "DeleteMode.right + 10", "DeleteMode.top" });
 
 			break;
@@ -1081,8 +1074,8 @@ void SLL::initButtons()
 		case 2:
 			DeleteMode->setText(tgui::String("Tail"));
 			DeletePos->setVisible(0);
-			DeletePos->setText(tgui::String(to_string(NodeNumber - 1)));
 			DeleteEx->setPosition({ "DeleteMode.right + 10", "DeleteMode.top" });
+
 
 			break;
 		}
@@ -1145,7 +1138,12 @@ void SLL::initButtons()
 		int Pos = InsertPos->getText().toInt();
 		int Val = InsertVal->getText().toInt();
 
-		insertNode(Pos, Val);
+		if (InsertModes == 0)
+			insertNode(Pos, Val);
+		else if (InsertModes == 1)
+			insertNode(0, Val);
+		else if (InsertModes == 2)
+			insertNode(NodeNumber , Val);
 		});
 
 	DeleteEx->onPress([=] {
@@ -1160,8 +1158,13 @@ void SLL::initButtons()
 		CurStep = 0;
 
 		int Pos = DeletePos->getText().toInt();
-
-		removeNode(Pos);
+		
+		if (DeleteModes == 0)
+			removeNode(Pos);
+		else if (DeleteModes == 1)
+			removeNode(0);
+		else
+			removeNode(NodeNumber - 1);
 		});
 
 
@@ -1201,6 +1204,10 @@ void SLL::initButtons()
 	SlideIn->onClick([=] {
 		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
+		});
+
+	Speed->onValueChange([=] {
+		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
 		});
 }
 
