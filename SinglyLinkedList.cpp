@@ -546,6 +546,10 @@ void SLL::insertAtBeginning(Node*& NewNode)
 
 void SLL::insertAtEnd(Node* & NewNode)
 {
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("Node Cur = Head\nfor (k = 0; k < n - 1; k++)\n	Cur = Cur.next\nCur.next = new Node(v)"));
 
 	Node* Cur = Head;
 
@@ -561,7 +565,9 @@ void SLL::insertAtEnd(Node* & NewNode)
 	
 	Cur = Head;
 	action.push_back(vector<function<void(int)> >());
+
 	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&SLL::HighlightAppear, this, placeholders::_1));
 	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
@@ -569,14 +575,23 @@ void SLL::insertAtEnd(Node* & NewNode)
 	while (Cur->nxt != NewNode) {
 
 		action.push_back(vector<function<void(int)> >());
+
+		if (Cur == Head)
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 0, 1, placeholders::_1));
+		else
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 1, placeholders::_1));
 		action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
-		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
 		
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&SLL::MoveHighlight, this, 1, 2, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 
@@ -584,6 +599,7 @@ void SLL::insertAtEnd(Node* & NewNode)
 	}
 
 	action.push_back(vector<function<void(int)> >());
+	action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 3, placeholders::_1));
 	action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
 	action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
 
@@ -591,11 +607,8 @@ void SLL::insertAtEnd(Node* & NewNode)
 	action.back().push_back(bind(&SLL::TitleAppear, this, NewNode, New, placeholders::_1));
 	action.back().push_back(bind(&SLL::NodeAppear, this, NewNode, placeholders::_1));
 
-	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::ConnectNode, this, NewNode->prev, NewNode, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(std::bind(&SLL::drawNode, this, NewNode, placeholders::_1));
-	
+
 }
 
 bool SLL::insertNode( int i, int v)
@@ -782,40 +795,62 @@ void SLL::removeAtBeginning() {
 }
 
 void SLL::removeAtEnd() {
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("Node Cur = Head, Aft = Head.next\nwhile(Aft.next != null)\n    Cur = Cur.next, Aft = Aft.next\nCur.next = null\ndelete Aft"));
+
 	//Run to node
 	Node* Cur = Head;
 	action.push_back(vector<function<void(int)> >());
+
+	action.back().push_back(bind(&SLL::HighlightAppear, this, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Next, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Next, placeholders::_1));
 
 	while (Cur->nxt->nxt != nullptr) {
 		action.push_back(vector<function<void(int)> >());
+
+		if (Cur == Head)
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 0, 1, placeholders::_1));
+		else
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 1, placeholders::_1));
+
 		action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
-
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur->nxt, Next, placeholders::_1));
+
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&SLL::MoveHighlight, this, 1, 2, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Next, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt->nxt, Normal, Next, placeholders::_1));
-		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt->nxt, Selecting, placeholders::_1));
-		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt->nxt, Next, placeholders::_1));
 
 		Cur = Cur->nxt;
 	}
 	
 	action.push_back(vector<function<void(int)> >());
+	action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 3, placeholders::_1));
 	action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
-	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawListExcept, this, Cur->nxt, placeholders::_1));
+	action.back().push_back(bind(&SLL::drawNode, this, Cur->nxt, placeholders::_1));
+	action.back().push_back(bind(&SLL::DisconnectNode, this, Cur, Cur->nxt, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Next, Remove, placeholders::_1));
 
 	action.push_back(vector<function<void(int)> >());
-
+	action.back().push_back(bind(&SLL::MoveHighlight, this, 3, 4, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawListExcept, this, Cur->nxt, placeholders::_1));
-	action.back().push_back(bind(&SLL::DisconnectNode, this, Cur, Cur->nxt, placeholders::_1));
 	action.back().push_back(bind(&SLL::NodeDisappear, this, Cur->nxt, placeholders::_1));
 
 	//Delete
@@ -958,13 +993,15 @@ void SLL::searchNode(tgui::String v)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("index = 0, Cur = Head\nwhile(Cur.value != v)\n    index++, Cur = Cur.next\nif (Cur == null)\nreturn NOT_FOUND\nreturn index"));
+	TextArea->setText(tgui::String("index = 0, Cur = Head\nwhile(Cur.value != v)\n		index++, Cur = Cur.next\nif (Cur == null)\n		return NOT_FOUND\nreturn index"));
 
 	string s = v.toStdString();
 
 	//Run to node
 	Node* Cur = Head;
 	action.push_back(vector<function<void(int)> >());
+
+	action.back().push_back(bind(&SLL::HighlightAppear, this, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
@@ -972,15 +1009,25 @@ void SLL::searchNode(tgui::String v)
 	while (Cur != nullptr && Cur->Val != s) {
 
 		action.push_back(vector<function<void(int)> >());
+
+		if (Cur == Head)
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 0, 1, placeholders::_1));
+		else
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 1, placeholders::_1));
+
 		action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
+
 
 		if (Cur->nxt) {
-			action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
+			action.push_back(vector<function<void(int)> >());
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 1, 2, placeholders::_1));
+			action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 			action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
-			action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 			action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 			action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 		}
@@ -991,7 +1038,7 @@ void SLL::searchNode(tgui::String v)
 
 	if (!Cur) {
 		action.push_back(vector<function<void(int)> >());
-		
+		action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 4, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Tail, Selecting, Visited, placeholders::_1));
 		return;
@@ -999,6 +1046,7 @@ void SLL::searchNode(tgui::String v)
 	
 	action.push_back(vector<function<void(int)> >());
 
+	action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 5, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 	//action.back().push_back(bind(&SLL::setNodeState, this, Cur, New, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, New, placeholders::_1));
@@ -1074,6 +1122,11 @@ void SLL::initButtons()
 	tgui::Button::Ptr SearchNode = gui.get<tgui::Button>("SearchNode");
 	tgui::Button::Ptr SearchEx = gui.get<tgui::Button>("SearchEx");
 	tgui::EditBox::Ptr SearchVal = gui.get<tgui::EditBox>("SearchVal");
+
+	tgui::Button::Ptr UpdateNode = gui.get<tgui::Button>("UpdateNode");
+	tgui::Button::Ptr UpdateEx = gui.get<tgui::Button>("UpdateEx");
+	tgui::EditBox::Ptr UpdateVal = gui.get<tgui::EditBox>("UpdateVal");
+	tgui::EditBox::Ptr UpdatePos = gui.get<tgui::EditBox>("UpdatePos");
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 
@@ -1179,6 +1232,12 @@ void SLL::initButtons()
 		SearchEx->setVisible(1 - SearchEx->isVisible());
 		});
 
+	UpdateNode->onPress([=] {
+		UpdateVal->setVisible(1 - UpdateVal->isVisible());
+		UpdatePos->setVisible(1 - UpdatePos->isVisible());
+		UpdateEx->setVisible(1 - UpdateEx->isVisible());
+		});
+
 
 	CreateButton->onPress([=] {
 		InputGen->setVisible(1 - InputGen->isVisible());
@@ -1272,6 +1331,20 @@ void SLL::initButtons()
 		tgui::String Val = SearchVal->getText();
 
 		searchNode(Val);
+		});
+
+	UpdateEx->onPress([=] {
+		Signal = Searching;
+		timer.restart();
+
+		ClearAction();
+		ShowDirection = 0;
+		CurStep = 0;
+
+		tgui::String Val = UpdateVal->getText();
+		tgui::String Pos = UpdatePos->getText();
+
+		updateNode(Pos.toInt(), Val.toInt());
 		});
 
 	PseudoCode->loadWidgetsFromFile("assets/CodeWindow.txt");
