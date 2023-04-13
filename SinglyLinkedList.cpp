@@ -244,6 +244,9 @@ void SLL::initList() {
 
 		tmp->NodeState = Normal;
 		tmp->ArrowState = Normal;
+		
+		if (!tmp->nxt)
+			Tail = tmp;
 	}
 
 	drawList(1);
@@ -952,6 +955,11 @@ void SLL::searchNode(tgui::String v)
 
 	initList();
 
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("index = 0, Cur = Head\nwhile(Cur.value != v)\n    index++, Cur = Cur.next\nif (Cur == null)\nreturn NOT_FOUND\nreturn index"));
+
 	string s = v.toStdString();
 
 	//Run to node
@@ -961,25 +969,33 @@ void SLL::searchNode(tgui::String v)
 	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
-	while (Cur->nxt != nullptr && Cur->Val != s) {
+	while (Cur != nullptr && Cur->Val != s) {
 
 		action.push_back(vector<function<void(int)> >());
 		action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
-
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
-		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
-		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
-		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
-		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
-		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
+
+		if (Cur->nxt) {
+			action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
+			action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
+			action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
+			action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
+			action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
+		}
+		
 
 		Cur = Cur->nxt;
 	}
 
-	if (Cur->Val != s)
+	if (!Cur) {
+		action.push_back(vector<function<void(int)> >());
+		
+		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
+		action.back().push_back(bind(&SLL::ChangeState, this, Tail, Selecting, Visited, placeholders::_1));
 		return;
+	}
 	
 	action.push_back(vector<function<void(int)> >());
 
