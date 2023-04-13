@@ -75,6 +75,8 @@ struct SLL {
 	void NodeDisappear( Node* Cur, int Elapsed);
 	void TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed);
 	void TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed);
+	void HighlightAppear(int Elapsed);
+	void MoveHighlight(int CurLine, int NextLine, int Elapsed);
 	void drawNode( Node* Cur, int Dummy);
 	void setNodeState(Node* Cur, Nodestate NodeState, int Dummy);
 

@@ -1,0 +1,35 @@
+Panel.TextHighlight {
+    Position = (0, 4);
+    Size = (480, 30);
+    Visible = false;
+
+    Renderer {
+        BackgroundColor = #4559FF;
+        BorderColor = black;
+        Opacity = 1;
+        TextureBackground = None;
+    }
+}
+
+TextArea.TextArea1 {
+    HorizontalScrollbarPolicy = Never;
+    MaximumCharacters = 0;
+    ReadOnly = true;
+    Size = (470, 356);
+    Text = "";
+    TextSize = 20;
+
+    Renderer {
+        BackgroundColor = None;
+        BorderColor = None;
+        Borders = (1, 1, 1, 1);
+        CaretColor = black;
+        CaretWidth = 0;
+        DefaultTextColor = #A0A0A0;
+        Padding = (5, 5, 0, 100);
+        SelectedTextBackgroundColor = None;
+        SelectedTextColor = white;
+        TextColor = white;
+        TextureBackground = None;
+    }
+}
