@@ -328,7 +328,7 @@ void SLL::genList( const tgui::String s)
 	for (int i = 0; i < parts.size(); i++) {
 		int tmp;
 
-		if (!parts[i].attemptToInt(tmp))
+		if (!parts[i].attemptToInt(tmp) || tmp >= 1000)
 			return;
 	}
 	//Release old List
@@ -1058,26 +1058,43 @@ void SLL:: updateNode(int i, int v)
 		return;
 
 	Node* Cur = Head;
-		for (int j = 0; j < i - 1; j++)
+		for (int j = 0; j < i; j++)
 			Cur = Cur->nxt;
 
-	String preVal = Cur->nxt->Val;
+	String preVal = Cur->Val;
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("Node Cur = Head\nfor(k = 0; k < i; k++)\n	Cur = Cur.next\nCur.value = v"));
 
 	Cur = Head;
 	action.push_back(vector<function<void(int)> >());
+
+	action.back().push_back(bind(&SLL::HighlightAppear, this, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
 
 
-	for (int j = 0; j < i - 1; j++) {
+	for (int j = 0; j < i; j++) {
 		action.push_back(vector<function<void(int)> >());
+
+		if (j == 0)
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 0, 1, placeholders::_1));
+		else
+			action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 1, placeholders::_1));
+
 		action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
-
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
+
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&SLL::MoveHighlight, this, 1, 2, placeholders::_1));
+		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
@@ -1085,18 +1102,15 @@ void SLL:: updateNode(int i, int v)
 
 		Cur = Cur->nxt;
 
-		if (j + 1 == i)
-			action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Next, placeholders::_1));
 	}
 
 	//Change Aft State
 	action.push_back(vector<function<void(int)> >());
+	action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 3, placeholders::_1));
 	action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
-	action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
-
-	action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Next, placeholders::_1));
-	action.back().push_back(bind(&SLL::ChangeValue, this, Cur->nxt, preVal, String(to_string(v)), placeholders::_1));
+	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
+	action.back().push_back(bind(&SLL::ChangeValue, this, Cur, preVal, String(to_string(v)), placeholders::_1));
 	
 	initList();
 }

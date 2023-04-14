@@ -4,6 +4,10 @@
 #include "Global.h"
 #include <string>
 
+#define FontOfNum "assets/CONSOLAB.TTF"
+#define FontOfTitle "assets/SpaceGrotesk-Bold.ttf"
+
+
 using namespace std;
 using namespace sf;
 
@@ -28,7 +32,8 @@ struct Node {
 	Sprite NodeShape;
 	CircleShape NodeBack;
 
-	Font font;
+	Font TitleFont;
+	Font NumFont;
 	Text Value;
 
 	Texture ArrowTexture;
@@ -61,8 +66,9 @@ struct Node {
 		nxt = nullptr;
 		prev = nullptr;
 
-		font.loadFromFile("assets/SpaceGrotesk-Bold.ttf");
-		Value.setFont(font);
+		NumFont.loadFromFile(FontOfNum);
+		Value.setFont(NumFont);
+		Value.setCharacterSize(23);
 		Value.setFillColor(Color(0, 0, 0));
 		changeNodeValue(v);
 
@@ -84,7 +90,8 @@ struct Node {
 		changeNodePosition(DefaultPosX, DefaultPosY);
 
 		NumberInList = -1;
-		Title.setFont(font);
+		TitleFont.loadFromFile(FontOfTitle);
+		Title.setFont(TitleFont);
 		Title.setCharacterSize(15);
 		Title.setFillColor(Color(229, 9, 20));
 		Title.setOutlineColor(Color::Black);
@@ -112,8 +119,9 @@ struct Node {
 		nxt = nullptr;
 		prev = nullptr;
 
-		font.loadFromFile("assets/SpaceGrotesk-Bold.ttf");
-		Value.setFont(font);
+		NumFont.loadFromFile(FontOfNum);
+		Value.setFont(NumFont);
+		Value.setCharacterSize(23);
 		Value.setFillColor(Color(0, 0, 0));
 		changeNodeValue(v);
 
@@ -135,7 +143,8 @@ struct Node {
 		changeNodePosition(DefaultPosX, DefaultPosY);
 
 		NumberInList = -1;
-		Title.setFont(font);
+		TitleFont.loadFromFile(FontOfTitle);
+		Title.setFont(TitleFont);
 		Title.setCharacterSize(15);
 		Title.setFillColor(Color(229, 9, 20));
 		Title.setOutlineColor(Color::Black);

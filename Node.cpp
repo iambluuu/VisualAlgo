@@ -183,20 +183,8 @@ void Node::changeNodePosition(float x, float y)
 		prev->updateArrow(prev->nxt);
 
 	//change value position
-	switch (Val.length()) {
-	case 1:
-		Value.setPosition(Pos.x + 13, Pos.y + 7);
-		Value.setCharacterSize(28);
-		break;
-	case 2:
-		Value.setPosition(Pos.x + 7, Pos.y + 7);
-		Value.setCharacterSize(25);
-		break;
-	case 3:
-		Value.setPosition(Pos.x + 1, Pos.y + 7);
-		Value.setCharacterSize(22);
-		break;
-	}
+	Value.setOrigin(Value.getLocalBounds().left + Value.getLocalBounds().width / 2, Value.getLocalBounds().top + Value.getLocalBounds().height / 2);
+	Value.setPosition(Pos.x + 23, Pos.y + 23);
 
 	//change title position
 	Title.setPosition(Vector2f(Pos.x + 5, Pos.y + 50));
