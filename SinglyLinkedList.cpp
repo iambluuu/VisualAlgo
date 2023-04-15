@@ -1438,6 +1438,8 @@ void SLL::initButtons()
 		int NewProgress = ProgressThumb->getValue();
 		
 		int CurProgress = CurStep;
+		if (ShowDirection == 0)
+			CurProgress++;
 
 		Progress->setValue(ProgressThumb->getValue());
 
@@ -1457,10 +1459,11 @@ void SLL::initButtons()
 
 		if (CurProgress > NewProgress) {
 			ShowDirection = 1;
-			for (; CurStep > NewProgress + 1; CurStep--)
+
+			for (; CurStep > NewProgress; CurStep--)
 				for (int i = 0; i < action[CurStep].size(); i++) {
 					action[CurStep][i](0);
-				}
+				} 
 
 			Last = Duration;
 			timer.restart();
@@ -1732,8 +1735,10 @@ void SLL::interactSLL()
 
 	if (ShowDirection == 1) {
 		Elapsed = max(0, Last - Elapsed);
+		ProgressThumb->setValue(CurStep);
 	}
 	else {
+		ProgressThumb->setValue(CurStep + 1);
 		Elapsed = min(Duration, Last + Elapsed);
 	}
 
