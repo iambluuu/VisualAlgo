@@ -15,6 +15,7 @@ struct SLL {
 
 	bool ShowMode;
 	bool ShowDirection;
+	int Last;
 
 	int InsertModes;
 	int DeleteModes;
@@ -36,6 +37,7 @@ struct SLL {
 		Elapsed = 0;
 		Duration = 700;
 		CurStep = 0;
+		Last = 0;
 
 		InsertModes = 0;
 		DeleteModes = 0;
@@ -59,6 +61,7 @@ struct SLL {
 	int getSize();
 
 	void initButtons();
+	void initProgress();
 	void interactSLL();
 	void HandleEvent(Event& e);
 	void ClearAction();

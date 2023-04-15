@@ -21,7 +21,8 @@ void Node::changeNodeValue(String val)
 
 void Node::drawNode(int Opacity)
 {
-	VSPurple.a = Opacity;
+	Color Main = *MainColor;
+	Main.a = Opacity;
 	SGreen.a = Opacity;
 	NRed.a = Opacity;
 	FBlue.a = Opacity;
@@ -40,9 +41,9 @@ void Node::drawNode(int Opacity)
 		break;
 
 	case Visited:
-		NodeShape.setColor(VSPurple);
+		NodeShape.setColor(Main);
 		NodeBack.setFillColor(Color(255, 255, 255, Opacity));
-		Value.setFillColor(VSPurple);
+		Value.setFillColor(Main);
 
 		if (NumberInList == 0)
 			Title.setString(String("Head"));
@@ -52,8 +53,8 @@ void Node::drawNode(int Opacity)
 		break;
 
 	case Selecting:
-		NodeShape.setColor(VSPurple);
-		NodeBack.setFillColor(VSPurple);
+		NodeShape.setColor(Main);
+		NodeBack.setFillColor(Main);
 		Value.setFillColor(Color(255, 255, 255, Opacity));
 
 		if (NumberInList == 0)
@@ -111,7 +112,7 @@ void Node::drawArrow()
 		Arrow.setColor(Color(0, 0, 0));
 		break;
 	case Visited:
-		Arrow.setColor(Color(193, 148, 243));
+		Arrow.setColor(*MainColor);
 		break;
 	case New:
 		Arrow.setColor(Color(30, 215, 96));
@@ -126,12 +127,14 @@ void Node::drawArrow()
 
 void Node::drawArrow(int Opacity)
 {
+	Color Main = *MainColor;
+	Main.a = Opacity;
 	switch (ArrowState) {
 	case Normal:
 		Arrow.setColor(Color(0, 0, 0, Opacity));
 		break;
 	case Visited:
-		Arrow.setColor(Color(193, 148, 243, Opacity));
+		Arrow.setColor(Main);
 		break;
 	case New:
 		Arrow.setColor(Color(30, 215, 96, Opacity));

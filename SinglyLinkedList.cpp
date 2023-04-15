@@ -25,7 +25,6 @@ void SLL::NodeDisappear(Node* Cur, int Elapsed)
 	NodeAppear(Cur, Duration - Elapsed);
 }
 
-
 void SLL::drawNode(Node * Cur, int Dummy)
 {
 	Cur->drawNode(255);
@@ -542,10 +541,13 @@ void SLL::insertAtBeginning(Node*& NewNode)
 		action.back().push_back(std::bind(&SLL::SlideNodes, this,NewNode->nxt, DefaultPosX, DefaultPosY, DefaultPosX + 95, DefaultPosY, placeholders::_1));
 		action.back().push_back(std::bind(&SLL::drawList, this, placeholders::_1));
 	}
+
+	initProgress();
 }
 
 void SLL::insertAtEnd(Node* & NewNode)
 {
+
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
@@ -609,11 +611,12 @@ void SLL::insertAtEnd(Node* & NewNode)
 
 	action.back().push_back(bind(&SLL::ConnectNode, this, NewNode->prev, NewNode, placeholders::_1));
 
+	initProgress();
 }
 
 bool SLL::insertNode( int i, int v)
 {
-	if (i > NodeNumber || i < 0 || NodeNumber == maxNodeNumber) {
+ 	if (i > NodeNumber || i < 0 || NodeNumber == maxNodeNumber) {
 		Signal = Pending;
 		return 0;
 	}
@@ -742,6 +745,8 @@ bool SLL::insertNode( int i, int v)
 	action.back().push_back(std::bind(&SLL::SlideNodes, this, NewNode->nxt, Cur->Pos.x + 95, Cur->Pos.y, Cur->Pos.x + 95 + 95, DefaultPosY, placeholders::_1));
 	action.back().push_back(std::bind(&SLL::drawList, this, placeholders::_1));
 
+	initProgress();
+
 	return 1;
 }
 
@@ -790,6 +795,8 @@ void SLL::removeAtBeginning() {
 	//Delete
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::DeleteNode, this, Dell, placeholders::_1));
+
+	initProgress();
 	
 	return;
 }
@@ -856,18 +863,19 @@ void SLL::removeAtEnd() {
 	//Delete
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::DeleteNode, this, Cur->nxt, placeholders::_1));
+
+	initProgress();
 	
 	return;
 }
 
 bool SLL::removeNode(int i)
 {
+	initList();
 	if (i >= NodeNumber || i < 0) {
 		Signal = Pending;
 		return 0;
 	}
-
-	initList();
 
 	NodeNumber--;
 
@@ -977,6 +985,8 @@ bool SLL::removeNode(int i)
 	//Delete
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&SLL::DeleteNode, this, Dell, placeholders::_1));
+
+	initProgress();
 
 	return 1;
 }
@@ -1088,6 +1098,7 @@ void SLL:: updateNode(int i, int v)
 		action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur->prev, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::setNodeState, this, Cur, Selecting, placeholders::_1));
+		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawArrowFlow, this, Cur, placeholders::_1));
 
@@ -1096,7 +1107,6 @@ void SLL:: updateNode(int i, int v)
 		action.back().push_back(bind(&SLL::MoveHighlight, this, 1, 2, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::TitleAppear, this, Cur->nxt, Selecting, placeholders::_1));
-		action.back().push_back(bind(&SLL::TitleDisappear, this, Cur, Selecting, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, Visited, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 
@@ -1113,6 +1123,26 @@ void SLL:: updateNode(int i, int v)
 	action.back().push_back(bind(&SLL::ChangeValue, this, Cur, preVal, String(to_string(v)), placeholders::_1));
 	
 	initList();
+}
+
+void SLL::initProgress() {
+	tgui::Panel::Ptr EditPanel = gui.get<tgui::Panel>("EditPanel");
+
+	tgui::Slider::Ptr ProgressThumb = EditPanel->get<tgui::Slider>("ProgressThumb");
+	tgui::ProgressBar::Ptr Progress = EditPanel->get<tgui::ProgressBar>("ProgressStep");
+
+	if (Signal == Removing) {
+		ProgressThumb->setMaximum(action.size() - 1);
+		Progress->setMaximum(action.size() - 1);
+	}
+	else {
+		ProgressThumb->setMaximum(action.size());
+		Progress->setMaximum(action.size());
+	}
+	
+
+	ProgressThumb->setValue(0);
+	Progress->setValue(0);
 }
 
 void SLL::initButtons()
@@ -1150,6 +1180,9 @@ void SLL::initButtons()
 	EditPanel->loadWidgetsFromFile("assets/ControlPanel.txt");
 
 	tgui::Slider::Ptr Speed = EditPanel->get<tgui::Slider>("Speed");
+	tgui::Slider::Ptr ProgressThumb = EditPanel->get<tgui::Slider>("ProgressThumb");
+	tgui::ProgressBar::Ptr Progress = EditPanel->get<tgui::ProgressBar>("ProgressStep");
+
 
 	Speed->setValue(2);
 
@@ -1300,6 +1333,7 @@ void SLL::initButtons()
 		ClearAction();
 		ShowDirection = 0;
 		CurStep = 0;
+		Last = 0;
 
 		int Pos = InsertPos->getText().toInt();
 		int Val = InsertVal->getText().toInt();
@@ -1322,6 +1356,7 @@ void SLL::initButtons()
 		ClearAction();
 		ShowDirection = 0;
 		CurStep = 0;
+		Last = 0;
 
 		int Pos = DeletePos->getText().toInt();
 		
@@ -1341,6 +1376,7 @@ void SLL::initButtons()
 		ClearAction();
 		ShowDirection = 0;
 		CurStep = 0;
+		Last = 0;
 
 		tgui::String Val = SearchVal->getText();
 
@@ -1354,6 +1390,7 @@ void SLL::initButtons()
 		ClearAction();
 		ShowDirection = 0;
 		CurStep = 0;
+		Last = 0;
 
 		tgui::String Val = UpdateVal->getText();
 		tgui::String Pos = UpdatePos->getText();
@@ -1391,6 +1428,45 @@ void SLL::initButtons()
 	Speed->onValueChange([=] {
 		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
 		});
+
+	ProgressThumb->onValueChange([=] {
+		if (action.empty()) {
+			ProgressThumb->setValue(0);
+			return;
+		}
+
+		int NewProgress = ProgressThumb->getValue();
+		
+		int CurProgress = CurStep;
+
+		Progress->setValue(ProgressThumb->getValue());
+
+		//timer.restart();
+		//Last = 0;
+		
+		if (CurProgress < NewProgress) {
+			ShowDirection = 0;
+			for (; CurStep < NewProgress - 1; CurStep++)
+				for (int i = 0; i < action[CurStep].size(); i++) {
+					action[CurStep][i](Duration);
+				}
+
+			Last = 0;
+			timer.restart();
+		}
+
+		if (CurProgress > NewProgress) {
+			ShowDirection = 1;
+			for (; CurStep > NewProgress + 1; CurStep--)
+				for (int i = 0; i < action[CurStep].size(); i++) {
+					action[CurStep][i](0);
+				}
+
+			Last = Duration;
+			timer.restart();
+		}
+
+		});
 }
 
 void SLL::HandleEvent(Event& e)
@@ -1405,6 +1481,7 @@ void SLL::HandleEvent(Event& e)
 			if (Elapsed >= Duration) {
 				CurStep++;
 				timer.restart();
+				Last = 0;
 				Elapsed = 0;
 			}
 
@@ -1427,7 +1504,7 @@ void SLL::HandleEvent(Event& e)
 				case Keyboard::Right:
 					if (ShowDirection == 1) {
 						ShowDirection = 0;
-						Elapsed = (Duration - Elapsed);
+						Last = Elapsed;
 						timer.restart();
 					}
 					else {
@@ -1441,7 +1518,7 @@ void SLL::HandleEvent(Event& e)
 							CurStep++;
 
 							Elapsed = 0;
-					
+							Last = 0;
 							timer.restart();
 						}
 					}
@@ -1451,7 +1528,7 @@ void SLL::HandleEvent(Event& e)
 				case Keyboard::Left:
 					if (ShowDirection == 0) {
 						ShowDirection = 1;
-						Elapsed = (Duration - Elapsed);
+						Last = Elapsed;
 						timer.restart();
 					}
 					else {
@@ -1464,6 +1541,7 @@ void SLL::HandleEvent(Event& e)
 
 							CurStep--;
 							Elapsed = Duration;
+							Last = Duration;
 							timer.restart();
 						}
 					}
@@ -1482,6 +1560,7 @@ void SLL::HandleEvent(Event& e)
 			if (Elapsed >= Duration) {
 				CurStep++;
 				timer.restart();
+				Last = 0;
 				Elapsed = 0;
 			}
 
@@ -1504,7 +1583,7 @@ void SLL::HandleEvent(Event& e)
 				case Keyboard::Right:
 					if (ShowDirection == 1) {
 						ShowDirection = 0;
-						Elapsed = (Duration - Elapsed);
+						Last = Elapsed;
 						timer.restart();
 					}
 					else {
@@ -1518,7 +1597,7 @@ void SLL::HandleEvent(Event& e)
 							CurStep++;
 
 							Elapsed = 0;
-
+							Last = 0;
 							timer.restart();
 						}
 					}
@@ -1528,7 +1607,7 @@ void SLL::HandleEvent(Event& e)
 				case Keyboard::Left:
 					if (ShowDirection == 0) {
 						ShowDirection = 1;
-						Elapsed = (Duration - Elapsed);
+						Last = Elapsed;
 						timer.restart();
 					}
 					else {
@@ -1541,6 +1620,7 @@ void SLL::HandleEvent(Event& e)
 
 							CurStep--;
 							Elapsed = Duration;
+							Last = 0;
 							timer.restart();
 						}
 					}
@@ -1559,6 +1639,7 @@ void SLL::HandleEvent(Event& e)
 			if (Elapsed >= Duration) {
 				CurStep++;
 				timer.restart();
+				Last = 0;
 				Elapsed = 0;
 			}
 
@@ -1581,7 +1662,7 @@ void SLL::HandleEvent(Event& e)
 				case Keyboard::Right:
 					if (ShowDirection == 1) {
 						ShowDirection = 0;
-						Elapsed = (Duration - Elapsed);
+						Last = Elapsed;
 						timer.restart();
 					}
 					else {
@@ -1595,7 +1676,7 @@ void SLL::HandleEvent(Event& e)
 							CurStep++;
 
 							Elapsed = 0;
-
+							Last = 0;
 							timer.restart();
 						}
 					}
@@ -1605,7 +1686,7 @@ void SLL::HandleEvent(Event& e)
 				case Keyboard::Left:
 					if (ShowDirection == 0) {
 						ShowDirection = 1;
-						Elapsed = (Duration - Elapsed);
+						Last = Elapsed;
 						timer.restart();
 					}
 					else {
@@ -1618,6 +1699,7 @@ void SLL::HandleEvent(Event& e)
 
 							CurStep--;
 							Elapsed = Duration;
+							Last = Duration;
 							timer.restart();
 						}
 					}
@@ -1638,14 +1720,22 @@ void SLL::interactSLL()
 {
 	app.clear();
 	gui.draw();
+
+	tgui::Panel::Ptr EditPanel = gui.get<tgui::Panel>("EditPanel");
+
+	tgui::Slider::Ptr ProgressThumb = EditPanel->get<tgui::Slider>("ProgressThumb");
+	tgui::ProgressBar::Ptr Progress = EditPanel->get<tgui::ProgressBar>("ProgressStep");
+
 	Event e;
 
 	Elapsed = timer.getElapsedTime().asMilliseconds();
 
-	if (ShowDirection == 1) 
-		Elapsed = max(0, Duration - Elapsed);
-	else
-		Elapsed = min(Duration, Elapsed);
+	if (ShowDirection == 1) {
+		Elapsed = max(0, Last - Elapsed);
+	}
+	else {
+		Elapsed = min(Duration, Last + Elapsed);
+	}
 
 	while (app.pollEvent(e)) {
 		if (e.type == Event::Closed) {
@@ -1653,9 +1743,8 @@ void SLL::interactSLL()
 			State = _EndProgram;
 			return;
 		}
-		HandleEvent(e);
 		gui.handleEvent(e);
-		
+		HandleEvent(e);
 	}
 
 	switch (Signal) {

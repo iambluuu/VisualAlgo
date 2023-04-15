@@ -7,7 +7,6 @@
 #define FontOfNum "assets/CONSOLAB.TTF"
 #define FontOfTitle "assets/SpaceGrotesk-Bold.ttf"
 
-
 using namespace std;
 using namespace sf;
 
@@ -15,6 +14,7 @@ enum Nodestate {
 	Normal, Visited, Selecting, Next, New, Remove
 };
 
+__declspec(selectany) Color* MainColor = &VSPurple;
 
 struct Node {
 	tgui::Button::Ptr Hitbox;
@@ -48,14 +48,18 @@ struct Node {
 		Hitbox->setSize({ 46, 46 });
 		Hitbox->getRenderer()->setOpacity(0);
 		Hitbox->getRenderer()->setRoundedBorderRadius(23);
+		
+
 		gui.add(Hitbox);
 
 		Hitbox->onPress([=] {
 			tgui::EditBox::Ptr InsertPos = gui.get<tgui::EditBox>("InsertPos");
 			tgui::EditBox::Ptr DeletePos = gui.get<tgui::EditBox>("DeletePos");
+			tgui::EditBox::Ptr UpdatePos = gui.get<tgui::EditBox>("UpdatePos");
 
 			InsertPos->setText(tgui::String(to_string(NumberInList)));
 			DeletePos->setText(tgui::String(to_string(NumberInList)));
+			UpdatePos->setText(tgui::String(to_string(NumberInList)));
 			});
 
 		ArrowState = Normal;
@@ -85,7 +89,7 @@ struct Node {
 		Arrow.setTexture(ArrowTexture);
 		Arrow.setPosition(Pos.x + 40, Pos.y + 15);
 		TmpArrow.setTexture(ArrowTexture);
-		TmpArrow.setColor(Color(193, 148, 243));
+		TmpArrow.setColor(*MainColor);
 
 		changeNodePosition(DefaultPosX, DefaultPosY);
 
