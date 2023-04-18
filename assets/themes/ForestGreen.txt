@@ -1,0 +1,527 @@
+Background {
+   Texture = "ForestGreen.png" Smooth;
+   TransparentTexture = false;
+}
+
+Button {
+        BackgroundColor = #1C6758;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #1C6758;
+        BackgroundColorDownFocused = #1C6758;
+        BackgroundColorDownHover = #FAC0FF00;
+        BackgroundColorFocused = #1C6758;
+        BackgroundColorHover = #00725B;
+        BorderColor = #005644;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #005644;
+        BorderColorHover = #3D8361;
+        Borders = (2, 2, 2, 2);
+        Font = "SpaceGrotesk-Bold.ttf";
+        RoundedBorderRadius = 13;
+        TextColor = #EEF2E6;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        TextStyle = Regular;
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+SemiButton {
+        BackgroundColor = #D6CDA4;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = #DCDACB;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = #D39BFF;
+        Borders = (1, 1, 1, 1);
+        Font = "SpaceGrotesk-Bold.ttf";
+        RoundedBorderRadius = 6;
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+ExButton {
+        BackgroundColor = #024236;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #071831;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (1, 1, 1, 1);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #ECF7FF;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+EditBox {
+        BackgroundColor = #D4D1B7;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorHover = #DADFCB;
+        BorderColor = #1C6758;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorFocused = #636387;
+        BorderColorHover = black;
+        Borders = (2, 2, 2, 2);
+        CaretColor = black;
+        CaretWidth = 0;
+        DefaultTextColor = #483C4F;
+        Font = "SpaceGrotesk-Bold.ttf";
+        Opacity = 0.8;
+        Padding = (0, 0, 0, 0);
+        SelectedTextBackgroundColor = #006EFF;
+        SelectedTextColor = white;
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        Texture = None;
+        TextureDisabled = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+ComboBox {
+        ArrowBackgroundColor = #1C6758;
+        ArrowBackgroundColorHover = white;
+        ArrowColor = #3C3C3C;
+        ArrowColorHover = black;
+        BackgroundColor = #3D8361;
+        BorderColor = black;
+        Borders = (0, 0, 0, 0);
+        Padding = (0, 0, 0, 0);
+        TextColor = #3C3C3C;
+        TextureArrow = None;
+        TextureArrowDisabled = None;
+        TextureArrowHover = None;
+        TextureBackground = None;
+        TextureBackgroundDisabled = None;
+
+        ListBox {
+            BackgroundColor = #F5F5F5;
+            BackgroundColorHover = white;
+            BorderColor = black;
+            Borders = (1, 1, 1, 1);
+            Padding = (0, 0, 0, 0);
+            SelectedBackgroundColor = #006EFF;
+            SelectedBackgroundColorHover = #1E96FF;
+            SelectedTextColor = white;
+            TextColor = #3C3C3C;
+            TextColorHover = black;
+            TextureBackground = None;
+
+            Scrollbar {
+                ArrowBackgroundColor = #F5F5F5;
+                ArrowBackgroundColorHover = white;
+                ArrowColor = #3C3C3C;
+                ArrowColorHover = black;
+                TextureArrowDown = None;
+                TextureArrowDownHover = None;
+                TextureArrowUp = None;
+                TextureArrowUpHover = None;
+                TextureThumb = None;
+                TextureThumbHover = None;
+                TextureTrack = None;
+                TextureTrackHover = None;
+                ThumbColor = #DCDCDC;
+                ThumbColorHover = #E6E6E6;
+                TrackColor = #F5F5F5;
+            }
+        }
+    }
+
+EditPanel {
+        BackgroundColor = #1C6758;
+        BorderColor = black;
+        Padding = (3, 3, 3, 3);
+        TextureBackground = None;
+    }
+
+SlideOut {
+        BackgroundColor = black;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextColor = white;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "SlideOut.png" Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+SlideIn {
+        BackgroundColor = black;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = None;
+        BorderColor = None;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = None;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextColor = white;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "SlideIn.png" Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+CodeWindow {
+        BackgroundColor = #EEF2E6;
+        BorderBelowTitleBar = 1;
+        BorderColor = black;
+        Borders = (1, 1, 1, 1);
+        DistanceToSide = 3;
+        Font = "SpaceGrotesk-Bold.ttf";
+        Opacity = 0.8;
+        PaddingBetweenButtons = 3;
+        ShowTextOnTitleButtons = true;
+        TextureBackground = None;
+        TextureTitleBar = None;
+        TitleBarColor = #1C6758;
+        TitleColor = #EEF2E6;
+
+        CloseButton {
+            BackgroundColor = #F5F5F5;
+            BackgroundColorDown = #EBEBEB;
+            BackgroundColorHover = white;
+            BorderColor = #3C3C3C;
+            BorderColorDown = black;
+            BorderColorHover = black;
+            Borders = (1, 1, 1, 1);
+            TextColor = #3C3C3C;
+            TextColorDown = black;
+            TextColorHover = black;
+            Texture = None;
+            TextureDisabled = None;
+            TextureDown = None;
+            TextureDownFocused = None;
+            TextureDownHover = None;
+            TextureFocused = None;
+            TextureHover = None;
+        }
+
+        MaximizeButton {
+            BackgroundColor = #F5F5F5;
+            BackgroundColorDown = #EBEBEB;
+            BackgroundColorHover = white;
+            BorderColor = #3C3C3C;
+            BorderColorDown = black;
+            BorderColorHover = black;
+            Borders = (1, 1, 1, 1);
+            TextColor = #3C3C3C;
+            TextColorDown = black;
+            TextColorHover = black;
+            Texture = None;
+            TextureDisabled = None;
+            TextureDown = None;
+            TextureDownFocused = None;
+            TextureDownHover = None;
+            TextureFocused = None;
+            TextureHover = None;
+        }
+
+        MinimizeButton {
+            BackgroundColor = #F5F5F5;
+            BackgroundColorDown = #EBEBEB;
+            BackgroundColorHover = white;
+            BorderColor = #3C3C3C;
+            BorderColorDown = black;
+            BorderColorHover = black;
+            Borders = (1, 1, 1, 1);
+            TextColor = #3C3C3C;
+            TextColorDown = black;
+            TextColorHover = black;
+            Texture = None;
+            TextureDisabled = None;
+            TextureDown = None;
+            TextureDownFocused = None;
+            TextureDownHover = None;
+            TextureFocused = None;
+            TextureHover = None;
+        }
+    }
+
+LightText{
+        BackgroundColor = transparent;
+        BorderColor = #3C3C3C;
+        Borders = (0, 0, 0, 0);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #EEF2E6;
+        TextOutlineColor = None;
+        TextureBackground = None;
+    }
+
+SpeedSlider {
+        BorderColor = #3C3C3C;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextureThumb = "thumb.png" Part(0, 0, 10, 10) Smooth;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = #F4DDFF;
+        ThumbColorHover = #F4DDFF;
+        TrackColor = black;
+        TrackColorHover = #F4DDFF;
+    }
+
+ProgressBar {
+        BackgroundColor = #EEF2E6;
+        BorderColor = black;
+        Borders = (0, 0, 0, 0);
+        FillColor = #D6CDA4;
+        TextColor = #3C3C3C;
+        TextColorFilled = white;
+        TextureBackground = None;
+        TextureFill = None;
+    }
+
+ProgressThumb {
+        BorderColor = None;
+        BorderColorHover = None;
+        Borders = (1, 1, 1, 1);
+        Opacity = 1;
+        TextureThumb = None;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = #D6CDA4;
+        ThumbColorHover = white;
+        TrackColor = None;
+        TrackColorHover = None;
+    }
+
+RadioButton {
+    BackgroundColor = None;
+    BackgroundColorDisabled = #E6E6E6;
+    BackgroundColorHover = None;
+    BorderColor = #D6CDA4;
+    BorderColorDisabled = #7D7D7D;
+    BorderColorFocused = #D6CDA4;
+    BorderColorHover = black;
+    Borders = (3, 3, 3, 3);
+    CheckColor = #D6CDA4;
+    CheckColorDisabled = #7D7D7D;
+    CheckColorHover = black;
+    TextColor = #3C3C3C;
+    TextColorDisabled = #7D7D7D;
+    TextColorHover = black;
+    TextDistanceRatio = 0.2;
+    TextureChecked = None;
+    TextureCheckedDisabled = None;
+    TextureCheckedFocused = None;
+    TextureCheckedHover = None;
+    TextureUnchecked = None;
+    TextureUncheckedDisabled = None;
+    TextureUncheckedFocused = None;
+    TextureUncheckedHover = None;
+}
+
+BackwardToBegin {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons2.png" Part(0, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+Backward {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons2.png" Part(512, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+PlayButton {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        RoundedBorderRadius = 19;
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons2.png" Part(1024, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+PauseButton {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        RoundedBorderRadius = 19;
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons2.png" Part(1536, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+Forward {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons2.png" Part(2048, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+ForwardToFinal {
+        BackgroundColor = rgba(180, 180, 180, 215);
+        BackgroundColorDown = rgba(150, 150, 150, 215);
+        BackgroundColorHover = rgba(190, 190, 190, 215);
+        BorderColor = rgba(240, 240, 240, 215);
+        Borders = (0, 0, 0, 0);
+        TextColor = rgba(255, 255, 255, 215);
+        TextColorDown = rgba(255, 255, 255, 235);
+        TextColorHover = rgba(255, 255, 255, 235);
+        Texture = "PlayButtons2.png" Part(2560, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+
+TextHighlight {
+        BackgroundColor = #3D8361;
+        BorderColor = black;
+        Opacity = 1;
+        TextureBackground = None;
+    }
+
+CodeLines {
+        BackgroundColor = None;
+        BorderColor = None;
+        Borders = (1, 1, 1, 1);
+        CaretColor = black;
+        CaretWidth = 0;
+        DefaultTextColor = white;
+        Padding = (5, 5, 0, 100);
+        SelectedTextBackgroundColor = None;
+        SelectedTextColor = white;
+        TextColor = white;
+        TextureBackground = None;
+    }

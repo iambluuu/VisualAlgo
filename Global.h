@@ -28,6 +28,7 @@ static Color SGreen(30, 215, 96);
 static Color NRed(229, 9, 20);
 static Color FBlue(66, 103, 178);
 static Color CPink(228, 113, 122);
+static Color Fulvous(220, 124, 0);
 
 enum ScreenState {
 	_SLL, _DLList, _CLL, _Stack, _Queue, _DArray, _Array, _EndProgram

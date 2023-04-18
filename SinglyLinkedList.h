@@ -12,6 +12,7 @@ struct SLL {
 	vector<vector<function<void (int)> > >  action;
 	signal Signal;
 	Clock timer;
+	tgui::Theme theme;
 
 	bool ShowMode;
 	bool ShowDirection;
@@ -30,6 +31,8 @@ struct SLL {
 	RectangleShape TextHighlight;
 
 	SLL() {
+		theme.load("assets/themes/CyberPurple.txt");
+
 		Head = nullptr;
 		Tail = nullptr;
 		Signal = Pending;

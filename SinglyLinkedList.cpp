@@ -440,6 +440,7 @@ void SLL::drawArrowFlow(Node* Cur, int Elapsed)
 
 	Cur->TmpArrow.setPosition(Cur->Arrow.getPosition());
 	Cur->TmpArrow.setRotation(Cur->Arrow.getRotation());
+	Cur->TmpArrow.setColor(*MainColor);
 
 	int ArrowLength = (int)(Util::DistanceBetweenNodes(Cur->Pos, Cur->nxt->Pos) - 46);
 
@@ -616,12 +617,12 @@ void SLL::insertAtEnd(Node* & NewNode)
 
 bool SLL::insertNode( int i, int v)
 {
+	initList();
+
  	if (i > NodeNumber || i < 0 || NodeNumber == maxNodeNumber) {
 		Signal = Pending;
 		return 0;
 	}
-
-	initList();
 
 	Node* Cur = Head;
 	Node* NewNode = new Node(v);
@@ -995,10 +996,9 @@ bool SLL::removeNode(int i)
 
 void SLL::searchNode(tgui::String v)
 {
+	initList();
 	if (!Head)
 		return;
-
-	initList();
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
@@ -1042,7 +1042,6 @@ void SLL::searchNode(tgui::String v)
 			action.back().push_back(bind(&SLL::ChangeState, this, Cur->nxt, Normal, Selecting, placeholders::_1));
 		}
 		
-
 		Cur = Cur->nxt;
 	}
 
@@ -1051,6 +1050,8 @@ void SLL::searchNode(tgui::String v)
 		action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 4, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Tail, Selecting, Visited, placeholders::_1));
+
+		initProgress();
 		return;
 	}
 	
@@ -1060,10 +1061,14 @@ void SLL::searchNode(tgui::String v)
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 	//action.back().push_back(bind(&SLL::setNodeState, this, Cur, New, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Cur, Selecting, New, placeholders::_1));
+
+	initProgress();
 }
 
 void SLL:: updateNode(int i, int v)
 {
+	initList();
+
 	if (i < 0 || i >= NodeNumber)
 		return;
 
@@ -1122,7 +1127,7 @@ void SLL:: updateNode(int i, int v)
 	action.back().push_back(bind(&SLL::TitleAppear, this, Cur, Selecting, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeValue, this, Cur, preVal, String(to_string(v)), placeholders::_1));
 	
-	initList();
+	initProgress();
 }
 
 void SLL::initProgress() {
@@ -1147,41 +1152,106 @@ void SLL::initProgress() {
 
 void SLL::initButtons()
 {
+	tgui::Picture::Ptr Background = gui.get<tgui::Picture>("Background");
+	Background->setRenderer(theme.getRenderer("Background"));
+
+	tgui::ComboBox::Ptr StructList = gui.get<tgui::ComboBox>("ComboBox1");
+	StructList->setRenderer(theme.getRenderer("ComboBox"));
+
 	tgui::Button::Ptr InsertEx = gui.get<tgui::Button>("InsertEx");
+	InsertEx->setRenderer(theme.getRenderer("ExButton"));
 	tgui::Button::Ptr InsertMode = gui.get<tgui::Button>("InsertMode");
+	InsertMode->setRenderer(theme.getRenderer("SemiButton"));
 	tgui::Button::Ptr InsertButton = gui.get<tgui::Button>("InsertButton");
+	InsertButton->setRenderer(theme.getRenderer("Button"));
 	tgui::EditBox::Ptr InsertPos = gui.get<tgui::EditBox>("InsertPos");
+	InsertPos->setRenderer(theme.getRenderer("EditBox"));
 	tgui::EditBox::Ptr InsertVal = gui.get<tgui::EditBox>("InsertVal");
+	InsertVal->setRenderer(theme.getRenderer("EditBox"));
 
 	tgui::Button::Ptr DeleteEx = gui.get<tgui::Button>("DeleteEx");
+	DeleteEx->setRenderer(theme.getRenderer("ExButton"));
 	tgui::Button::Ptr DeleteMode = gui.get<tgui::Button>("DeleteMode");
+	DeleteMode->setRenderer(theme.getRenderer("SemiButton"));
 	tgui::Button::Ptr DeleteButton = gui.get<tgui::Button>("DeleteButton");
+	DeleteButton->setRenderer(theme.getRenderer("Button"));
 	tgui::EditBox::Ptr DeletePos = gui.get<tgui::EditBox>("DeletePos");
+	DeletePos->setRenderer(theme.getRenderer("EditBox"));
 
 	tgui::Button::Ptr CreateButton = gui.get<tgui::Button>("CreateButton");
+	CreateButton->setRenderer(theme.getRenderer("Button"));
 	tgui::Button::Ptr InputGen = gui.get<tgui::Button>("InputGen");
+	InputGen->setRenderer(theme.getRenderer("SemiButton"));
 	tgui::EditBox::Ptr UserInput = gui.get<tgui::EditBox>("EditBox1");
+	UserInput->setRenderer(theme.getRenderer("EditBox"));
 	tgui::Button::Ptr UserInputEx = gui.get<tgui::Button>("UserInputEx");
+	UserInputEx->setRenderer(theme.getRenderer("ExButton"));
 
 	tgui::Button::Ptr SearchNode = gui.get<tgui::Button>("SearchNode");
+	SearchNode->setRenderer(theme.getRenderer("Button"));
 	tgui::Button::Ptr SearchEx = gui.get<tgui::Button>("SearchEx");
+	SearchEx->setRenderer(theme.getRenderer("ExButton"));
 	tgui::EditBox::Ptr SearchVal = gui.get<tgui::EditBox>("SearchVal");
+	SearchVal->setRenderer(theme.getRenderer("EditBox"));
 
 	tgui::Button::Ptr UpdateNode = gui.get<tgui::Button>("UpdateNode");
+	UpdateNode->setRenderer(theme.getRenderer("Button"));
 	tgui::Button::Ptr UpdateEx = gui.get<tgui::Button>("UpdateEx");
+	UpdateEx->setRenderer(theme.getRenderer("ExButton"));
 	tgui::EditBox::Ptr UpdateVal = gui.get<tgui::EditBox>("UpdateVal");
+	UpdateVal->setRenderer(theme.getRenderer("EditBox"));
 	tgui::EditBox::Ptr UpdatePos = gui.get<tgui::EditBox>("UpdatePos");
+	UpdatePos->setRenderer(theme.getRenderer("EditBox"));
+
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	PseudoCode->loadWidgetsFromFile("assets/themes/CodeWindow.txt");
+	PseudoCode->setRenderer(theme.getRenderer("CodeWindow"));
+	tgui::TextArea::Ptr CodeLines = PseudoCode->get<tgui::TextArea>("TextArea1");
+	CodeLines->setRenderer(theme.getRenderer("CodeLines"));
+	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
+	TextHighlight->setRenderer(theme.getRenderer("TextHighlight"));
+
 
 	tgui::Button::Ptr SlideIn = gui.get<tgui::Button>("SlideIn");
 	tgui::Button::Ptr SlideOut = gui.get<tgui::Button>("SlideOut");
 	tgui::Panel::Ptr EditPanel = gui.get<tgui::Panel>("EditPanel");
-	EditPanel->loadWidgetsFromFile("assets/ControlPanel.txt");
+	EditPanel->loadWidgetsFromFile("assets/themes/ControlPanel.txt");
+	EditPanel->setRenderer(theme.getRenderer("EditPanel"));
 
 	tgui::Slider::Ptr Speed = EditPanel->get<tgui::Slider>("Speed");
+	Speed->setRenderer(theme.getRenderer("SpeedSlider"));
 	tgui::Slider::Ptr ProgressThumb = EditPanel->get<tgui::Slider>("ProgressThumb");
+	ProgressThumb->setRenderer(theme.getRenderer("ProgressThumb"));
 	tgui::ProgressBar::Ptr Progress = EditPanel->get<tgui::ProgressBar>("ProgressStep");
+	Progress->setRenderer(theme.getRenderer("ProgressBar"));
+
+	tgui::Button::Ptr Begin = EditPanel->get<tgui::Button>("Begin");
+	Begin->setRenderer(theme.getRenderer("BackwardToBegin"));
+	tgui::Button::Ptr Final = EditPanel->get<tgui::Button>("Final");
+	Final->setRenderer(theme.getRenderer("ForwardToFinal"));
+	tgui::Button::Ptr Forward = EditPanel->get<tgui::Button>("Forward");
+	Forward->setRenderer(theme.getRenderer("Forward"));
+	tgui::Button::Ptr Backward = EditPanel->get<tgui::Button>("Backward");
+	Backward->setRenderer(theme.getRenderer("Backward"));
+	tgui::Button::Ptr Play = EditPanel->get<tgui::Button>("PlayButton");
+	Play->setRenderer(theme.getRenderer("PlayButton"));
+	
+	tgui::Label::Ptr SpeedIndicator = EditPanel->get<tgui::Label>("SpeedIndicator");
+	tgui::Label::Ptr SpeedLabel = EditPanel->get<tgui::Label>("Label1");
+	tgui::Label::Ptr ThemeLabel = EditPanel->get<tgui::Label>("Label2");
+	tgui::Label::Ptr Color1 = EditPanel->get<tgui::Label>("Color1");
+	tgui::Label::Ptr Color2 = EditPanel->get<tgui::Label>("Color2");
+	SpeedIndicator->setRenderer(theme.getRenderer("LightText"));
+	SpeedLabel->setRenderer(theme.getRenderer("LightText"));
+	ThemeLabel->setRenderer(theme.getRenderer("LightText"));
+	Color1->setRenderer(theme.getRenderer("LightText"));
+	Color2->setRenderer(theme.getRenderer("LightText"));
+
+	tgui::RadioButton::Ptr Theme1 = EditPanel->get<tgui::RadioButton>("Theme1");
+	Theme1->setRenderer(theme.getRenderer("RadioButton"));
+	tgui::RadioButton::Ptr Theme2 = EditPanel->get<tgui::RadioButton>("Theme2");
+	Theme2->setRenderer(theme.getRenderer("RadioButton"));
 
 
 	Speed->setValue(2);
@@ -1398,7 +1468,6 @@ void SLL::initButtons()
 		updateNode(Pos.toInt(), Val.toInt());
 		});
 
-	PseudoCode->loadWidgetsFromFile("assets/CodeWindow.txt");
 
 	PseudoCode->onMinimize([=] {
 		Vector2f MinSiz = PseudoCode->getMinimumSize();
@@ -1426,6 +1495,9 @@ void SLL::initButtons()
 		});
 
 	Speed->onValueChange([=] {
+		tgui::String s(0.5f + 0.25f * Speed->getValue());
+
+		SpeedIndicator->setText(tgui::String("x") + s);
 		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
 		});
 
@@ -1469,6 +1541,32 @@ void SLL::initButtons()
 			timer.restart();
 		}
 
+		});
+
+	Begin->onPress([=] {
+		ProgressThumb->setValue(0);
+		});
+
+	Final->onPress([=] {
+		ProgressThumb->setValue(ProgressThumb->getMaximum());
+		});
+
+	Forward->onPress([=] {
+		ProgressThumb->setValue(ProgressThumb->getValue() + 1);
+		});
+
+	Backward->onPress([=] {
+		ProgressThumb->setValue(ProgressThumb->getValue() - 1);
+		});
+
+	Theme1->onCheck([=] {
+		MainColor = &VSPurple;
+		theme.load("assets/themes/CyberPurple.txt");
+		});
+
+	Theme2->onCheck([=] {
+		MainColor = &Fulvous;
+		theme.load("assets/themes/ForestGreen.txt");
 		});
 }
 

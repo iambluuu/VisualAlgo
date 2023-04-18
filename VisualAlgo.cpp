@@ -24,7 +24,7 @@ int main()
 		switch (State) {
 		case _SLL:
 			gui.removeAllWidgets();
-			gui.loadWidgetsFromFile("assets/SLLGui.txt");
+			gui.loadWidgetsFromFile("assets/themes/SLLGui.txt");
 			A.initButtons();
 
 			while (State == _SLL) 

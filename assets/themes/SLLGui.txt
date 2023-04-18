@@ -108,7 +108,7 @@ Picture.Background {
     Size = (1600, 900);
 
     Renderer {
-        Texture = "assets/Background.png" Smooth;
+        Texture = "Background.png" Smooth;
         TransparentTexture = false;
     }
 }
@@ -535,8 +535,8 @@ Button.SlideOut {
 }
 
 Panel.EditPanel {
-    Position = (1210, 610);
-    Size = (400, 170);
+    Position = (1190, 610);
+    Size = (410, 170);
 
     Renderer {
         BackgroundColor = #8E6FFF;
@@ -548,7 +548,7 @@ Panel.EditPanel {
 
 Button.SlideIn {
     MouseCursor = Hand;
-    Position = (1170, 610);
+    Position = (1150, 610);
     Size = (40, 170);
     TextSize = 13;
 

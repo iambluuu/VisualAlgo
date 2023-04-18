@@ -1,0 +1,343 @@
+Renderer.1 {
+    BackgroundColor = None;
+    BackgroundColorDisabled = #E6E6E6;
+    BackgroundColorHover = None;
+    BorderColor = #6A4FFF;
+    BorderColorDisabled = #7D7D7D;
+    BorderColorFocused = #6A4FFF;
+    BorderColorHover = black;
+    Borders = (3, 3, 3, 3);
+    CheckColor = #6A4FFF;
+    CheckColorDisabled = #7D7D7D;
+    CheckColorHover = black;
+    TextColor = #3C3C3C;
+    TextColorDisabled = #7D7D7D;
+    TextColorHover = black;
+    TextDistanceRatio = 0.2;
+    TextureChecked = None;
+    TextureCheckedDisabled = None;
+    TextureCheckedFocused = None;
+    TextureCheckedHover = None;
+    TextureUnchecked = None;
+    TextureUncheckedDisabled = None;
+    TextureUncheckedFocused = None;
+    TextureUncheckedHover = None;
+}
+
+Slider.Speed {
+    ChangeValueOnScroll = true;
+    InvertedDirection = false;
+    Maximum = 4;
+    Minimum = 0;
+    Position = (70, 147);
+    Size = (90, 6);
+    Step = 1;
+    Value = 0;
+
+    Renderer {
+        BorderColor = #3C3C3C;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextureThumb = "thumb.png" Part(0, 0, 10, 10) Smooth;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = #F4DDFF;
+        ThumbColorHover = #F4DDFF;
+        TrackColor = black;
+        TrackColorHover = #F4DDFF;
+    }
+}
+
+Button.PlayButton {
+    Position = (107, 68);
+    Size = (48, 48);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        RoundedBorderRadius = 19;
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons1.png" Part(1024, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+Button.Final {
+    Position = (220, 75);
+    Size = (32, 32);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = rgba(180, 180, 180, 215);
+        BackgroundColorDown = rgba(150, 150, 150, 215);
+        BackgroundColorHover = rgba(190, 190, 190, 215);
+        BorderColor = rgba(240, 240, 240, 215);
+        Borders = (0, 0, 0, 0);
+        TextColor = rgba(255, 255, 255, 215);
+        TextColorDown = rgba(255, 255, 255, 235);
+        TextColorHover = rgba(255, 255, 255, 235);
+        Texture = "PlayButtons1.png" Part(2560, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+Button.Begin {
+    Position = (10, 75);
+    Size = (32, 32);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons1.png" Part(0, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+ProgressBar.ProgressStep {
+    Maximum = 7;
+    Minimum = 0;
+    MouseCursor = Hand;
+    Position = (10, 30);
+    Size = (240, 7);
+    TextSize = 13;
+    Value = 0;
+
+    Renderer {
+        BackgroundColor = black;
+        BorderColor = black;
+        Borders = (0, 0, 0, 0);
+        FillColor = #6A4FFF;
+        TextColor = #3C3C3C;
+        TextColorFilled = white;
+        TextureBackground = None;
+        TextureFill = None;
+    }
+}
+
+Slider.ProgressThumb {
+    ChangeValueOnScroll = true;
+    InvertedDirection = false;
+    Maximum = 10;
+    Minimum = 0;
+    Position = (10, 30);
+    Size = (240, 7);
+    Step = 1;
+    Value = 0;
+
+    Renderer {
+        BorderColor = None;
+        BorderColorHover = None;
+        Borders = (1, 1, 1, 1);
+        Opacity = 1;
+        TextureThumb = None;
+        TextureThumbHover = None;
+        TextureTrack = None;
+        TextureTrackHover = None;
+        ThumbColor = #6A4FFF;
+        ThumbColorHover = white;
+        TrackColor = None;
+        TrackColorHover = None;
+    }
+}
+
+Button.Backward {
+    Position = (50, 70);
+    Size = (42, 42);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons1.png" Part(512, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+Button.Forward {
+    Position = (170, 70);
+    Size = (42, 42);
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = #F5F5F5;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #3C3C3C;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (0, 0, 0, 0);
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = "PlayButtons1.png" Part(2048, 0, 512, 512) Smooth;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+Label.SpeedIndicator {
+    IgnoreMouseEvents = true;
+    Position = (180, 142);
+    Size = (117.2, 18);
+    Text = x1;
+    TextSize = 13;
+
+    Renderer {
+        BackgroundColor = transparent;
+        BorderColor = #3C3C3C;
+        Borders = (0, 0, 0, 0);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #F4DDFF;
+        TextOutlineColor = None;
+        TextureBackground = None;
+    }
+}
+
+RadioButton.Theme1 {
+    Checked = true;
+    Position = (280, 50);
+    Renderer = &1;
+    Size = (18, 18);
+    TextSize = 13;
+}
+
+Label.Color1 {
+    AutoSize = true;
+    Position = (300, 50);
+    Size = (95.4, 19);
+    Text = "Cyber Purple";
+    TextSize = 14;
+
+    Renderer {
+        BackgroundColor = transparent;
+        BorderColor = #3C3C3C;
+        Borders = (0, 0, 0, 0);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #3C3C3C;
+        TextureBackground = None;
+    }
+}
+
+RadioButton.Theme2 {
+    Position = (280, 80);
+    Renderer = &1;
+    Size = (18, 18);
+    TextSize = 13;
+}
+
+Label.Color2 {
+    Position = (300, 80);
+    ScrollbarPolicy = Never;
+    Size = (118.2, 18);
+    Text = "Forest Green";
+    TextSize = 14;
+
+    Renderer {
+        BackgroundColor = transparent;
+        BorderColor = #3C3C3C;
+        Borders = (0, 0, 0, 0);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #3C3C3C;
+        TextureBackground = None;
+    }
+}
+
+Label.Label1 {
+    AutoSize = true;
+    Position = (9, 138);
+    Size = (53.4, 19);
+    Text = "Speed:";
+    TextSize = 14;
+
+    Renderer {
+        BackgroundColor = transparent;
+        BorderColor = #3C3C3C;
+        Borders = (0, 0, 0, 0);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #F4DDFF;
+        TextureBackground = None;
+    }
+}
+
+Label.Label2 {
+    AutoSize = true;
+    Position = (277, 26);
+    Size = (57.4, 19);
+    Text = "Theme:";
+    TextSize = 14;
+
+    Renderer {
+        BackgroundColor = transparent;
+        BorderColor = #3C3C3C;
+        Borders = (0, 0, 0, 0);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #3C3C3C;
+        TextureBackground = None;
+    }
+}
