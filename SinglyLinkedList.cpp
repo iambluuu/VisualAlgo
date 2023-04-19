@@ -266,7 +266,7 @@ void SLL::genList()
 
 	//Gen new list
 
-	NodeNumber = rand() % 10;
+	NodeNumber = rand() % maxNodeNumber + 1;
 
 	while (NodeNumber == 0)
 		NodeNumber = rand() % 10;
@@ -1047,7 +1047,7 @@ void SLL::searchNode(tgui::String v)
 
 	if (!Cur) {
 		action.push_back(vector<function<void(int)> >());
-		action.back().push_back(bind(&SLL::MoveHighlight, this, 2, 4, placeholders::_1));
+		action.back().push_back(bind(&SLL::MoveHighlight, this, 1, 4, placeholders::_1));
 		action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(bind(&SLL::ChangeState, this, Tail, Selecting, Visited, placeholders::_1));
 
@@ -1148,6 +1148,11 @@ void SLL::initProgress() {
 
 	ProgressThumb->setValue(0);
 	Progress->setValue(0);
+
+	ShowDirection = 0;
+	timer.restart();
+	Last = 0;
+	Elapsed = 0;
 }
 
 void SLL::initButtons()
@@ -1252,6 +1257,7 @@ void SLL::initButtons()
 	Theme1->setRenderer(theme.getRenderer("RadioButton"));
 	tgui::RadioButton::Ptr Theme2 = EditPanel->get<tgui::RadioButton>("Theme2");
 	Theme2->setRenderer(theme.getRenderer("RadioButton"));
+
 
 
 	Speed->setValue(2);
@@ -1403,6 +1409,7 @@ void SLL::initButtons()
 		ClearAction();
 		ShowDirection = 0;
 		CurStep = 0;
+		Elapsed = 0;
 		Last = 0;
 
 		int Pos = InsertPos->getText().toInt();
@@ -1427,6 +1434,7 @@ void SLL::initButtons()
 		ShowDirection = 0;
 		CurStep = 0;
 		Last = 0;
+		Elapsed = 0;
 
 		int Pos = DeletePos->getText().toInt();
 		
@@ -1447,6 +1455,7 @@ void SLL::initButtons()
 		ShowDirection = 0;
 		CurStep = 0;
 		Last = 0;
+		Elapsed = 0;
 
 		tgui::String Val = SearchVal->getText();
 
@@ -1461,6 +1470,7 @@ void SLL::initButtons()
 		ShowDirection = 0;
 		CurStep = 0;
 		Last = 0;
+		Elapsed = 0;
 
 		tgui::String Val = UpdateVal->getText();
 		tgui::String Pos = UpdatePos->getText();
@@ -1530,17 +1540,36 @@ void SLL::initButtons()
 		}
 
 		if (CurProgress > NewProgress) {
-			ShowDirection = 1;
-
 			for (; CurStep > NewProgress; CurStep--)
 				for (int i = 0; i < action[CurStep].size(); i++) {
 					action[CurStep][i](0);
 				} 
 
-			Last = Duration;
-			timer.restart();
+			if (ShowMode) {
+				ShowDirection = 1;
+				Last = Duration;
+				Elapsed = Duration;
+				timer.restart();
+			}
+			else {
+				ShowDirection = 0;
+				Last = 0;
+				Elapsed = 0;
+				timer.restart();
+			}
 		}
 
+		});
+
+	Play->onPress([=] {
+		ShowMode = (1 - ShowMode);
+
+		if (ShowMode) 
+			Play->setRenderer(theme.getRenderer("PlayButton"));
+		else {
+			ShowDirection = 0;
+			Play->setRenderer(theme.getRenderer("PauseButton"));
+		}
 		});
 
 	Begin->onPress([=] {
@@ -1568,53 +1597,64 @@ void SLL::initButtons()
 		MainColor = &Fulvous;
 		theme.load("assets/themes/ForestGreen.txt");
 		});
+
+	StructList->setSelectedItem(tgui::String("SLL"));
+
+	StructList->onItemSelect([=] {
+		tgui::String s = StructList->getSelectedItem();
+
+		if (s != tgui::String("SLL")) {
+			while (Head) {
+				Node* tmp = Head->nxt;
+				delete Head;
+				Head = tmp;
+			}
+		}
+
+		if (s == tgui::String("DLL"))
+			State = _DLList;
+
+		if (s == tgui::String("CLL"))
+			State = _CLL;
+
+		if (s == tgui::String("Stack"))
+			State = _Stack;
+
+		if (s == tgui::String("Queue"))
+			State = _Queue;
+
+		if (s == tgui::String("Array"))
+			State = _Array;
+
+		if (s == tgui::String("Dynamic Array"))
+			State = _DArray;
+		});
 }
 
 void SLL::HandleEvent(Event& e)
 {
-
 	switch (Signal) {
-	case Pending:
-		drawList(1);
-		break;
+	case Searching:
 	case Inserting:
-		if (ShowMode == 0) {
-			if (Elapsed >= Duration) {
-				CurStep++;
-				timer.restart();
-				Last = 0;
-				Elapsed = 0;
-			}
+		if (e.type == Event::KeyPressed) {
 
-			if (CurStep >= action.size()) {
-				Signal = Pending;
-				drawList(1);
-				break;
-			}
+			switch (e.key.code) {
+			case Keyboard::Right:
+				if (ShowMode == 0)
+					ShowMode = 1;
 
-			for (int i = 0; i < action[CurStep].size(); i++) {
-				action[CurStep][i](Elapsed);
-			}
-		}
-
-		if (ShowMode == 1) {
-
-			if (e.type == Event::KeyPressed) {
-
-				switch (e.key.code) {
-				case Keyboard::Right:
-					if (ShowDirection == 1) {
-						ShowDirection = 0;
-						Last = Elapsed;
-						timer.restart();
+				if (ShowDirection == 1) {
+					ShowDirection = 0;
+					Last = Elapsed;
+					timer.restart();
+				}
+				else {
+					if (CurStep + 1 == (int)action.size()) {
+						Elapsed = Duration;
 					}
 					else {
-						if (CurStep + 1 == (int)action.size()) {
-							Elapsed = Duration;
-						}
-						else {
-							for (int i = 0; i < (int)action[CurStep].size(); i++)
-								action[CurStep][i](Duration);
+						for (int i = 0; i < (int)action[CurStep].size(); i++)
+							action[CurStep][i](Duration);
 
 							CurStep++;
 
@@ -1626,192 +1666,98 @@ void SLL::HandleEvent(Event& e)
 
 					break;
 
-				case Keyboard::Left:
-					if (ShowDirection == 0) {
-						ShowDirection = 1;
-						Last = Elapsed;
-						timer.restart();
+			case Keyboard::Left:
+				if (ShowMode == 0)
+					ShowMode = 1;
+
+				if (ShowDirection == 0) {
+					ShowDirection = 1;
+					Last = Elapsed;
+					timer.restart();
+				}
+				else {
+					if (CurStep == 0) {
+						Elapsed = 0;
 					}
 					else {
-						if (CurStep == 0) {
-							Elapsed = 0;
-						}
-						else {
-							for (int i = 0; i < (int)action[CurStep].size(); i++)
-								action[CurStep][i](0);
+						for (int i = 0; i < (int)action[CurStep].size(); i++)
+							action[CurStep][i](0);
 
-							CurStep--;
-							Elapsed = Duration;
-							Last = Duration;
-							timer.restart();
-						}
+						CurStep--;
+						Elapsed = Duration;
+						Last = Duration;
+						timer.restart();
 					}
-
-					break;
-				default:
-					break;
 				}
+				break;
+			
+			default:
+				break;
 			}
 		}
-
-		break;
+	break;
 
 	case Removing:
-		if (ShowMode == 0) {
-			if (Elapsed >= Duration) {
-				CurStep++;
-				timer.restart();
-				Last = 0;
-				Elapsed = 0;
-			}
 
-			if (CurStep >= action.size()) {
-				Signal = Pending;
-				drawList(1);
+		if (e.type == Event::KeyPressed) {
+
+			switch (e.key.code) {
+			case Keyboard::Right:
+				if (ShowMode == 0)
+					ShowMode = 1;
+
+				if (ShowDirection == 1) {
+					ShowDirection = 0;
+					Last = Elapsed;
+					timer.restart();
+				}
+				else {
+					if (CurStep + 2 == (int)action.size()) {
+						Elapsed = Duration;
+					}
+					else {
+						for (int i = 0; i < (int)action[CurStep].size(); i++)
+							action[CurStep][i](Duration);
+
+						CurStep++;
+
+						Elapsed = 0;
+						Last = 0;
+						timer.restart();
+					}
+				}
+
+				break;
+
+			case Keyboard::Left:
+				if (ShowMode == 0)
+					ShowMode = 1;
+
+				if (ShowDirection == 0) {
+					ShowDirection = 1;
+					Last = Elapsed;
+					timer.restart();
+				}
+				else {
+					if (CurStep == 0) {
+						Elapsed = 0;
+					}
+					else {
+						for (int i = 0; i < (int)action[CurStep].size(); i++)
+							action[CurStep][i](0);
+
+						CurStep--;
+						Elapsed = Duration;
+						Last = 0;
+						timer.restart();
+					}
+				}
+
+				break;
+			default:
 				break;
 			}
-
-			for (int i = 0; i < action[CurStep].size(); i++) {
-				action[CurStep][i](Elapsed);
-			}
 		}
-
-		if (ShowMode == 1) {
-
-			if (e.type == Event::KeyPressed) {
-
-				switch (e.key.code) {
-				case Keyboard::Right:
-					if (ShowDirection == 1) {
-						ShowDirection = 0;
-						Last = Elapsed;
-						timer.restart();
-					}
-					else {
-						if (CurStep + 2 == (int)action.size()) {
-							Elapsed = Duration;
-						}
-						else {
-							for (int i = 0; i < (int)action[CurStep].size(); i++)
-								action[CurStep][i](Duration);
-
-							CurStep++;
-
-							Elapsed = 0;
-							Last = 0;
-							timer.restart();
-						}
-					}
-
-					break;
-
-				case Keyboard::Left:
-					if (ShowDirection == 0) {
-						ShowDirection = 1;
-						Last = Elapsed;
-						timer.restart();
-					}
-					else {
-						if (CurStep == 0) {
-							Elapsed = 0;
-						}
-						else {
-							for (int i = 0; i < (int)action[CurStep].size(); i++)
-								action[CurStep][i](0);
-
-							CurStep--;
-							Elapsed = Duration;
-							Last = 0;
-							timer.restart();
-						}
-					}
-
-					break;
-				default:
-					break;
-				}
-			}
-		}
-
-		break;
-
-	case Searching:
-		if (ShowMode == 0) {
-			if (Elapsed >= Duration) {
-				CurStep++;
-				timer.restart();
-				Last = 0;
-				Elapsed = 0;
-			}
-
-			if (CurStep >= action.size()) {
-				Signal = Pending;
-				drawList(1);
-				break;
-			}
-
-			for (int i = 0; i < action[CurStep].size(); i++) {
-				action[CurStep][i](Elapsed);
-			}
-		}
-
-		if (ShowMode == 1) {
-
-			if (e.type == Event::KeyPressed) {
-
-				switch (e.key.code) {
-				case Keyboard::Right:
-					if (ShowDirection == 1) {
-						ShowDirection = 0;
-						Last = Elapsed;
-						timer.restart();
-					}
-					else {
-						if (CurStep + 1 == (int)action.size()) {
-							Elapsed = Duration;
-						}
-						else {
-							for (int i = 0; i < (int)action[CurStep].size(); i++)
-								action[CurStep][i](Duration);
-
-							CurStep++;
-
-							Elapsed = 0;
-							Last = 0;
-							timer.restart();
-						}
-					}
-
-					break;
-
-				case Keyboard::Left:
-					if (ShowDirection == 0) {
-						ShowDirection = 1;
-						Last = Elapsed;
-						timer.restart();
-					}
-					else {
-						if (CurStep == 0) {
-							Elapsed = 0;
-						}
-						else {
-							for (int i = 0; i < (int)action[CurStep].size(); i++)
-								action[CurStep][i](0);
-
-							CurStep--;
-							Elapsed = Duration;
-							Last = Duration;
-							timer.restart();
-						}
-					}
-
-					break;
-				default:
-					break;
-				}
-			}
-		}
-
 		break;
 	}
 }
@@ -1826,6 +1772,7 @@ void SLL::interactSLL()
 
 	tgui::Slider::Ptr ProgressThumb = EditPanel->get<tgui::Slider>("ProgressThumb");
 	tgui::ProgressBar::Ptr Progress = EditPanel->get<tgui::ProgressBar>("ProgressStep");
+	tgui::Button::Ptr Play = EditPanel->get<tgui::Button>("PlayButton");
 
 	Event e;
 
@@ -1839,6 +1786,11 @@ void SLL::interactSLL()
 		ProgressThumb->setValue(CurStep + 1);
 		Elapsed = min(Duration, Last + Elapsed);
 	}
+
+	if (ShowMode)
+		Play->setRenderer(theme.getRenderer("PlayButton"));
+	else
+		Play->setRenderer(theme.getRenderer("PauseButton"));
 
 	while (app.pollEvent(e)) {
 		if (e.type == Event::Closed) {
@@ -1856,6 +1808,31 @@ void SLL::interactSLL()
 		break;
 
 	default:
+		if (ShowMode == 0) {
+			if(ShowDirection == 0 && Elapsed >= Duration) {
+				
+				if (CurStep + 1 == (int)action.size())
+					Elapsed = Duration;
+				else {
+					timer.restart();
+					Last = 0;
+					Elapsed = 0;
+					CurStep++;
+				}
+			}
+			else if (ShowDirection == 1 && Elapsed <= 0) {
+	
+				if (CurStep == 0)
+					Elapsed = 0;
+				else {
+					timer.restart();
+					Last = Duration;
+					Elapsed = Duration;
+					CurStep--;
+				}
+			}
+		}
+			
 
 		for (int i = 0; i < (int)action[CurStep].size(); i++) {
 			action[CurStep][i](Elapsed);

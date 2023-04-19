@@ -17,10 +17,7 @@ __declspec(selectany) tgui::Gui gui;
 __declspec(selectany) RenderWindow app(VideoMode(1600, 900), "VisualAlgo", Style::Close);
 
 const double PI = 3.14159265359;
-const float DefaultPosX = 250;
-const float DefaultPosY = 250;
 
-const int maxNodeNumber = 15;
 const int waitTime = 700;
 
 static Color VSPurple(193, 148, 243);
@@ -34,7 +31,11 @@ enum ScreenState {
 	_SLL, _DLList, _CLL, _Stack, _Queue, _DArray, _Array, _EndProgram
 };	
 
-__declspec(selectany) ScreenState State = _SLL;
+enum signal {
+	Pending, Inserting, Removing, Searching
+};
+
+__declspec(selectany) ScreenState State = _Stack;
 
 namespace Util {
 

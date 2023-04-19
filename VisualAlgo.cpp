@@ -6,6 +6,7 @@
 
 #include "Global.h"
 #include "SinglyLinkedList.h"
+#include "Stack.h"
 
 using namespace std;
 using namespace sf;
@@ -18,6 +19,7 @@ int main()
 	gui.setTarget(app);
 
 	SLL A;
+	Stack B;
 	//A.genList(app, gui);
 	
 	while (app.isOpen()) {
@@ -31,7 +33,7 @@ int main()
 				A.interactSLL();
 			
 			break;
-		case _DLL:
+		case _DLList:
 			app.clear();
 			app.display();
 			gui.removeAllWidgets();
@@ -42,6 +44,13 @@ int main()
 			cout << "CLL\n";
 			break;
 		case _Stack:
+			gui.removeAllWidgets();
+			gui.loadWidgetsFromFile("assets/themes/StackGui.txt");
+			B.initButtons();
+
+			while (State == _Stack)
+				B.interactStack();
+
 			cout << "Stack\n";
 			break;
 		case _Queue:

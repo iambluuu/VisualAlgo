@@ -53,9 +53,14 @@ struct Node {
 		gui.add(Hitbox);
 
 		Hitbox->onPress([=] {
+
+
 			tgui::EditBox::Ptr InsertPos = gui.get<tgui::EditBox>("InsertPos");
 			tgui::EditBox::Ptr DeletePos = gui.get<tgui::EditBox>("DeletePos");
 			tgui::EditBox::Ptr UpdatePos = gui.get<tgui::EditBox>("UpdatePos");
+
+			if (!InsertPos || !DeletePos || UpdatePos)
+				return;
 
 			InsertPos->setText(tgui::String(to_string(NumberInList)));
 			DeletePos->setText(tgui::String(to_string(NumberInList)));
@@ -91,7 +96,7 @@ struct Node {
 		TmpArrow.setTexture(ArrowTexture);
 		TmpArrow.setColor(*MainColor);
 
-		changeNodePosition(DefaultPosX, DefaultPosY);
+		changeNodePosition(0, 0);
 
 		NumberInList = -1;
 		TitleFont.loadFromFile(FontOfTitle);
@@ -144,7 +149,7 @@ struct Node {
 		TmpArrow.setTexture(ArrowTexture);
 		TmpArrow.setColor(Color(193, 148, 243));
 
-		changeNodePosition(DefaultPosX, DefaultPosY);
+		changeNodePosition(0, 0);
 
 		NumberInList = -1;
 		TitleFont.loadFromFile(FontOfTitle);

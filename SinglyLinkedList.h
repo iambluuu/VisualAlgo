@@ -4,11 +4,11 @@
 
 #include "Node.h"
 
-enum signal {
-	Pending, Inserting, Removing, Searching
-};
-
 struct SLL {
+	float DefaultPosX;
+	float DefaultPosY;
+	int maxNodeNumber;
+
 	vector<vector<function<void (int)> > >  action;
 	signal Signal;
 	Clock timer;
@@ -31,6 +31,10 @@ struct SLL {
 	RectangleShape TextHighlight;
 
 	SLL() {
+		DefaultPosX = 250;
+		DefaultPosY = 250;
+		maxNodeNumber = 15;
+
 		theme.load("assets/themes/CyberPurple.txt");
 
 		Head = nullptr;
