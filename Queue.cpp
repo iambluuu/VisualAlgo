@@ -1,36 +1,36 @@
-#include "Stack.h"
+#include "Queue.h"
 #include <math.h>
 #include <functional>
 
 using namespace std;
 using namespace sf;
 
-int Stack::getSize()
+int Queue::getSize()
 {
 	return NodeNumber;
 }
 
-void Stack::changePosition(Node* Cur, float x, float y)
+void Queue::changePosition(Node* Cur, float x, float y)
 {
 	Cur->changeNodePosition(x, y);
 }
 
-void Stack::NodeAppear(Node* Cur, int Elapsed)
+void Queue::NodeAppear(Node* Cur, int Elapsed)
 {
 	Cur->drawNode((int)(255 * (double)Elapsed / Duration));
 }
 
-void Stack::NodeDisappear(Node* Cur, int Elapsed)
+void Queue::NodeDisappear(Node* Cur, int Elapsed)
 {
 	NodeAppear(Cur, Duration - Elapsed);
 }
 
-void Stack::drawNode(Node* Cur, int Dummy)
+void Queue::drawNode(Node* Cur, int Dummy)
 {
 	Cur->drawNode(255);
 }
 
-void Stack::setNodeState(Node* Cur, Nodestate NodeState, int Dummy)
+void Queue::setNodeState(Node* Cur, Nodestate NodeState, int Dummy)
 {
 	if (!Cur)
 		return;
@@ -44,7 +44,7 @@ void Stack::setNodeState(Node* Cur, Nodestate NodeState, int Dummy)
 	Cur->NodeState = NodeState;
 }
 
-void Stack::MoveNode(Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed)
+void Queue::MoveNode(Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed)
 {
 	if (!Cur)
 		return;
@@ -52,7 +52,7 @@ void Stack::MoveNode(Node* Cur, float CurX, float CurY, float NxtX, float NxtY, 
 	Cur->changeNodePosition(CurX + (NxtX - CurX) * (double)Elapsed / Duration, CurY + (NxtY - CurY) * (double)Elapsed / Duration);
 }
 
-void Stack::SlideNodes(Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed)
+void Queue::SlideNodes(Node* Cur, float CurX, float CurY, float NxtX, float NxtY, int Elapsed)
 {
 	if (!Cur)
 		return;
@@ -64,7 +64,7 @@ void Stack::SlideNodes(Node* Cur, float CurX, float CurY, float NxtX, float NxtY
 
 }
 
-void Stack::SetNodesNormal(Node* A, Node* B, int Dummy)
+void Queue::SetNodesNormal(Node* A, Node* B, int Dummy)
 {
 	if (!A || !B)
 		return;
@@ -77,7 +77,7 @@ void Stack::SetNodesNormal(Node* A, Node* B, int Dummy)
 	B->ArrowState = Normal;
 }
 
-void Stack::ClearAction()
+void Queue::ClearAction()
 {
 	for (int i = 0; i < action.size(); i++)
 		for (int j = 0; j < action[i].size(); j++)
@@ -87,7 +87,7 @@ void Stack::ClearAction()
 		action.pop_back();
 }
 
-void Stack::drawList(int Dummy)
+void Queue::drawList(int Dummy)
 {
 	//if (Head)
 	//	app.draw(Head->Title);
@@ -99,7 +99,7 @@ void Stack::drawList(int Dummy)
 	}
 }
 
-void Stack::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
+void Queue::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 {
 	if (!Cur)
 		return;
@@ -154,12 +154,12 @@ void Stack::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 	app.draw(Cur->Title);
 }
 
-void Stack::TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed)
+void Queue::TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed)
 {
 	TitleAppear(Cur, NodeState, Duration - Elapsed);
 }
 
-void Stack::HighlightAppear(int Line, int Elapsed)
+void Queue::HighlightAppear(int Line, int Elapsed)
 {
 	if (Elapsed >= Duration / 2)
 		Elapsed = Duration / 2;
@@ -172,7 +172,7 @@ void Stack::HighlightAppear(int Line, int Elapsed)
 	TextHighlight->setInheritedOpacity(2 * (float)Elapsed / Duration);
 }
 
-void Stack::MoveHighlight(int CurLine, int NextLine, int Elapsed)
+void Queue::MoveHighlight(int CurLine, int NextLine, int Elapsed)
 {
 	if (Elapsed >= Duration / 2)
 		Elapsed = Duration / 2;
@@ -185,7 +185,7 @@ void Stack::MoveHighlight(int CurLine, int NextLine, int Elapsed)
 	TextHighlight->setPosition({ 0, 4 + CurLine * 26 + Distance });
 }
 
-void Stack::drawListPartial(Node* A, Node* B, int Dummy)
+void Queue::drawListPartial(Node* A, Node* B, int Dummy)
 {
 	if (!A || !B)
 		return;
@@ -200,7 +200,7 @@ void Stack::drawListPartial(Node* A, Node* B, int Dummy)
 		B->drawNode(255);
 }
 
-void Stack::drawListExcept(Node* ExceptNode, int Dummy)
+void Queue::drawListExcept(Node* ExceptNode, int Dummy)
 {
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 		if (tmp == ExceptNode)
@@ -219,7 +219,7 @@ void Stack::drawListExcept(Node* ExceptNode, int Dummy)
 	}
 }
 
-void Stack::DeleteNode(Node*& Cur, int Dummy)
+void Queue::DeleteNode(Node*& Cur, int Dummy)
 {
 	if (Cur->prev) {
 		Cur->prev->nxt = Cur->nxt;
@@ -235,7 +235,7 @@ void Stack::DeleteNode(Node*& Cur, int Dummy)
 	delete Cur;
 }
 
-void Stack::initList() {
+void Queue::initList() {
 	int i = 0;
 
 	for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
@@ -251,7 +251,7 @@ void Stack::initList() {
 	drawList(1);
 }
 
-void Stack::genList()
+void Queue::genList()
 {
 	srand(time(0));
 
@@ -273,7 +273,7 @@ void Stack::genList()
 
 	Head = new Node(rand() % 100);
 	Head->NumberInList = 0;
-	Head->changeNodePosition(DefaultPosX, DefaultPosY - 100 * (NodeNumber - 1));
+	Head->changeNodePosition(DefaultPosX, DefaultPosY);
 
 	Node* Cur = Head;
 
@@ -284,7 +284,7 @@ void Stack::genList()
 		Cur = Cur->nxt;
 		Cur->prev = tmp;
 		Cur->NumberInList = i;
-		Cur->changeNodePosition(tmp->Pos.x, tmp->Pos.y + 100);
+		Cur->changeNodePosition(tmp->Pos.x + 95, tmp->Pos.y);
 
 		Tail = Cur;
 	}
@@ -315,7 +315,7 @@ void Stack::genList()
 
 }
 
-void Stack::genList(const tgui::String s)
+void Queue::genList(const tgui::String s)
 {
 	vector<tgui::String> parts = tgui::String(s).split(',', true);
 
@@ -385,7 +385,7 @@ void Stack::genList(const tgui::String s)
 
 }
 
-void Stack::ChangeState(Node* Cur, Nodestate CurState, Nodestate NextState, int Elapsed)
+void Queue::ChangeState(Node* Cur, Nodestate CurState, Nodestate NextState, int Elapsed)
 {
 	if (!Cur)
 		return;
@@ -409,7 +409,7 @@ void Stack::ChangeState(Node* Cur, Nodestate CurState, Nodestate NextState, int 
 	delete tmp;
 }
 
-void Stack::ChangeValue(Node* Cur, sf::String preVal, sf::String nextVal, int Elapsed)
+void Queue::ChangeValue(Node* Cur, sf::String preVal, sf::String nextVal, int Elapsed)
 {
 	if (!Cur)
 		return;
@@ -433,7 +433,7 @@ void Stack::ChangeValue(Node* Cur, sf::String preVal, sf::String nextVal, int El
 	delete tmp;
 }
 
-void Stack::drawArrowFlow(Node* Cur, int Elapsed)
+void Queue::drawArrowFlow(Node* Cur, int Elapsed)
 {
 	if (!Cur->nxt)
 		return;
@@ -452,7 +452,7 @@ void Stack::drawArrowFlow(Node* Cur, int Elapsed)
 	}
 }
 
-void Stack::ConnectNode(Node* A, Node* B, int Elapsed)
+void Queue::ConnectNode(Node* A, Node* B, int Elapsed)
 {
 	if (!B)
 		return;
@@ -466,7 +466,7 @@ void Stack::ConnectNode(Node* A, Node* B, int Elapsed)
 
 }
 
-void Stack::DisconnectNode(Node* A, Node* B, int Elapsed)
+void Queue::DisconnectNode(Node* A, Node* B, int Elapsed)
 {
 	if (!B)
 		return;
@@ -481,7 +481,7 @@ void Stack::DisconnectNode(Node* A, Node* B, int Elapsed)
 	A->drawArrow();
 }
 
-void Stack::insertAtBeginning(Node*& NewNode)
+void Queue::insertAtBeginning(Node*& NewNode)
 {
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
@@ -509,16 +509,16 @@ void Stack::insertAtBeginning(Node*& NewNode)
 
 	action.push_back(vector<function<void(int) > >());
 
-	action.back().push_back(bind(&Stack::HighlightAppear, this, 0, placeholders::_1));
-	action.back().push_back(std::bind(&Stack::drawListExcept, this, NewNode, std::placeholders::_1));
-	action.back().push_back(std::bind(&Stack::NodeAppear, this, NewNode, std::placeholders::_1));
+	action.back().push_back(bind(&Queue::HighlightAppear, this, 0, placeholders::_1));
+	action.back().push_back(std::bind(&Queue::drawListExcept, this, NewNode, std::placeholders::_1));
+	action.back().push_back(std::bind(&Queue::NodeAppear, this, NewNode, std::placeholders::_1));
 
 	if (!Head->nxt) {
 		action.push_back(vector<function<void(int) > >());
 
-		action.back().push_back(std::bind(&Stack::drawList, this, placeholders::_1));
-		action.back().push_back(std::bind(&Stack::MoveHighlight, this, 0, 2, placeholders::_1));
-		action.back().push_back(std::bind(&Stack::TitleAppear, this, NewNode, New, placeholders::_1));
+		action.back().push_back(std::bind(&Queue::drawList, this, placeholders::_1));
+		action.back().push_back(std::bind(&Queue::MoveHighlight, this, 0, 2, placeholders::_1));
+		action.back().push_back(std::bind(&Queue::TitleAppear, this, NewNode, New, placeholders::_1));
 
 		initProgress();
 		return;
@@ -528,23 +528,23 @@ void Stack::insertAtBeginning(Node*& NewNode)
 	//Connect NewNode to Head
 	action.push_back(vector<function<void(int) > >());
 
-	action.back().push_back(std::bind(&Stack::MoveHighlight, this, 0, 1, placeholders::_1));
-	action.back().push_back(std::bind(&Stack::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(std::bind(&Stack::drawNode, this, NewNode, placeholders::_1));
-	action.back().push_back(std::bind(&Stack::ConnectNode, this, NewNode, NewNode->nxt, placeholders::_1));
+	action.back().push_back(std::bind(&Queue::MoveHighlight, this, 0, 1, placeholders::_1));
+	action.back().push_back(std::bind(&Queue::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(std::bind(&Queue::drawNode, this, NewNode, placeholders::_1));
+	action.back().push_back(std::bind(&Queue::ConnectNode, this, NewNode, NewNode->nxt, placeholders::_1));
 
 	//Make NewNode Head
 	action.push_back(vector<function<void(int) > >());
 
-	action.back().push_back(std::bind(&Stack::MoveHighlight, this, 1, 2, placeholders::_1));
-	action.back().push_back(std::bind(&Stack::drawList, this, placeholders::_1));
-	action.back().push_back(std::bind(&Stack::TitleAppear, this, NewNode, New, placeholders::_1));
+	action.back().push_back(std::bind(&Queue::MoveHighlight, this, 1, 2, placeholders::_1));
+	action.back().push_back(std::bind(&Queue::drawList, this, placeholders::_1));
+	action.back().push_back(std::bind(&Queue::TitleAppear, this, NewNode, New, placeholders::_1));
 
 	initProgress();
 
 }
 
-bool Stack::insertNode(int i, int v)
+bool Queue::insertNode(int i, int v)
 {
 	initList();
 
@@ -571,7 +571,7 @@ bool Stack::insertNode(int i, int v)
 	return 1;
 }
 
-void Stack::removeAtBeginning() {
+void Queue::removeAtBeginning() {
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
@@ -585,43 +585,43 @@ void Stack::removeAtBeginning() {
 
 	//tmp = Head
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&Stack::HighlightAppear, this, 0, placeholders::_1));
-	action.back().push_back(bind(&Stack::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&Stack::ChangeState, this, Dell, Normal, Selecting, placeholders::_1));
-	action.back().push_back(bind(&Stack::TitleAppear, this, Dell, Selecting, placeholders::_1));
+	action.back().push_back(bind(&Queue::HighlightAppear, this, 0, placeholders::_1));
+	action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
+	action.back().push_back(bind(&Queue::ChangeState, this, Dell, Normal, Selecting, placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleAppear, this, Dell, Selecting, placeholders::_1));
 
 	//Next = Head
 
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&Stack::MoveHighlight, this, 0, 1, placeholders::_1));
-	action.back().push_back(bind(&Stack::SetNodesNormal, this, Dell, Tail, placeholders::_1));
-	action.back().push_back(bind(&Stack::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&Stack::ChangeState, this, Dell, Selecting, Remove, placeholders::_1));
-	action.back().push_back(bind(&Stack::ChangeState, this, Dell->nxt, Normal, Next, placeholders::_1));
-	action.back().push_back(bind(&Stack::TitleAppear, this, Dell->nxt, Next, placeholders::_1));
-	action.back().push_back(bind(&Stack::TitleDisappear, this, Dell, Selecting, placeholders::_1));
+	action.back().push_back(bind(&Queue::MoveHighlight, this, 0, 1, placeholders::_1));
+	action.back().push_back(bind(&Queue::SetNodesNormal, this, Dell, Tail, placeholders::_1));
+	action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
+	action.back().push_back(bind(&Queue::ChangeState, this, Dell, Selecting, Remove, placeholders::_1));
+	action.back().push_back(bind(&Queue::ChangeState, this, Dell->nxt, Normal, Next, placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleAppear, this, Dell->nxt, Next, placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleDisappear, this, Dell, Selecting, placeholders::_1));
 
 	//Del disappear
 	action.push_back(vector<function<void(int)> >());
 
-	action.back().push_back(bind(&Stack::MoveHighlight, this, 1, 2, placeholders::_1));
-	action.back().push_back(bind(&Stack::SetNodesNormal, this, Dell, Tail, placeholders::_1));
-	action.back().push_back(bind(&Stack::setNodeState, this, Dell, Remove, placeholders::_1));
+	action.back().push_back(bind(&Queue::MoveHighlight, this, 1, 2, placeholders::_1));
+	action.back().push_back(bind(&Queue::SetNodesNormal, this, Dell, Tail, placeholders::_1));
+	action.back().push_back(bind(&Queue::setNodeState, this, Dell, Remove, placeholders::_1));
 
-	action.back().push_back(bind(&Stack::drawListExcept, this, Dell, placeholders::_1));
-	action.back().push_back(bind(&Stack::DisconnectNode, this, Dell, Dell->nxt, placeholders::_1));
-	action.back().push_back(bind(&Stack::NodeDisappear, this, Dell, placeholders::_1));
-	
+	action.back().push_back(bind(&Queue::drawListExcept, this, Dell, placeholders::_1));
+	action.back().push_back(bind(&Queue::DisconnectNode, this, Dell, Dell->nxt, placeholders::_1));
+	action.back().push_back(bind(&Queue::NodeDisappear, this, Dell, placeholders::_1));
+
 	//Delete
 	action.push_back(vector<function<void(int)> >());
-	action.back().push_back(bind(&Stack::DeleteNode, this, Dell, placeholders::_1));
+	action.back().push_back(bind(&Queue::DeleteNode, this, Dell, placeholders::_1));
 
 	initProgress();
 
 	return;
 }
 
-bool Stack::removeNode(int i)
+bool Queue::removeNode(int i)
 {
 	initList();
 	if (i >= NodeNumber || i < 0) {
@@ -640,7 +640,7 @@ bool Stack::removeNode(int i)
 }
 
 
-void Stack::Peek()
+void Queue::Peek()
 {
 	initList();
 
@@ -652,24 +652,23 @@ void Stack::Peek()
 	if (!Head) {
 		action.push_back(vector<function<void(int)> >());
 
-		action.back().push_back(bind(&Stack::HighlightAppear, this, 0, placeholders::_1));
+		action.back().push_back(bind(&Queue::HighlightAppear, this, 0, placeholders::_1));
 		initProgress();
-
 		return;
 	}
 
 	//Run to node
 	action.push_back(vector<function<void(int)> >());
 
-	action.back().push_back(bind(&Stack::HighlightAppear, this, 1, placeholders::_1));
-	action.back().push_back(bind(&Stack::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&Stack::TitleAppear, this, Head, Selecting, placeholders::_1));
-	action.back().push_back(bind(&Stack::ChangeState, this, Head, Normal, New, placeholders::_1));
+	action.back().push_back(bind(&Queue::HighlightAppear, this, 1, placeholders::_1));
+	action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleAppear, this, Head, Selecting, placeholders::_1));
+	action.back().push_back(bind(&Queue::ChangeState, this, Head, Normal, New, placeholders::_1));
 
 	initProgress();
 }
 
-void Stack::initProgress() {
+void Queue::initProgress() {
 	tgui::Panel::Ptr EditPanel = gui.get<tgui::Panel>("EditPanel");
 
 	tgui::Slider::Ptr ProgressThumb = EditPanel->get<tgui::Slider>("ProgressThumb");
@@ -693,7 +692,7 @@ void Stack::initProgress() {
 	Elapsed = 0;
 }
 
-void Stack::initButtons()
+void Queue::initButtons()
 {
 	tgui::Picture::Ptr Background = gui.get<tgui::Picture>("Background");
 	Background->setRenderer(theme.getRenderer("Background"));
@@ -779,121 +778,121 @@ void Stack::initButtons()
 	InsertButton->onPress([=] {
 		InsertVal->setVisible(1 - InsertVal->isVisible());
 
-		InsertEx->setVisible(1 - InsertEx->isVisible());
+	InsertEx->setVisible(1 - InsertEx->isVisible());
 		});
 
 	DeleteButton->onPress([=] {
 		Signal = Removing;
-		timer.restart();
+	timer.restart();
 
-		ClearAction();
-		ShowDirection = 0;
-		CurStep = 0;
-		Elapsed = 0;
-		Last = 0;
+	ClearAction();
+	ShowDirection = 0;
+	CurStep = 0;
+	Elapsed = 0;
+	Last = 0;
 
-		removeNode(0);
+	removeNode(0);
 		});
 
 	SearchNode->onPress([=] {
 		Signal = Searching;
-		timer.restart();
+	timer.restart();
 
-		ClearAction();
-		ShowDirection = 0;
-		CurStep = 0;
-		Elapsed = 0;
-		Last = 0;
+	ClearAction();
+	ShowDirection = 0;
+	CurStep = 0;
+	Elapsed = 0;
+	Last = 0;
 
-		Peek();
+	Peek();
 		});
 
 	CreateButton->onPress([=] {
 		InputGen->setVisible(1 - InputGen->isVisible());
 
-		if (!GenModes)
-			UserInput->setVisible(InputGen->isVisible());
-		UserInputEx->setVisible(InputGen->isVisible());
+	if (!GenModes)
+		UserInput->setVisible(InputGen->isVisible());
+	UserInputEx->setVisible(InputGen->isVisible());
 		});
 
 	InputGen->onPress([=] {
 		GenModes = 1 - GenModes;
 
-		if (GenModes == 1) {
-			InputGen->setText(tgui::String("Random Input"));
+	if (GenModes == 1) {
+		InputGen->setText(tgui::String("Random Input"));
 
-			UserInput->setVisible(0);
-			UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
-		}
-		else {
-			InputGen->setText(tgui::String("Manual Input"));
+		UserInput->setVisible(0);
+		UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
+	}
+	else {
+		InputGen->setText(tgui::String("Manual Input"));
 
-			UserInput->setVisible(1);
-			UserInputEx->setPosition({ "EditBox1.right + 10", "EditBox1.top" });
-		}
+		UserInput->setVisible(1);
+		UserInputEx->setPosition({ "EditBox1.right + 10", "EditBox1.top" });
+	}
 		});
 
 	UserInputEx->onPress([=] {
 		ClearAction();
-		Signal = Pending;
+	Signal = Pending;
 
-		if (GenModes == 1)
-			genList();
-		else {
-			tgui::String s = UserInput->getText();
-			genList(s);
-		}
+	if (GenModes == 1)
+		genList();
+	else {
+		tgui::String s = UserInput->getText();
+		genList(s);
+	}
 		});
 
 	InsertEx->onPress([=] {
 		if (NodeNumber == maxNodeNumber)
-			return;
+		return;
 
-		Signal = Inserting;
-		timer.restart();
+	Signal = Inserting;
+	timer.restart();
 
-		ClearAction();
-		ShowDirection = 0;
-		CurStep = 0;
-		Elapsed = 0;
-		Last = 0;
+	ClearAction();
+	ShowDirection = 0;
+	CurStep = 0;
+	Elapsed = 0;
+	Last = 0;
 
-		int Val = InsertVal->getText().toInt();
+	int Val = InsertVal->getText().toInt();
 
-		insertNode(0, Val);
+	insertNode(0, Val);
 		});
 
 
 	PseudoCode->onMinimize([=] {
 		Vector2f MinSiz = PseudoCode->getMinimumSize();
-		Vector2f CurSiz = PseudoCode->getSize();
+	Vector2f CurSiz = PseudoCode->getSize();
 
-		if (CurSiz.x > MinSiz.x || CurSiz.y > MinSiz.y)
-			PseudoCode->setSize({ MinSiz.x, MinSiz.y });
-		else
-			PseudoCode->setSize({ 360, 277.52 });
+	if (CurSiz.x > MinSiz.x || CurSiz.y > MinSiz.y)
+		PseudoCode->setSize({ MinSiz.x, MinSiz.y });
+	else
+		PseudoCode->setSize({ 360, 277.52 });
 		});
 
 	PseudoCode->onMaximize([=] {
 		Vector2f MaxSiz = PseudoCode->getMaximumSize();
-		PseudoCode->setSize({ MaxSiz.x, MaxSiz.y });
+	PseudoCode->setSize({ MaxSiz.x, MaxSiz.y });
 		});
 
 	SlideOut->onClick([=] {
 		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
-		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
+	SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		});
 
 	SlideIn->onClick([=] {
 		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
-		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
+	SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		});
 
 	Speed->onValueChange([=] {
 		tgui::String s(0.5f + 0.25f * Speed->getValue());
 
-		SpeedIndicator->setText(tgui::String("x") + s);
-		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
+	SpeedIndicator->setText(tgui::String("x") + s);
+	Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
 		});
 
 	ProgressThumb->onValueChange([=] {
@@ -902,59 +901,59 @@ void Stack::initButtons()
 			return;
 		}
 
-		int NewProgress = ProgressThumb->getValue();
+	int NewProgress = ProgressThumb->getValue();
 
-		int CurProgress = CurStep;
-		if (ShowDirection == 0)
-			CurProgress++;
+	int CurProgress = CurStep;
+	if (ShowDirection == 0)
+		CurProgress++;
 
-		Progress->setValue(ProgressThumb->getValue());
+	Progress->setValue(ProgressThumb->getValue());
 
-		//timer.restart();
-		//Last = 0;
+	//timer.restart();
+	//Last = 0;
 
-		if (CurProgress < NewProgress) {
-			ShowDirection = 0;
-			for (; CurStep < NewProgress - 1; CurStep++)
-				for (int i = 0; i < action[CurStep].size(); i++) {
-					action[CurStep][i](Duration);
-				}
+	if (CurProgress < NewProgress) {
+		ShowDirection = 0;
+		for (; CurStep < NewProgress - 1; CurStep++)
+			for (int i = 0; i < action[CurStep].size(); i++) {
+				action[CurStep][i](Duration);
+			}
 
-			Last = 0;
+		Last = 0;
+		timer.restart();
+	}
+
+	if (CurProgress > NewProgress) {
+		for (; CurStep > NewProgress; CurStep--)
+			for (int i = 0; i < action[CurStep].size(); i++) {
+				action[CurStep][i](0);
+			}
+
+		if (ShowMode) {
+			ShowDirection = 1;
+			Last = Duration;
+			Elapsed = Duration;
 			timer.restart();
 		}
-
-		if (CurProgress > NewProgress) {
-			for (; CurStep > NewProgress; CurStep--)
-				for (int i = 0; i < action[CurStep].size(); i++) {
-					action[CurStep][i](0);
-				}
-
-			if (ShowMode) {
-				ShowDirection = 1;
-				Last = Duration;
-				Elapsed = Duration;
-				timer.restart();
-			}
-			else {
-				ShowDirection = 0;
-				Last = 0;
-				Elapsed = 0;
-				timer.restart();
-			}
+		else {
+			ShowDirection = 0;
+			Last = 0;
+			Elapsed = 0;
+			timer.restart();
 		}
+	}
 
 		});
 
 	Play->onPress([=] {
 		ShowMode = (1 - ShowMode);
 
-		if (ShowMode)
-			Play->setRenderer(theme.getRenderer("PlayButton"));
-		else {
-			ShowDirection = 0;
-			Play->setRenderer(theme.getRenderer("PauseButton"));
-		}
+	if (ShowMode)
+		Play->setRenderer(theme.getRenderer("PlayButton"));
+	else {
+		ShowDirection = 0;
+		Play->setRenderer(theme.getRenderer("PauseButton"));
+	}
 		});
 
 	Begin->onPress([=] {
@@ -975,48 +974,48 @@ void Stack::initButtons()
 
 	Theme1->onCheck([=] {
 		MainColor = &VSPurple;
-		theme.load("assets/themes/CyberPurple.txt");
+	theme.load("assets/themes/CyberPurple.txt");
 		});
 
 	Theme2->onCheck([=] {
 		MainColor = &Fulvous;
-		theme.load("assets/themes/ForestGreen.txt");
+	theme.load("assets/themes/ForestGreen.txt");
 		});
 
-	StructList->setSelectedItem(tgui::String("Stack"));
+	StructList->setSelectedItem(tgui::String("Queue"));
 
 	StructList->onItemSelect([=] {
 		tgui::String s = StructList->getSelectedItem();
 
-		if (s != tgui::String("Stack")) {
-			while (Head) {
-				Node* tmp = Head->nxt;
-				delete Head;
-				Head = tmp;
-			}
+	if (s != tgui::String("Queue")) {
+		while (Head) {
+			Node* tmp = Head->nxt;
+			delete Head;
+			Head = tmp;
 		}
+	}
 
-		if (s == tgui::String("DLL"))
-			State = _DLList;
+	if (s == tgui::String("DLL"))
+		State = _DLList;
 
-		if (s == tgui::String("CLL"))
-			State = _CLL;
+	if (s == tgui::String("CLL"))
+		State = _CLL;
 
-		if (s == tgui::String("SLL"))
-			State = _SLL;
+	if (s == tgui::String("SLL"))
+		State = _SLL;
 
-		if (s == tgui::String("Queue"))
-			State = _Queue;
+	if (s == tgui::String("Queue"))
+		State = _Queue;
 
-		if (s == tgui::String("Array"))
-			State = _Array;
+	if (s == tgui::String("Array"))
+		State = _Array;
 
-		if (s == tgui::String("Dynamic Array"))
-			State = _DArray;
+	if (s == tgui::String("Dynamic Array"))
+		State = _DArray;
 		});
 }
 
-void Stack::HandleEvent(Event& e)
+void Queue::HandleEvent(Event& e)
 {
 	switch (Signal) {
 	case Searching:
@@ -1148,7 +1147,7 @@ void Stack::HandleEvent(Event& e)
 }
 
 
-void Stack::interactStack()
+void Queue::interactQueue()
 {
 	app.clear();
 	gui.draw();

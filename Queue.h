@@ -4,7 +4,7 @@
 
 #include "Node.h"
 
-struct Stack {
+struct Queue {
 	float DefaultPosX;
 	float DefaultPosY;
 	int maxNodeNumber;
@@ -30,10 +30,10 @@ struct Stack {
 	Node* Tail;
 	RectangleShape TextHighlight;
 
-	Stack() {
-		DefaultPosX = 700;
-		DefaultPosY = 700;
-		maxNodeNumber = 9;
+	Queue() {
+		DefaultPosX = 250;
+		DefaultPosY = 250;
+		maxNodeNumber = 12;
 
 		theme.load("assets/themes/CyberPurple.txt");
 
@@ -56,7 +56,7 @@ struct Stack {
 		TextHighlight.setFillColor(Color(0, 0, 0, 0));
 	}
 
-	~Stack() {
+	~Queue() {
 		while (Head) {
 			Node* tmp = Head->nxt;
 			delete Head;
@@ -69,7 +69,7 @@ struct Stack {
 
 	void initButtons();
 	void initProgress();
-	void interactStack();
+	void interactQueue();
 	void HandleEvent(Event& e);
 	void ClearAction();
 

@@ -776,7 +776,7 @@ void SLL::removeAtBeginning() {
 	action.back().push_back(bind(&SLL::MoveHighlight, this, 0, 1, placeholders::_1));
 	action.back().push_back(bind(&SLL::SetNodesNormal, this, Dell, Tail, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&SLL::ChangeState, this, Dell, Normal, Remove, placeholders::_1));
+	action.back().push_back(bind(&SLL::ChangeState, this, Dell, Selecting, Remove, placeholders::_1));
 	action.back().push_back(bind(&SLL::ChangeState, this, Dell->nxt, Normal, Next, placeholders::_1));
 	action.back().push_back(bind(&SLL::TitleAppear, this, Dell->nxt, Next, placeholders::_1));
 	action.back().push_back(bind(&SLL::TitleDisappear, this, Dell, Selecting, placeholders::_1));
