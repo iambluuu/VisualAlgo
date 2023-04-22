@@ -60,7 +60,7 @@ void Queue::SlideNodes(Node* Cur, float CurX, float CurY, float NxtX, float NxtY
 	MoveNode(Cur, CurX, CurY, NxtX, NxtY, Elapsed);
 
 	for (Node* tmp = Cur->nxt; tmp; tmp = tmp->nxt)
-		tmp->changeNodePosition(tmp->prev->Pos.x, tmp->prev->Pos.y + 100);
+		tmp->changeNodePosition(tmp->prev->Pos.x + 95, tmp->prev->Pos.y);
 
 }
 
@@ -83,8 +83,7 @@ void Queue::ClearAction()
 		for (int j = 0; j < action[i].size(); j++)
 			action[i][j](Duration);
 
-	while (!action.empty())
-		action.pop_back();
+	action.clear();
 }
 
 void Queue::drawList(int Dummy)
@@ -109,6 +108,8 @@ void Queue::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 	case Normal:
 		if (Cur->NumberInList == 0)
 			Cur->Title.setString(String("Head"));
+		else if (Cur->NumberInList == NodeNumber - 1)
+			Cur->Title.setString(String("Tail"));
 		else
 			Cur->Title.setString(String(""));
 
@@ -117,6 +118,8 @@ void Queue::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 	case Visited:
 		if (Cur->NumberInList == 0)
 			Cur->Title.setString(String("Head"));
+		else if (Cur->NumberInList == NodeNumber - 1)
+			Cur->Title.setString(String("Tail"));
 		else
 			Cur->Title.setString(String(""));
 
@@ -125,6 +128,8 @@ void Queue::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 	case Selecting:
 		if (Cur->NumberInList == 0)
 			Cur->Title.setString(String("Cur/Head"));
+		else if (Cur->NumberInList == NodeNumber - 1)
+			Cur->Title.setString(String("Tail"));
 		else
 			Cur->Title.setString(String("Cur/") + String(to_string(Cur->NumberInList)));
 		break;
@@ -133,6 +138,8 @@ void Queue::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 
 		if (Cur->NumberInList == 0)
 			Cur->Title.setString(String("New/Head"));
+		else if (Cur->NumberInList == NodeNumber - 1)
+			Cur->Title.setString(String("New/Tail"));
 		else if (Cur->NumberInList > 0)
 			Cur->Title.setString(String("New/") + String(to_string(Cur->NumberInList)));
 		else
@@ -263,6 +270,8 @@ void Queue::genList()
 		tmp = tmp->nxt;
 		delete Dummy;
 	}
+	
+	Tail = nullptr;
 
 	//Gen new list
 
@@ -338,6 +347,8 @@ void Queue::genList(const tgui::String s)
 		tmp = tmp->nxt;
 		delete Dummy;
 	}
+
+	Tail = nullptr;
 
 	//Gen new list
 	Head = new Node(parts[0].toInt());
@@ -481,67 +492,42 @@ void Queue::DisconnectNode(Node* A, Node* B, int Elapsed)
 	A->drawArrow();
 }
 
-void Queue::insertAtBeginning(Node*& NewNode)
+void Queue::insertAtEnd(Node*& NewNode)
 {
 
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("Node NewNode = new Node(v)\nNewNode.next = Head\nHead = NewNode"));
+	TextArea->setText(tgui::String("Node NewNode = new Node(v)\nTail.next = NewNode\nTail = NewNode"));
 
-	NewNode->nxt = Head;
-	if (Head)
-		Head->prev = NewNode;
+	NewNode->changeNodePosition(Tail->Pos.x + 95, Tail->Pos.y);
 
-	Head = NewNode;
+	Tail->nxt = NewNode;
+	NewNode->prev = Tail;
+	Tail = NewNode;
 
-	for (Node* tmp = NewNode->nxt; tmp; tmp = tmp->nxt)
-		tmp->NumberInList++;
+	action.push_back(vector<function<void(int)> >());
 
-	if (NewNode->nxt) {
-		changePosition(NewNode, DefaultPosX, NewNode->nxt->Pos.y - 100);
-	}
-	else {
-		changePosition(NewNode, DefaultPosX, DefaultPosY);
-	}
-
-	//NewNode appears
-
-	action.push_back(vector<function<void(int) > >());
-
+	action.back().push_back(bind(&Queue::drawListExcept, this, NewNode, placeholders::_1));
 	action.back().push_back(bind(&Queue::HighlightAppear, this, 0, placeholders::_1));
-	action.back().push_back(std::bind(&Queue::drawListExcept, this, NewNode, std::placeholders::_1));
-	action.back().push_back(std::bind(&Queue::NodeAppear, this, NewNode, std::placeholders::_1));
+	action.back().push_back(bind(&Queue::NodeAppear, this, NewNode, placeholders::_1));
 
-	if (!Head->nxt) {
-		action.push_back(vector<function<void(int) > >());
+	action.push_back(vector<function<void(int)> >());
 
-		action.back().push_back(std::bind(&Queue::drawList, this, placeholders::_1));
-		action.back().push_back(std::bind(&Queue::MoveHighlight, this, 0, 2, placeholders::_1));
-		action.back().push_back(std::bind(&Queue::TitleAppear, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&Queue::MoveHighlight, this, 0, 1, placeholders::_1));
+	action.back().push_back(bind(&Queue::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&Queue::drawNode, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&Queue::ChangeState, this, NewNode->prev, Normal, Selecting, placeholders::_1));
+	action.back().push_back(bind(&Queue::ConnectNode, this, NewNode->prev, NewNode, placeholders::_1));
 
-		initProgress();
-		return;
-	}
+	action.push_back(vector<function<void(int)> >());
 
-
-	//Connect NewNode to Head
-	action.push_back(vector<function<void(int) > >());
-
-	action.back().push_back(std::bind(&Queue::MoveHighlight, this, 0, 1, placeholders::_1));
-	action.back().push_back(std::bind(&Queue::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(std::bind(&Queue::drawNode, this, NewNode, placeholders::_1));
-	action.back().push_back(std::bind(&Queue::ConnectNode, this, NewNode, NewNode->nxt, placeholders::_1));
-
-	//Make NewNode Head
-	action.push_back(vector<function<void(int) > >());
-
-	action.back().push_back(std::bind(&Queue::MoveHighlight, this, 1, 2, placeholders::_1));
-	action.back().push_back(std::bind(&Queue::drawList, this, placeholders::_1));
-	action.back().push_back(std::bind(&Queue::TitleAppear, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
+	action.back().push_back(bind(&Queue::MoveHighlight, this, 1, 2, placeholders::_1));
+	action.back().push_back(bind(&Queue::ChangeState, this, NewNode->prev, Selecting, Normal, placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleAppear, this, NewNode, New, placeholders::_1));
 
 	initProgress();
-
 }
 
 bool Queue::insertNode(int i, int v)
@@ -563,8 +549,8 @@ bool Queue::insertNode(int i, int v)
 	NewNode->NodeState = New;
 	NewNode->ArrowState = New;
 
-	if (i == 0) {
-		insertAtBeginning(NewNode);
+	if (i == NodeNumber - 1) {
+		insertAtEnd(NewNode);
 		return 1;
 	}
 
@@ -601,7 +587,7 @@ void Queue::removeAtBeginning() {
 	action.back().push_back(bind(&Queue::TitleAppear, this, Dell->nxt, Next, placeholders::_1));
 	action.back().push_back(bind(&Queue::TitleDisappear, this, Dell, Selecting, placeholders::_1));
 
-	//Del disappear
+	//Update Nodes position
 	action.push_back(vector<function<void(int)> >());
 
 	action.back().push_back(bind(&Queue::MoveHighlight, this, 1, 2, placeholders::_1));
@@ -611,6 +597,7 @@ void Queue::removeAtBeginning() {
 	action.back().push_back(bind(&Queue::drawListExcept, this, Dell, placeholders::_1));
 	action.back().push_back(bind(&Queue::DisconnectNode, this, Dell, Dell->nxt, placeholders::_1));
 	action.back().push_back(bind(&Queue::NodeDisappear, this, Dell, placeholders::_1));
+	action.back().push_back(bind(&Queue::SlideNodes, this, Dell->nxt, Dell->Pos.x + 95, DefaultPosY, Dell->Pos.x, DefaultPosY, placeholders::_1));
 
 	//Delete
 	action.push_back(vector<function<void(int)> >());
@@ -771,128 +758,183 @@ void Queue::initButtons()
 	tgui::RadioButton::Ptr Theme2 = EditPanel->get<tgui::RadioButton>("Theme2");
 	Theme2->setRenderer(theme.getRenderer("RadioButton"));
 
-
+	if (ThemeNum == 0) {
+		Theme1->setChecked(1);
+	}
+	else {
+		Theme2->setChecked(1);
+	}
 
 	Speed->setValue(2);
 
 	InsertButton->onPress([=] {
 		InsertVal->setVisible(1 - InsertVal->isVisible());
 
-	InsertEx->setVisible(1 - InsertEx->isVisible());
+		InsertEx->setVisible(1 - InsertEx->isVisible());
 		});
 
 	DeleteButton->onPress([=] {
 		Signal = Removing;
-	timer.restart();
+		timer.restart();
 
-	ClearAction();
-	ShowDirection = 0;
-	CurStep = 0;
-	Elapsed = 0;
-	Last = 0;
+		ClearAction();
+		ShowDirection = 0;
+		CurStep = 0;
+		Elapsed = 0;
+		Last = 0;
 
-	removeNode(0);
+		removeNode(0);
 		});
 
 	SearchNode->onPress([=] {
 		Signal = Searching;
-	timer.restart();
+		timer.restart();
 
-	ClearAction();
-	ShowDirection = 0;
-	CurStep = 0;
-	Elapsed = 0;
-	Last = 0;
+		ClearAction();
+		ShowDirection = 0;
+		CurStep = 0;
+		Elapsed = 0;
+		Last = 0;
 
-	Peek();
+		Peek();
 		});
 
 	CreateButton->onPress([=] {
 		InputGen->setVisible(1 - InputGen->isVisible());
 
-	if (!GenModes)
-		UserInput->setVisible(InputGen->isVisible());
-	UserInputEx->setVisible(InputGen->isVisible());
+		if (!GenModes)
+			UserInput->setVisible(InputGen->isVisible());
+			UserInputEx->setVisible(InputGen->isVisible());
 		});
 
 	InputGen->onPress([=] {
-		GenModes = 1 - GenModes;
+		GenModes = (GenModes + 1) % 3;
 
-	if (GenModes == 1) {
-		InputGen->setText(tgui::String("Random Input"));
+		switch (GenModes) {
+		case 0:
+			InputGen->setText(tgui::String("Manual Input"));
 
-		UserInput->setVisible(0);
-		UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
-	}
-	else {
-		InputGen->setText(tgui::String("Manual Input"));
+			UserInput->setVisible(1);
+			UserInputEx->setPosition({ "EditBox1.right + 10", "EditBox1.top" });
+			break;
 
-		UserInput->setVisible(1);
-		UserInputEx->setPosition({ "EditBox1.right + 10", "EditBox1.top" });
-	}
+		case 1:
+			InputGen->setText(tgui::String("Random Input"));
+
+			UserInput->setVisible(0);
+			UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
+			break;
+
+		case 2:
+			InputGen->setText(tgui::String("Browse"));
+
+			UserInput->setVisible(0);
+			UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
+			break;
+		}
+
 		});
 
 	UserInputEx->onPress([=] {
 		ClearAction();
-	Signal = Pending;
+		Signal = Pending;
 
-	if (GenModes == 1)
-		genList();
-	else {
-		tgui::String s = UserInput->getText();
-		genList(s);
-	}
+		switch (GenModes) {
+		case 0:
+		{
+			tgui::String s = UserInput->getText();
+			genList(s);
+			break;
+		}
+		case 1:
+		{
+			genList();
+			break;
+		}
+		case 2:
+		{
+			OPENFILENAME ofn;
+			ZeroMemory(&ofn, sizeof(ofn));
+			ofn.lStructSize = sizeof(ofn);
+			ofn.hwndOwner = hwnd;
+			ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0";
+			ofn.lpstrFile = szFileName;
+			ofn.nMaxFile = MAX_PATH;
+			ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_NOCHANGEDIR;
+			ofn.lpstrDefExt = L"txt";
+
+			tgui::String S;
+
+			if (GetOpenFileName(&ofn) == TRUE) {
+				// User selected a file
+				std::ifstream file(ofn.lpstrFile);
+				std::string line;
+				while (std::getline(file, line)) {
+					S.append(line);
+				}
+
+				file.close();
+			}
+			else {
+				// User cancelled the dialog
+			}
+
+			genList(S);
+
+			break;
+		}
+		}
 		});
 
 	InsertEx->onPress([=] {
 		if (NodeNumber == maxNodeNumber)
-		return;
+			return;
 
-	Signal = Inserting;
-	timer.restart();
+		Signal = Inserting;
+		timer.restart();
 
-	ClearAction();
-	ShowDirection = 0;
-	CurStep = 0;
-	Elapsed = 0;
-	Last = 0;
+		ClearAction();
+		ShowDirection = 0;
+		CurStep = 0;
+		Elapsed = 0;
+		Last = 0;
 
-	int Val = InsertVal->getText().toInt();
+		int Val = InsertVal->getText().toInt();
 
-	insertNode(0, Val);
+		insertNode(NodeNumber, Val);
 		});
 
 
 	PseudoCode->onMinimize([=] {
 		Vector2f MinSiz = PseudoCode->getMinimumSize();
-	Vector2f CurSiz = PseudoCode->getSize();
+		Vector2f CurSiz = PseudoCode->getSize();
 
-	if (CurSiz.x > MinSiz.x || CurSiz.y > MinSiz.y)
-		PseudoCode->setSize({ MinSiz.x, MinSiz.y });
-	else
-		PseudoCode->setSize({ 360, 277.52 });
+		if (CurSiz.x > MinSiz.x || CurSiz.y > MinSiz.y)
+			PseudoCode->setSize({ MinSiz.x, MinSiz.y });
+		else
+			PseudoCode->setSize({ 360, 277.52 });
 		});
 
 	PseudoCode->onMaximize([=] {
 		Vector2f MaxSiz = PseudoCode->getMaximumSize();
-	PseudoCode->setSize({ MaxSiz.x, MaxSiz.y });
+		PseudoCode->setSize({ MaxSiz.x, MaxSiz.y });
 		});
 
 	SlideOut->onClick([=] {
 		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
-	SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
-		});
+		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
+			});
 
 	SlideIn->onClick([=] {
 		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
-	SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
-		});
+		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
+	});
 
 	Speed->onValueChange([=] {
 		tgui::String s(0.5f + 0.25f * Speed->getValue());
 
-	SpeedIndicator->setText(tgui::String("x") + s);
-	Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
+		SpeedIndicator->setText(tgui::String("x") + s);
+		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
 		});
 
 	ProgressThumb->onValueChange([=] {
@@ -901,59 +943,62 @@ void Queue::initButtons()
 			return;
 		}
 
-	int NewProgress = ProgressThumb->getValue();
+		int NewProgress = ProgressThumb->getValue();
 
-	int CurProgress = CurStep;
-	if (ShowDirection == 0)
-		CurProgress++;
+		int CurProgress = CurStep;
+		if (ShowDirection == 0)
+			CurProgress++;
 
-	Progress->setValue(ProgressThumb->getValue());
+		Progress->setValue(ProgressThumb->getValue());
 
-	//timer.restart();
-	//Last = 0;
+		//timer.restart();
+		//Last = 0;
 
-	if (CurProgress < NewProgress) {
-		ShowDirection = 0;
-		for (; CurStep < NewProgress - 1; CurStep++)
-			for (int i = 0; i < action[CurStep].size(); i++) {
-				action[CurStep][i](Duration);
-			}
-
-		Last = 0;
-		timer.restart();
-	}
-
-	if (CurProgress > NewProgress) {
-		for (; CurStep > NewProgress; CurStep--)
-			for (int i = 0; i < action[CurStep].size(); i++) {
-				action[CurStep][i](0);
-			}
-
-		if (ShowMode) {
-			ShowDirection = 1;
-			Last = Duration;
-			Elapsed = Duration;
-			timer.restart();
-		}
-		else {
+		if (CurProgress < NewProgress) {
 			ShowDirection = 0;
+			for (; CurStep < NewProgress - 1; CurStep++)
+				for (int i = 0; i < action[CurStep].size(); i++) {
+					action[CurStep][i](Duration);
+				}
+
 			Last = 0;
-			Elapsed = 0;
 			timer.restart();
 		}
-	}
+
+		if (CurProgress > NewProgress) {
+			for (; CurStep > NewProgress; CurStep--)
+				for (int i = 0; i < action[CurStep].size(); i++) {
+					action[CurStep][i](0);
+				}
+
+			if (ShowMode) {
+				ShowDirection = 1;
+				Last = Duration;
+				Elapsed = Duration;
+				timer.restart();
+			}
+			else {
+				ShowDirection = 0;
+				Last = 0;
+				Elapsed = 0;
+				timer.restart();
+			}
+		}
 
 		});
 
 	Play->onPress([=] {
 		ShowMode = (1 - ShowMode);
 
-	if (ShowMode)
-		Play->setRenderer(theme.getRenderer("PlayButton"));
-	else {
-		ShowDirection = 0;
-		Play->setRenderer(theme.getRenderer("PauseButton"));
-	}
+		Last = Elapsed;
+		timer.restart();
+
+		if (ShowMode)
+			Play->setRenderer(theme.getRenderer("PlayButton"));
+		else {
+			ShowDirection = 0;
+			Play->setRenderer(theme.getRenderer("PauseButton"));
+		}
 		});
 
 	Begin->onPress([=] {
@@ -965,21 +1010,27 @@ void Queue::initButtons()
 		});
 
 	Forward->onPress([=] {
+		ShowMode = 1;
+
 		ProgressThumb->setValue(ProgressThumb->getValue() + 1);
 		});
 
 	Backward->onPress([=] {
+		ShowMode = 1;
+
 		ProgressThumb->setValue(ProgressThumb->getValue() - 1);
 		});
 
 	Theme1->onCheck([=] {
 		MainColor = &VSPurple;
-	theme.load("assets/themes/CyberPurple.txt");
+		ThemeNum = 0;
+		theme.load("assets/themes/CyberPurple.txt");
 		});
 
 	Theme2->onCheck([=] {
 		MainColor = &Fulvous;
-	theme.load("assets/themes/ForestGreen.txt");
+		ThemeNum = 1;
+		theme.load("assets/themes/ForestGreen.txt");
 		});
 
 	StructList->setSelectedItem(tgui::String("Queue"));
@@ -987,31 +1038,33 @@ void Queue::initButtons()
 	StructList->onItemSelect([=] {
 		tgui::String s = StructList->getSelectedItem();
 
-	if (s != tgui::String("Queue")) {
-		while (Head) {
-			Node* tmp = Head->nxt;
-			delete Head;
-			Head = tmp;
+		if (s != tgui::String("Queue")) {
+			ClearAction();
+
+			while (Head) {
+				Node* tmp = Head->nxt;
+				delete Head;
+				Head = tmp;
+			}
 		}
-	}
 
-	if (s == tgui::String("DLL"))
-		State = _DLList;
+		if (s == tgui::String("DLL"))
+			State = _DLList;
 
-	if (s == tgui::String("CLL"))
-		State = _CLL;
+		if (s == tgui::String("CLL"))
+			State = _CLL;
 
-	if (s == tgui::String("SLL"))
-		State = _SLL;
+		if (s == tgui::String("SLL"))
+			State = _SLL;
 
-	if (s == tgui::String("Queue"))
-		State = _Queue;
+		if (s == tgui::String("Stack"))
+			State = _Stack;
 
-	if (s == tgui::String("Array"))
-		State = _Array;
+		if (s == tgui::String("Array"))
+			State = _Array;
 
-	if (s == tgui::String("Dynamic Array"))
-		State = _DArray;
+		if (s == tgui::String("Dynamic Array"))
+			State = _DArray;
 		});
 }
 
@@ -1193,26 +1246,17 @@ void Queue::interactQueue()
 
 	default:
 		if (ShowMode == 0) {
+
 			if (ShowDirection == 0 && Elapsed >= Duration) {
 
-				if (CurStep + 1 == (int)action.size())
+				if ((CurStep + 2 == (int)action.size() && Signal == Removing) || (CurStep + 1 == (int)action.size()))
 					Elapsed = Duration;
 				else {
 					timer.restart();
 					Last = 0;
 					Elapsed = 0;
-					CurStep++;
-				}
-			}
-			else if (ShowDirection == 1 && Elapsed <= 0) {
 
-				if (CurStep == 0)
-					Elapsed = 0;
-				else {
-					timer.restart();
-					Last = Duration;
-					Elapsed = Duration;
-					CurStep--;
+					CurStep++;
 				}
 			}
 		}

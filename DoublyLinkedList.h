@@ -4,7 +4,7 @@
 
 #include "Node.h"
 
-struct Stack {
+struct DLL {
 	float DefaultPosX;
 	float DefaultPosY;
 	int maxNodeNumber;
@@ -29,10 +29,10 @@ struct Stack {
 	Node* Tail;
 	RectangleShape TextHighlight;
 
-	Stack() {
-		DefaultPosX = 700;
-		DefaultPosY = 700;
-		maxNodeNumber = 9;
+	DLL() {
+		DefaultPosX = 250;
+		DefaultPosY = 250;
+		maxNodeNumber = 12;
 
 		Head = nullptr;
 		Tail = nullptr;
@@ -53,7 +53,7 @@ struct Stack {
 		TextHighlight.setFillColor(Color(0, 0, 0, 0));
 	}
 
-	~Stack() {
+	~DLL() {
 		while (Head) {
 			Node* tmp = Head->nxt;
 			delete Head;
@@ -66,7 +66,7 @@ struct Stack {
 
 	void initButtons();
 	void initProgress();
-	void interactStack();
+	void interactDLL();
 	void HandleEvent(Event& e);
 	void ClearAction();
 
@@ -82,7 +82,7 @@ struct Stack {
 	void NodeDisappear(Node* Cur, int Elapsed);
 	void TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed);
 	void TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed);
-	void HighlightAppear(int Line, int Elapsed);
+	void HighlightAppear(int Elapsed);
 	void MoveHighlight(int CurLine, int NextLine, int Elapsed);
 	void drawNode(Node* Cur, int Dummy);
 	void setNodeState(Node* Cur, Nodestate NodeState, int Dummy);
@@ -99,11 +99,14 @@ struct Stack {
 	void genList(const tgui::String s);
 
 	void insertAtBeginning(Node*& NewNode);
+	void insertAtEnd(Node*& NewNode);
 	bool insertNode(int i, int v);
 
 	bool removeNode(int i);
 	void removeAtBeginning();
+	void removeAtEnd();
 	void DeleteNode(Node*& Cur, int Dummy);
 
-	void Peek();
+	void searchNode(tgui::String v);
+	void updateNode(int i, int v);
 };

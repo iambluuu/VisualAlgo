@@ -12,7 +12,6 @@ struct Queue {
 	vector<vector<function<void(int)> > >  action;
 	signal Signal;
 	Clock timer;
-	tgui::Theme theme;
 
 	bool ShowMode;
 	bool ShowDirection;
@@ -34,8 +33,6 @@ struct Queue {
 		DefaultPosX = 250;
 		DefaultPosY = 250;
 		maxNodeNumber = 12;
-
-		theme.load("assets/themes/CyberPurple.txt");
 
 		Head = nullptr;
 		Tail = nullptr;
@@ -101,7 +98,7 @@ struct Queue {
 	void genList();
 	void genList(const tgui::String s);
 
-	void insertAtBeginning(Node*& NewNode);
+	void insertAtEnd(Node*& NewNode);
 	bool insertNode(int i, int v);
 
 	bool removeNode(int i);

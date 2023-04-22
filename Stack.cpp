@@ -83,8 +83,7 @@ void Stack::ClearAction()
 		for (int j = 0; j < action[i].size(); j++)
 			action[i][j](Duration);
 
-	while (!action.empty())
-		action.pop_back();
+	action.clear();
 }
 
 void Stack::drawList(int Dummy)
@@ -264,6 +263,8 @@ void Stack::genList()
 		delete Dummy;
 	}
 
+	Tail = nullptr;
+
 	//Gen new list
 
 	NodeNumber = rand() % maxNodeNumber + 1;
@@ -339,10 +340,12 @@ void Stack::genList(const tgui::String s)
 		delete Dummy;
 	}
 
+	Tail = nullptr;
+
 	//Gen new list
 	Head = new Node(parts[0].toInt());
 	Head->NumberInList = 0;
-	Head->changeNodePosition(DefaultPosX, DefaultPosY);
+	Head->changeNodePosition(DefaultPosX, DefaultPosY - 100 * (NodeNumber - 1));
 
 	Node* Cur = Head;
 
@@ -731,7 +734,6 @@ void Stack::initButtons()
 	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
 	TextHighlight->setRenderer(theme.getRenderer("TextHighlight"));
 
-
 	tgui::Button::Ptr SlideIn = gui.get<tgui::Button>("SlideIn");
 	tgui::Button::Ptr SlideOut = gui.get<tgui::Button>("SlideOut");
 	tgui::Panel::Ptr EditPanel = gui.get<tgui::Panel>("EditPanel");
@@ -772,7 +774,12 @@ void Stack::initButtons()
 	tgui::RadioButton::Ptr Theme2 = EditPanel->get<tgui::RadioButton>("Theme2");
 	Theme2->setRenderer(theme.getRenderer("RadioButton"));
 
-
+	if (ThemeNum == 0) {
+		Theme1->setChecked(1);
+	}
+	else {
+		Theme2->setChecked(1);
+	}
 
 	Speed->setValue(2);
 
@@ -780,6 +787,34 @@ void Stack::initButtons()
 		InsertVal->setVisible(1 - InsertVal->isVisible());
 
 		InsertEx->setVisible(1 - InsertEx->isVisible());
+		});
+
+	InputGen->onPress([=] {
+		GenModes = (GenModes + 1) % 3;
+
+		switch (GenModes) {
+		case 0:
+			InputGen->setText(tgui::String("Manual Input"));
+
+			UserInput->setVisible(1);
+			UserInputEx->setPosition({ "EditBox1.right + 10", "EditBox1.top" });
+			break;
+
+		case 1:
+			InputGen->setText(tgui::String("Random Input"));
+
+			UserInput->setVisible(0);
+			UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
+			break;
+
+		case 2:
+			InputGen->setText(tgui::String("Browse"));
+
+			UserInput->setVisible(0);
+			UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
+			break;
+		}
+
 		});
 
 	DeleteButton->onPress([=] {
@@ -816,32 +851,54 @@ void Stack::initButtons()
 		UserInputEx->setVisible(InputGen->isVisible());
 		});
 
-	InputGen->onPress([=] {
-		GenModes = 1 - GenModes;
-
-		if (GenModes == 1) {
-			InputGen->setText(tgui::String("Random Input"));
-
-			UserInput->setVisible(0);
-			UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
-		}
-		else {
-			InputGen->setText(tgui::String("Manual Input"));
-
-			UserInput->setVisible(1);
-			UserInputEx->setPosition({ "EditBox1.right + 10", "EditBox1.top" });
-		}
-		});
-
 	UserInputEx->onPress([=] {
 		ClearAction();
 		Signal = Pending;
 
-		if (GenModes == 1)
-			genList();
-		else {
+		switch (GenModes) {
+		case 0:
+		{
 			tgui::String s = UserInput->getText();
 			genList(s);
+			break;
+		}
+		case 1:
+		{
+			genList();
+			break;
+		}
+		case 2:
+		{
+			OPENFILENAME ofn;
+			ZeroMemory(&ofn, sizeof(ofn));
+			ofn.lStructSize = sizeof(ofn);
+			ofn.hwndOwner = hwnd;
+			ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0";
+			ofn.lpstrFile = szFileName;
+			ofn.nMaxFile = MAX_PATH;
+			ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_NOCHANGEDIR;
+			ofn.lpstrDefExt = L"txt";
+
+			tgui::String S;
+
+			if (GetOpenFileName(&ofn) == TRUE) {
+				// User selected a file
+				std::ifstream file(ofn.lpstrFile);
+				std::string line;
+				while (std::getline(file, line)) {
+					S.append(line);
+				}
+
+				file.close();
+			}
+			else {
+				// User cancelled the dialog
+			}
+
+			genList(S);
+
+			break;
+		}
 		}
 		});
 
@@ -949,6 +1006,9 @@ void Stack::initButtons()
 	Play->onPress([=] {
 		ShowMode = (1 - ShowMode);
 
+		Last = Elapsed;
+		timer.restart();
+
 		if (ShowMode)
 			Play->setRenderer(theme.getRenderer("PlayButton"));
 		else {
@@ -966,20 +1026,24 @@ void Stack::initButtons()
 		});
 
 	Forward->onPress([=] {
+		ShowMode = 1;
 		ProgressThumb->setValue(ProgressThumb->getValue() + 1);
 		});
 
 	Backward->onPress([=] {
+		ShowMode = 1;
 		ProgressThumb->setValue(ProgressThumb->getValue() - 1);
 		});
 
 	Theme1->onCheck([=] {
 		MainColor = &VSPurple;
+		ThemeNum = 0;
 		theme.load("assets/themes/CyberPurple.txt");
 		});
 
 	Theme2->onCheck([=] {
 		MainColor = &Fulvous;
+		ThemeNum = 1;
 		theme.load("assets/themes/ForestGreen.txt");
 		});
 
@@ -989,6 +1053,8 @@ void Stack::initButtons()
 		tgui::String s = StructList->getSelectedItem();
 
 		if (s != tgui::String("Stack")) {
+			ClearAction();
+
 			while (Head) {
 				Node* tmp = Head->nxt;
 				delete Head;
@@ -1133,12 +1199,12 @@ void Stack::HandleEvent(Event& e)
 
 						CurStep--;
 						Elapsed = Duration;
-						Last = 0;
+						Last = Duration;
 						timer.restart();
 					}
 				}
-
 				break;
+
 			default:
 				break;
 			}
@@ -1194,26 +1260,17 @@ void Stack::interactStack()
 
 	default:
 		if (ShowMode == 0) {
+
 			if (ShowDirection == 0 && Elapsed >= Duration) {
 
-				if (CurStep + 1 == (int)action.size())
+				if ((CurStep + 2 == (int)action.size() && Signal == Removing) || (CurStep + 1 == (int)action.size()))
 					Elapsed = Duration;
 				else {
 					timer.restart();
 					Last = 0;
 					Elapsed = 0;
-					CurStep++;
-				}
-			}
-			else if (ShowDirection == 1 && Elapsed <= 0) {
 
-				if (CurStep == 0)
-					Elapsed = 0;
-				else {
-					timer.restart();
-					Last = Duration;
-					Elapsed = Duration;
-					CurStep--;
+					CurStep++;
 				}
 			}
 		}

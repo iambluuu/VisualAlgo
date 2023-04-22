@@ -1,4 +1,29 @@
 Renderer.1 {
+    BackgroundColor = #313893;
+    BackgroundColorDisabled = #E6E6E6;
+    BackgroundColorDown = #EBEBEB;
+    BackgroundColorHover = white;
+    BorderColor = #071831;
+    BorderColorDisabled = #7D7D7D;
+    BorderColorDown = black;
+    BorderColorFocused = #1E1EB4;
+    BorderColorHover = black;
+    Borders = (1, 1, 1, 1);
+    Font = "SpaceGrotesk-Bold.ttf";
+    TextColor = #ECF7FF;
+    TextColorDisabled = #7D7D7D;
+    TextColorDown = black;
+    TextColorHover = black;
+    Texture = None;
+    TextureDisabled = None;
+    TextureDown = None;
+    TextureDownFocused = None;
+    TextureDownHover = None;
+    TextureFocused = None;
+    TextureHover = None;
+}
+
+Renderer.2 {
     BackgroundColor = #8E6FFF;
     BackgroundColorDisabled = #E6E6E6;
     BackgroundColorDown = #7F76FF;
@@ -28,7 +53,7 @@ Renderer.1 {
     TextureHover = None;
 }
 
-Renderer.2 {
+Renderer.3 {
     BackgroundColor = #313893;
     BackgroundColorDisabled = #E6E6E6;
     BackgroundColorDown = #EBEBEB;
@@ -53,12 +78,67 @@ Renderer.2 {
     TextureHover = None;
 }
 
+Renderer.4 {
+    BackgroundColor = #E1D0FF;
+    BackgroundColorDisabled = #E6E6E6;
+    BackgroundColorDown = #EBEBEB;
+    BackgroundColorHover = #E6DAFF;
+    BorderColor = #3C3C3C;
+    BorderColorDisabled = #7D7D7D;
+    BorderColorDown = black;
+    BorderColorFocused = #1E1EB4;
+    BorderColorHover = #D39BFF;
+    Borders = (1, 1, 1, 1);
+    Font = "SpaceGrotesk-Bold.ttf";
+    RoundedBorderRadius = 6;
+    TextColor = #3C3C3C;
+    TextColorDisabled = #7D7D7D;
+    TextColorDown = black;
+    TextColorHover = black;
+    Texture = None;
+    TextureDisabled = None;
+    TextureDown = None;
+    TextureDownFocused = None;
+    TextureDownHover = None;
+    TextureFocused = None;
+    TextureHover = None;
+}
+
+Renderer.5 {
+    BackgroundColor = #8E6FFF;
+    BackgroundColorDisabled = #E6E6E6;
+    BackgroundColorDown = #7F76FF;
+    BackgroundColorDownFocused = #7F76FF;
+    BackgroundColorDownHover = #FAC0FF00;
+    BackgroundColorFocused = #8E6FFF;
+    BackgroundColorHover = #AB96FF;
+    BorderColor = #3C2877;
+    BorderColorDisabled = #7D7D7D;
+    BorderColorDown = black;
+    BorderColorFocused = #FFAEF4;
+    BorderColorHover = #FFC9EF;
+    Borders = (2, 2, 2, 2);
+    Font = "SpaceGrotesk-Bold.ttf";
+    RoundedBorderRadius = 13;
+    TextColor = #F4DDFF;
+    TextColorDisabled = #7D7D7D;
+    TextColorDown = black;
+    TextColorHover = black;
+    TextStyle = Regular;
+    Texture = None;
+    TextureDisabled = None;
+    TextureDown = None;
+    TextureDownFocused = None;
+    TextureDownHover = None;
+    TextureFocused = None;
+    TextureHover = None;
+}
+
 Picture.Background {
-    Position = (0, -30);
-    Size = (1920, 1080);
+    Size = (1600, 900);
 
     Renderer {
-        Texture = "ForestGreen.png" Smooth;
+        Texture = "Background.png" Smooth;
         TransparentTexture = false;
     }
 }
@@ -66,26 +146,26 @@ Picture.Background {
 Button.InsertButton {
     Position = (20, 540);
     Size = (140, 51.3333);
-    Text = "Insert Node";
+    Text = Insert;
     TextSize = 15;
 
     Renderer {
-        BackgroundColor = #1C6758;
+        BackgroundColor = #8E6FFF;
         BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorDown = #1C6758;
-        BackgroundColorDownFocused = #1C6758;
+        BackgroundColorDown = #7F76FF;
+        BackgroundColorDownFocused = #7F76FF;
         BackgroundColorDownHover = #FAC0FF00;
-        BackgroundColorFocused = #1C6758;
-        BackgroundColorHover = #00725B;
-        BorderColor = #005644;
+        BackgroundColorFocused = #8E6FFF;
+        BackgroundColorHover = #AB96FF;
+        BorderColor = #3C2877;
         BorderColorDisabled = #7D7D7D;
         BorderColorDown = black;
-        BorderColorFocused = #005644;
-        BorderColorHover = #3D8361;
+        BorderColorFocused = #FFAEF4;
+        BorderColorHover = #FFC9EF;
         Borders = (2, 2, 2, 2);
         Font = "SpaceGrotesk-Bold.ttf";
         RoundedBorderRadius = 13;
-        TextColor = #EEF2E6;
+        TextColor = #F4DDFF;
         TextColorDisabled = #7D7D7D;
         TextColorDown = black;
         TextColorHover = black;
@@ -103,26 +183,26 @@ Button.InsertButton {
 Button.DeleteButton {
     Position = (20, 600);
     Size = (140, 51.3333);
-    Text = "Delete Node";
+    Text = Remove;
     TextSize = 15;
 
     Renderer {
-        BackgroundColor = #1C6758;
+        BackgroundColor = #8E6FFF;
         BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorDown = #1C6758;
-        BackgroundColorDownFocused = #1C6758;
+        BackgroundColorDown = #7F76FF;
+        BackgroundColorDownFocused = #7F76FF;
         BackgroundColorDownHover = #FAC0FF00;
-        BackgroundColorFocused = #1C6758;
-        BackgroundColorHover = #00725B;
-        BorderColor = #005644;
+        BackgroundColorFocused = #8E6FFF;
+        BackgroundColorHover = #AB96FF;
+        BorderColor = #3C2877;
         BorderColorDisabled = #7D7D7D;
         BorderColorDown = black;
-        BorderColorFocused = #005644;
-        BorderColorHover = #3D8361;
+        BorderColorFocused = #FFAEF4;
+        BorderColorHover = #FFC9EF;
         Borders = (2, 2, 2, 2);
         Font = "SpaceGrotesk-Bold.ttf";
         RoundedBorderRadius = 13;
-        TextColor = #EEF2E6;
+        TextColor = #F4DDFF;
         TextColorDisabled = #7D7D7D;
         TextColorDown = black;
         TextColorHover = black;
@@ -140,7 +220,7 @@ Button.DeleteButton {
 Button.CreateButton {
     Position = (20, 780);
     Size = (140, 51.3333);
-    Text = "Create List";
+    Text = "Create Array";
     TextSize = 15;
 
     Renderer {
@@ -179,7 +259,7 @@ EditBox.DeletePos {
     InputValidator = Int;
     MaximumCharacters = 2;
     MouseCursor = Text;
-    Position = (240, 610);
+    Position = (250, 610);
     Size = (60, 30.1714);
     TextSize = 13;
 
@@ -214,15 +294,15 @@ EditBox.InsertPos {
     InputValidator = Int;
     MaximumCharacters = 3;
     MouseCursor = Text;
-    Position = (240, 550);
+    Position = (250, 550);
     Size = (60, 30.1714);
     TextSize = 13;
 
     Renderer {
-        BackgroundColor = #D4D1B7;
+        BackgroundColor = #E1D0FF;
         BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorHover = #DADFCB;
-        BorderColor = #1C6758;
+        BackgroundColorHover = #EFDDFF;
+        BorderColor = #A588BF;
         BorderColorDisabled = #7D7D7D;
         BorderColorFocused = #636387;
         BorderColorHover = black;
@@ -249,15 +329,15 @@ EditBox.InsertVal {
     InputValidator = Int;
     MaximumCharacters = 2;
     MouseCursor = Text;
-    Position = (310, 550);
+    Position = (320, 550);
     Size = (60, 30.1714);
     TextSize = 13;
 
     Renderer {
-        BackgroundColor = #D4D1B7;
+        BackgroundColor = #E1D0FF;
         BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorHover = #DADFCB;
-        BorderColor = #1C6758;
+        BackgroundColorHover = #EFDDFF;
+        BorderColor = #A588BF;
         BorderColorDisabled = #7D7D7D;
         BorderColorFocused = #636387;
         BorderColorHover = black;
@@ -347,67 +427,19 @@ EditBox.EditBox1 {
 }
 
 Button.InsertEx {
-    Position = (380, 550);
+    Position = (400, 550);
+    Renderer = &1;
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
-
-    Renderer {
-        BackgroundColor = #024236;
-        BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorDown = #EBEBEB;
-        BackgroundColorHover = white;
-        BorderColor = #071831;
-        BorderColorDisabled = #7D7D7D;
-        BorderColorDown = black;
-        BorderColorFocused = #1E1EB4;
-        BorderColorHover = black;
-        Borders = (1, 1, 1, 1);
-        Font = "SpaceGrotesk-Bold.ttf";
-        TextColor = #ECF7FF;
-        TextColorDisabled = #7D7D7D;
-        TextColorDown = black;
-        TextColorHover = black;
-        Texture = None;
-        TextureDisabled = None;
-        TextureDown = None;
-        TextureDownFocused = None;
-        TextureDownHover = None;
-        TextureFocused = None;
-        TextureHover = None;
-    }
 }
 
 Button.DeleteEx {
-    Position = (310, 610);
+    Position = (320, 610);
+    Renderer = &1;
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
-
-    Renderer {
-        BackgroundColor = #313893;
-        BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorDown = #EBEBEB;
-        BackgroundColorHover = white;
-        BorderColor = #071831;
-        BorderColorDisabled = #7D7D7D;
-        BorderColorDown = black;
-        BorderColorFocused = #1E1EB4;
-        BorderColorHover = black;
-        Borders = (1, 1, 1, 1);
-        Font = "SpaceGrotesk-Bold.ttf";
-        TextColor = #ECF7FF;
-        TextColorDisabled = #7D7D7D;
-        TextColorDown = black;
-        TextColorHover = black;
-        Texture = None;
-        TextureDisabled = None;
-        TextureDown = None;
-        TextureDownFocused = None;
-        TextureDownHover = None;
-        TextureFocused = None;
-        TextureHover = None;
-    }
 }
 
 Button.UserInputEx {
@@ -452,11 +484,11 @@ ComboBox.ComboBox1 {
     TextSize = 13;
 
     Renderer {
-        ArrowBackgroundColor = #1C6758;
+        ArrowBackgroundColor = #9148FF;
         ArrowBackgroundColorHover = white;
         ArrowColor = #3C3C3C;
         ArrowColorHover = black;
-        BackgroundColor = #3D8361;
+        BackgroundColor = #8E6FFF;
         BorderColor = black;
         Borders = (0, 0, 0, 0);
         Padding = (0, 0, 0, 0);
@@ -533,11 +565,11 @@ Button.SlideOut {
 }
 
 Panel.EditPanel {
-    Position = (1210, 610);
-    Size = (400, 170);
+    Position = (1190, 610);
+    Size = (410, 170);
 
     Renderer {
-        BackgroundColor = #1C6758;
+        BackgroundColor = #8E6FFF;
         BorderColor = black;
         Padding = (3, 3, 3, 3);
         TextureBackground = None;
@@ -546,7 +578,7 @@ Panel.EditPanel {
 
 Button.SlideIn {
     MouseCursor = Hand;
-    Position = (1170, 610);
+    Position = (1150, 610);
     Size = (40, 170);
     TextSize = 13;
 
@@ -579,7 +611,7 @@ ChildWindow.PseudoCode {
     MaximumSize = (470, 356.06);
     MinimumSize = (360, 20);
     MouseCursor = Hand;
-    Position = (590, 531.507);
+    Position = (540, 521.507);
     Resizable = true;
     Size = (470, 356.06);
     Title = "Pseudo Code";
@@ -588,7 +620,7 @@ ChildWindow.PseudoCode {
     TitleTextSize = 13;
 
     Renderer {
-        BackgroundColor = #EEF2E6;
+        BackgroundColor = #E6DAFF;
         BorderBelowTitleBar = 1;
         BorderColor = black;
         Borders = (1, 1, 1, 1);
@@ -599,8 +631,8 @@ ChildWindow.PseudoCode {
         ShowTextOnTitleButtons = true;
         TextureBackground = None;
         TextureTitleBar = None;
-        TitleBarColor = #1C6758;
-        TitleColor = #EEF2E6;
+        TitleBarColor = #8E6FFF;
+        TitleColor = #F4DDFF;
 
         CloseButton {
             BackgroundColor = #F5F5F5;
@@ -666,17 +698,17 @@ ChildWindow.PseudoCode {
 
 Button.UpdateNode {
     Position = (20, 720);
-    Renderer = &1;
+    Renderer = &2;
     Size = (140, 51.3333);
-    Text = "Update Node";
+    Text = Update;
     TextSize = 15;
 }
 
 Button.SearchNode {
     Position = (20, 660);
-    Renderer = &1;
+    Renderer = &2;
     Size = (140, 51.3333);
-    Text = "Search Node";
+    Text = Search;
     TextSize = 15;
 }
 
@@ -720,7 +752,7 @@ EditBox.UpdateVal {
     InputValidator = Int;
     MaximumCharacters = 2;
     MouseCursor = Text;
-    Position = (240, 730);
+    Position = (250, 730);
     Size = (60, 30.1714);
     TextSize = 13;
 
@@ -786,16 +818,16 @@ EditBox.SearchVal {
 }
 
 Button.SearchEx {
-    Position = (240, 670);
-    Renderer = &2;
+    Position = (250, 670);
+    Renderer = &3;
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
 }
 
 Button.UpdateEx {
-    Position = (310, 730);
-    Renderer = &2;
+    Position = (320, 730);
+    Renderer = &3;
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
@@ -803,65 +835,67 @@ Button.UpdateEx {
 
 Button.InsertMode {
     Position = (170, 550);
-    Size = (60, 30.3333);
-    Text = Middle;
+    Renderer = &4;
+    Size = (70, 30.3333);
+    Text = "Insert At";
     TextSize = 13;
-
-    Renderer {
-        BackgroundColor = #D6CDA4;
-        BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorDown = #EBEBEB;
-        BackgroundColorHover = #DCDACB;
-        BorderColor = #3C3C3C;
-        BorderColorDisabled = #7D7D7D;
-        BorderColorDown = black;
-        BorderColorFocused = #1E1EB4;
-        BorderColorHover = #D39BFF;
-        Borders = (1, 1, 1, 1);
-        Font = "SpaceGrotesk-Bold.ttf";
-        RoundedBorderRadius = 6;
-        TextColor = #3C3C3C;
-        TextColorDisabled = #7D7D7D;
-        TextColorDown = black;
-        TextColorHover = black;
-        Texture = None;
-        TextureDisabled = None;
-        TextureDown = None;
-        TextureDownFocused = None;
-        TextureDownHover = None;
-        TextureFocused = None;
-        TextureHover = None;
-    }
 }
 
 Button.DeleteMode {
     Position = (170, 610);
-    Size = (60, 30.3333);
-    Text = Middle;
+    Renderer = &4;
+    Size = (70, 30.3333);
+    Text = "Remove At";
     TextSize = 13;
+}
+
+Button.ShrinkButton {
+    Position = (20, 494.667);
+    Renderer = &5;
+    Size = (100, 36.6666);
+    Text = Shrink;
+    TextSize = 15;
+}
+
+Button.GrowButton {
+    Position = (20, 448.333);
+    Renderer = &5;
+    Size = (100, 36.6666);
+    Text = Grow;
+    TextSize = 15;
+}
+
+EditBox.ArraySize {
+    DefaultText = "size = ...";
+    InputValidator = Int;
+    MaximumCharacters = 2;
+    MouseCursor = Text;
+    Position = (140, 845);
+    Size = (60, 30.1714);
+    TextSize = 13;
+    Visible = false;
 
     Renderer {
-        BackgroundColor = #D6CDA4;
+        BackgroundColor = #E1D0FF;
         BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorDown = #EBEBEB;
-        BackgroundColorHover = #E6DAFF;
-        BorderColor = #3C3C3C;
+        BackgroundColorHover = #EFDDFF;
+        BorderColor = #A588BF;
         BorderColorDisabled = #7D7D7D;
-        BorderColorDown = black;
-        BorderColorFocused = #1E1EB4;
-        BorderColorHover = #D39BFF;
-        Borders = (1, 1, 1, 1);
+        BorderColorFocused = #636387;
+        BorderColorHover = black;
+        Borders = (2, 2, 2, 2);
+        CaretColor = black;
+        CaretWidth = 0;
+        DefaultTextColor = #483C4F;
         Font = "SpaceGrotesk-Bold.ttf";
-        RoundedBorderRadius = 6;
+        Opacity = 0.8;
+        Padding = (0, 0, 0, 0);
+        SelectedTextBackgroundColor = #006EFF;
+        SelectedTextColor = white;
         TextColor = #3C3C3C;
         TextColorDisabled = #7D7D7D;
-        TextColorDown = black;
-        TextColorHover = black;
         Texture = None;
         TextureDisabled = None;
-        TextureDown = None;
-        TextureDownFocused = None;
-        TextureDownHover = None;
         TextureFocused = None;
         TextureHover = None;
     }

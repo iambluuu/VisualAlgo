@@ -12,7 +12,6 @@ struct SLL {
 	vector<vector<function<void (int)> > >  action;
 	signal Signal;
 	Clock timer;
-	tgui::Theme theme;
 
 	bool ShowMode;
 	bool ShowDirection;
@@ -34,8 +33,6 @@ struct SLL {
 		DefaultPosX = 250;
 		DefaultPosY = 250;
 		maxNodeNumber = 15;
-
-		theme.load("assets/themes/CyberPurple.txt");
 
 		Head = nullptr;
 		Tail = nullptr;

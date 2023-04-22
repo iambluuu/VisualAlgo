@@ -14,13 +14,12 @@ enum Nodestate {
 	Normal, Visited, Selecting, Next, New, Remove
 };
 
-__declspec(selectany) Color* MainColor = &VSPurple;
-
 struct Node {
 	tgui::Button::Ptr Hitbox;
 
 	Nodestate NodeState;
 	Nodestate ArrowState;
+	Nodestate ArrowStateU;
 
 	string Val;
 	Node* nxt;
@@ -41,9 +40,11 @@ struct Node {
 	Sprite TmpArrow;
 	
 	int NumberInList;
+	int NodeType;
 	Text Title;
 
 	Node(int v) {
+		NodeType = 0;
 		Hitbox = tgui::Button::create();
 		Hitbox->setSize({ 46, 46 });
 		Hitbox->getRenderer()->setOpacity(0);
@@ -68,6 +69,7 @@ struct Node {
 			});
 
 		ArrowState = Normal;
+		ArrowStateU = Normal;
 		NodeState = Normal;
 
 		Pos = { 0, 0 };
@@ -107,6 +109,8 @@ struct Node {
 	}
 
 	Node(String v) {
+		NodeType = 0;
+
 		Hitbox = tgui::Button::create();
 		Hitbox->setSize({ 46, 46 });
 		Hitbox->getRenderer()->setRoundedBorderRadius(23);
@@ -170,5 +174,7 @@ struct Node {
 	void drawNode(int Opacity);
 	void drawArrow();
 	void drawArrow(int Opacity);
+	void drawDArrow();
+	void drawDArrow(int Opacity);
 
 };
