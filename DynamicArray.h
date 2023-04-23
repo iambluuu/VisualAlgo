@@ -28,9 +28,14 @@ struct DArray {
 	int size;
 	int capacity;
 
+	Font font;
+	Text ArrLabel;
+
 	DArray() {
 		DefaultPosX = 250;
 		DefaultPosY = 250;
+
+		maxCap = 15;
 
 		timer.restart();
 		Signal = Pending;
@@ -47,19 +52,23 @@ struct DArray {
 		ShowDirection = 0;
 		ShowMode = 1;
 
-		for (int i = 0; i < 12; i++) {
+		font.loadFromFile("assets/SpaceGrotesk-Bold.ttf");
+		ArrLabel.setFont(font);
+		ArrLabel.setFillColor(NRed);
+		ArrLabel.setCharacterSize(17);
+
+		for (int i = 0; i < maxCap; i++) {
 			ArrayMem* Mem = new ArrayMem(i);
 			Mem->changeMemPosition(DefaultPosX + 95 * (i - 1), DefaultPosY);
 			DummyArr.push_back(Mem);
 		}
 
-		for (int i = 0; i < 12; i++) {
+		for (int i = 0; i < maxCap; i++) {
 			ArrayMem* Mem = new ArrayMem(i);
 			Mem->changeMemPosition(DefaultPosX + 95 * (i - 1), DefaultPosY);
 			Arr.push_back(Mem);
 		}
 
-		maxCap = 12;
 
 		size = 0;
 		capacity = 0;
@@ -74,6 +83,12 @@ struct DArray {
 
 	void drawSize();
 	void drawCapacity();
+	void drawLabel(String Name, ArrayMem* A, int Dummy);
+	void LabelAppear(String Name, ArrayMem* A, int Elapsed);
+	void LabelDisappear(String Name, ArrayMem* A, int Elapsed);
+
+	void HighlightAppear(int Elapsed);
+	void MoveHighlight(int CurLine, int NextLine, int Elapsed);
 
 	void setArrNormal(vector<ArrayMem*> &A, int Dummy);
 	void ChangeState(ArrayMem* Cur, bool CurState, bool NextState, int Elapsed);
@@ -88,7 +103,9 @@ struct DArray {
 	void pushBack(int v);
 	void insertAt(int i, int v);
 	void popBack();
-	void deleteAt(int i)  ;
+	void deleteAt(int i);
+	void searchMem(int v);
+	void updateMem(int i, int v);
 
 	void ClearAction();
 	void reset();
