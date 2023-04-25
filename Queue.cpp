@@ -283,6 +283,7 @@ void Queue::genList()
 	Head = new Node(rand() % 100);
 	Head->NumberInList = 0;
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
+	Tail = Head;
 
 	Node* Cur = Head;
 
@@ -291,6 +292,7 @@ void Queue::genList()
 		Node* tmp = Cur;
 
 		Cur = Cur->nxt;
+
 		Cur->prev = tmp;
 		Cur->NumberInList = i;
 		Cur->changeNodePosition(tmp->Pos.x + 95, tmp->Pos.y);
@@ -354,6 +356,7 @@ void Queue::genList(const tgui::String s)
 	Head = new Node(parts[0].toInt());
 	Head->NumberInList = 0;
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
+	Tail = Head;
 
 	Node* Cur = Head;
 

@@ -275,6 +275,7 @@ void Stack::genList()
 	Head = new Node(rand() % 100);
 	Head->NumberInList = 0;
 	Head->changeNodePosition(DefaultPosX, DefaultPosY - 100 * (NodeNumber - 1));
+	Tail = Head;
 
 	Node* Cur = Head;
 
@@ -346,6 +347,7 @@ void Stack::genList(const tgui::String s)
 	Head = new Node(parts[0].toInt());
 	Head->NumberInList = 0;
 	Head->changeNodePosition(DefaultPosX, DefaultPosY - 100 * (NodeNumber - 1));
+	Tail = Head;
 
 	Node* Cur = Head;
 

@@ -7,8 +7,10 @@
 #include "Global.h"
 #include "SinglyLinkedList.h"
 #include "DoublyLinkedList.h"
+#include "CircularLinkedList.h"
 #include "Stack.h"
 #include "Queue.h"
+#include "Array.h"
 #include "DynamicArray.h"
 
 using namespace std;
@@ -25,8 +27,8 @@ int main()
 	Stack B;
 	Queue C;
 	DLL D;
-	//CLL E;
-	//Array F;
+	CLL E;
+	Array F;
 	DArray G;
 	
 	while (app.isOpen()) {
@@ -56,6 +58,16 @@ int main()
 
 			break;
 		case _CLL:
+			gui.removeAllWidgets();
+			gui.loadWidgetsFromFile("assets/themes/SLLGui.txt");
+			E.Signal = Pending;
+			E.NodeNumber = 0;
+			E.ShowMode = 1;
+			E.initButtons();
+
+			while (State == _CLL)
+				E.interactCLL();
+
 			cout << "CLL\n";
 			break;
 		case _Stack:
@@ -88,7 +100,7 @@ int main()
 			gui.loadWidgetsFromFile("assets/themes/DArrayGui.txt");
 			G.Signal = Pending;
 			G.size = 0;
-			G.capacity = 5;
+			G.capacity = 0;
 			G.ShowMode = 1;
 			G.initButtons();
 
@@ -98,6 +110,17 @@ int main()
 			cout << "Dynamic Array\n";
 			break;
 		case _Array:
+			gui.removeAllWidgets();
+			gui.loadWidgetsFromFile("assets/themes/DArrayGui.txt");
+			F.Signal = Pending;
+			F.size = 0;
+			F.capacity = 0;
+			F.ShowMode = 1;
+			F.initButtons();
+
+			while (State == _Array)
+				F.interactArr();
+
 			cout << "Array\n";
 			break;
 		}

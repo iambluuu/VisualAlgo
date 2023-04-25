@@ -257,7 +257,7 @@ void Node::updateArrow(Node* Nxt)
 	if (!Nxt)
 		return;
 
-	Arrow.setPosition(Pos.x + 46, Pos.y + 15);
+	Arrow.setPosition(Pos.x + 46, Pos.y + 17);
 
 	int ArrowLength = (int)(Util::DistanceBetweenNodes(Pos, Nxt->Pos) - 46);
 	if (NodeType == 1)

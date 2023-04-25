@@ -4,7 +4,7 @@
 
 #include "Node.h"
 
-struct Stack {
+struct CLL {
 	float DefaultPosX;
 	float DefaultPosY;
 	int maxNodeNumber;
@@ -28,10 +28,13 @@ struct Stack {
 	Node* Head;
 	Node* Tail;
 
-	Stack() {
-		DefaultPosX = 700;
-		DefaultPosY = 700;
-		maxNodeNumber = 9;
+	Texture longarrow;
+	Sprite LongArrow;
+
+	CLL() {
+		DefaultPosX = 250;
+		DefaultPosY = 250;
+		maxNodeNumber = 12;
 
 		Head = nullptr;
 		Tail = nullptr;
@@ -48,9 +51,14 @@ struct Stack {
 
 		ShowMode = 1;
 		ShowDirection = 0;
+
+		longarrow.loadFromFile("assets/arrow.png");
+		LongArrow.setTexture(longarrow);
+		LongArrow.setColor(Color(0, 0, 0));
+
 	}
 
-	~Stack() {
+	~CLL() {
 		while (Head) {
 			Node* tmp = Head->nxt;
 			delete Head;
@@ -58,16 +66,19 @@ struct Stack {
 		}
 	}
 
-
 	int getSize();
 
 	void initButtons();
 	void initProgress();
-	void interactStack();
+	void interactCLL();
 	void HandleEvent(Event& e);
 	void ClearAction();
 
 	void initList();
+	void drawLongArrow(Node* A, Node* B, int Dummy);
+	void ConnectLongArrow(Node* A, Node* B, int Elapsed);
+	void DisconnectLongArrow(Node* A, Node* B, int Elapsed);
+	void ReconnectLongArrow(Node* from, Node* preDes, Node* newDes, int Elapsed);
 	void drawList(int Dummy);
 	void drawTitle(Node* Cur, Nodestate NodeState, int Dummy);
 	void drawListPartial(Node* A, Node* B, int Dummy);
@@ -79,7 +90,7 @@ struct Stack {
 	void NodeDisappear(Node* Cur, int Elapsed);
 	void TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed);
 	void TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed);
-	void HighlightAppear(int Line, int Elapsed);
+	void HighlightAppear(int Elapsed);
 	void MoveHighlight(int CurLine, int NextLine, int Elapsed);
 	void drawNode(Node* Cur, int Dummy);
 	void setNodeState(Node* Cur, Nodestate NodeState, int Dummy);
@@ -96,11 +107,14 @@ struct Stack {
 	void genList(const tgui::String s);
 
 	void insertAtBeginning(Node*& NewNode);
+	void insertAtEnd(Node*& NewNode);
 	bool insertNode(int i, int v);
 
 	bool removeNode(int i);
 	void removeAtBeginning();
+	void removeAtEnd();
 	void DeleteNode(Node*& Cur, int Dummy);
 
-	void Peek();
+	void searchNode(tgui::String v);
+	void updateNode(int i, int v);
 };

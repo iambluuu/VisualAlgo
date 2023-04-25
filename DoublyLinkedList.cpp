@@ -281,6 +281,7 @@ void DLL::genList()
 	Head->NodeType = 1;
 	Head->NumberInList = 0;
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
+	Tail = Head;
 
 	Node* Cur = Head;
 
@@ -355,6 +356,7 @@ void DLL::genList(const tgui::String s)
 	Head->NumberInList = 0;
 	Head->NodeType = 1;
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
+	Tail = Head;
 
 	Node* Cur = Head;
 

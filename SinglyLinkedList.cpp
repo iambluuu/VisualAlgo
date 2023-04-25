@@ -275,7 +275,8 @@ void SLL::genList()
 	Head = new Node(rand() % 100);
 	Head->NumberInList = 0;
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
-	
+	Tail = Head;
+
 	Node* Cur = Head;
 
 	for (int i = 1; i < NodeNumber; i++) {
@@ -346,6 +347,7 @@ void SLL::genList( const tgui::String s)
 	Head = new Node(parts[0].toInt());
 	Head->NumberInList = 0;
 	Head->changeNodePosition(DefaultPosX, DefaultPosY);
+	Tail = Head;
 
 	Node* Cur = Head;
 
@@ -477,7 +479,7 @@ void SLL::DisconnectNode(Node* A, Node* B, int Elapsed)
 	Elapsed = Duration - Elapsed;
 
 	A->updateArrow(B);
-	//A->ArrowState = Remove;
+	A->ArrowState = Normal;
 
 	int Length = (int)((Util::DistanceBetweenNodes(A->Pos, B->Pos) - 46) * Elapsed / Duration);
 	A->Arrow.setTextureRect(IntRect(100 - Length, 0, Length, 10));
@@ -1256,7 +1258,12 @@ void SLL::initButtons()
 	tgui::RadioButton::Ptr Theme2 = EditPanel->get<tgui::RadioButton>("Theme2");
 	Theme2->setRenderer(theme.getRenderer("RadioButton"));
 
-
+	if (ThemeNum == 0) {
+		Theme1->setChecked(1);
+	}
+	else {
+		Theme2->setChecked(1);
+	}
 
 	Speed->setValue(2);
 

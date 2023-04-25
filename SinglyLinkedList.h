@@ -27,7 +27,6 @@ struct SLL {
 	int Duration;
 	Node* Head;
 	Node* Tail;
-	RectangleShape TextHighlight;
 
 	SLL() {
 		DefaultPosX = 250;
@@ -50,7 +49,6 @@ struct SLL {
 		ShowMode = 1;
 		ShowDirection = 0;
 
-		TextHighlight.setFillColor(Color(0,0,0,0));
 	}
 
 	~SLL() {
@@ -60,7 +58,6 @@ struct SLL {
 			Head = tmp;
 		}
 	}
-
 
 	int getSize();
 

@@ -27,7 +27,6 @@ struct Queue {
 	int Duration;
 	Node* Head;
 	Node* Tail;
-	RectangleShape TextHighlight;
 
 	Queue() {
 		DefaultPosX = 250;
@@ -49,8 +48,6 @@ struct Queue {
 
 		ShowMode = 1;
 		ShowDirection = 0;
-
-		TextHighlight.setFillColor(Color(0, 0, 0, 0));
 	}
 
 	~Queue() {

@@ -50,7 +50,7 @@ enum signal {
 	Pending, Inserting, Removing, Searching
 };
 
-__declspec(selectany) ScreenState State = _Stack;
+__declspec(selectany) ScreenState State = _CLL;
 
 namespace Util {
 

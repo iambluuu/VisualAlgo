@@ -1,7 +1,7 @@
 #pragma once
 #include "ArrayMem.h"
 
-struct DArray {
+struct Array {
 	vector<ArrayMem*> Arr;
 	vector<ArrayMem*> DummyArr;
 
@@ -31,7 +31,7 @@ struct DArray {
 	Font font;
 	Text ArrLabel;
 
-	DArray() {
+	Array() {
 		DefaultPosX = 250;
 		DefaultPosY = 250;
 
@@ -74,10 +74,10 @@ struct DArray {
 		capacity = 0;
 	}
 
-	~DArray() {
+	~Array() {
 		Arr.clear();
 	}
-	
+
 	void genList();
 	void genList(tgui::String s);
 
@@ -90,20 +90,15 @@ struct DArray {
 	void HighlightAppear(int Line, int Elapsed);
 	void MoveHighlight(int CurLine, int NextLine, int Elapsed);
 
-	void setArrNormal(vector<ArrayMem*> &A, int Dummy);
+	void setArrNormal(vector<ArrayMem*>& A, int Dummy);
 	void ChangeState(ArrayMem* Cur, bool CurState, bool NextState, int Elapsed);
 	void ChangeValue(ArrayMem* Cur, sf::String preVal, sf::String nextVal, int Elapsed);
-	void ArrAppear(vector<ArrayMem*> &A, int l, int r, int Elapsed);
-	void ArrDisappear(vector<ArrayMem*> &A, int l, int r, int Elapsed);
-	void drawArr(vector<ArrayMem*> &A, int l, int r, int Dummy);
+	void ArrAppear(vector<ArrayMem*>& A, int l, int r, int Elapsed);
+	void ArrDisappear(vector<ArrayMem*>& A, int l, int r, int Elapsed);
+	void drawArr(vector<ArrayMem*>& A, int l, int r, int Dummy);
 	void MoveArrDown(int Elapsed);
 
-	void shrinkArray();
-	void growArray();
-	void pushBack(int v);
-	void insertAt(int i, int v);
-	void popBack();
-	void deleteAt(int i);
+
 	void searchMem(int v);
 	void updateMem(int i, int v);
 
@@ -112,5 +107,5 @@ struct DArray {
 	void initProgress();
 	void initButtons();
 	void HandleEvent(Event& e);
-	void interactDArr();
+	void interactArr();
 };

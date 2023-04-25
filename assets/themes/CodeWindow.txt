@@ -15,7 +15,7 @@ TextArea.TextArea1 {
     HorizontalScrollbarPolicy = Never;
     MaximumCharacters = 0;
     ReadOnly = true;
-    Size = (470, 356);
+    Size = (470, 476.06);
     Text = "";
     TextSize = 20;
 

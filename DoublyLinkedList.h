@@ -27,7 +27,6 @@ struct DLL {
 	int Duration;
 	Node* Head;
 	Node* Tail;
-	RectangleShape TextHighlight;
 
 	DLL() {
 		DefaultPosX = 250;
@@ -50,7 +49,6 @@ struct DLL {
 		ShowMode = 1;
 		ShowDirection = 0;
 
-		TextHighlight.setFillColor(Color(0, 0, 0, 0));
 	}
 
 	~DLL() {

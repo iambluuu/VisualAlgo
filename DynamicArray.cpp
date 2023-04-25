@@ -7,7 +7,7 @@ void DArray::reset()
 {
 	for (int i = 0; i < maxCap; i++) {
 		Arr[i]->changeMemPosition(DefaultPosX + 95 * (i - 1), DefaultPosY);
-		DummyArr[i]->Value.setString(String(""));
+		DummyArr[i]->changeMemValue(String(""));
 
 		Arr[i]->Selecting = 0;
 		DummyArr[i]->Selecting = 0;
@@ -128,7 +128,7 @@ void DArray::genList(tgui::String s)
 	}
 }
 
-void DArray::HighlightAppear(int Elapsed)
+void DArray::HighlightAppear(int Line, int Elapsed)
 {
 	if (Elapsed >= Duration / 2)
 		Elapsed = Duration / 2;
@@ -136,7 +136,7 @@ void DArray::HighlightAppear(int Elapsed)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
 
-	TextHighlight->setPosition({ 0, 4 });
+	TextHighlight->setPosition({ 0, 4 + 26 * Line });
 	TextHighlight->setVisible(1);
 	TextHighlight->setInheritedOpacity(2 * (float)Elapsed / Duration);
 }
@@ -271,15 +271,21 @@ void DArray::MoveArrDown(int Elapsed)
 
 void DArray::shrinkArray()
 {
-	if (size == capacity) {
+	if (size == capacity || size == 0) {
 		Signal = Pending;
 		return;
 	}
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("int tmp = new int[size]\nfor(k = 0; k < size; k++)\n	tmp[k] = arr[k]\ncapacity = size\ndelete[] arr, arr = tmp"));
 
 	reset();
 
 	action.push_back(vector<function<void(int)> > ());
 
+	action.back().push_back(bind(&DArray::HighlightAppear, this, 0, placeholders::_1));
 	action.back().push_back(bind(&DArray::LabelAppear, this, String("tmp"), DummyArr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::ArrAppear, this, DummyArr, 0, size, placeholders::_1));
 	action.back().push_back(bind(&DArray::MoveArrDown, this, placeholders::_1));
@@ -293,15 +299,23 @@ void DArray::shrinkArray()
 		action.back().push_back(bind(&DArray::drawLabel, this, String("tmp"), DummyArr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::setArrNormal, this, Arr, placeholders::_1));
 		action.back().push_back(bind(&DArray::setArrNormal, this, DummyArr, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawArr, this, DummyArr, 0, i, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawArr, this, DummyArr, 0, i - 1, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, DummyArr, i + 1, size, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, i, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, i - 1, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, i + 1, capacity, placeholders::_1));
 		action.back().push_back(bind(&DArray::ChangeState, this, Arr[i], 0, 1,placeholders::_1));
 		action.back().push_back(bind(&DArray::ChangeState, this, DummyArr[i], 0, 1,placeholders::_1));
 
+		if (i > 0) {
+			action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 1, placeholders::_1));
+			action.back().push_back(bind(&DArray::ChangeState, this, Arr[i - 1], 1, 0, placeholders::_1));
+			action.back().push_back(bind(&DArray::ChangeState, this, DummyArr[i - 1], 1, 0, placeholders::_1));
+		} else
+			action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 1, placeholders::_1));
+
 		action.push_back(vector<function<void(int)> >());
 
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 1, 2, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("tmp"), DummyArr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, DummyArr, 0, i, placeholders::_1));
@@ -312,6 +326,7 @@ void DArray::shrinkArray()
 
 	action.push_back(vector<function<void(int)> >());
 
+	action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 4, placeholders::_1));
 	action.back().push_back(bind(&DArray::LabelAppear, this, String("arr"), DummyArr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::LabelDisappear, this, String("tmp"), DummyArr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::LabelDisappear, this, String("arr"), Arr[0], placeholders::_1));
@@ -327,10 +342,15 @@ void DArray::shrinkArray()
 
 void DArray::growArray()
 {
-	if (capacity == maxCap) {
+	if (capacity == maxCap || capacity == 0) {
 		Signal = Pending;
 		return;
 	}
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("int tmp = new int[min(capacity * 2, MaxCap)]\nfor(k = 0; k < size; k++)\n	tmp[k] = arr[k]\ncapacity = min(capacity * 2, MaxCap)\ndelete[] arr, arr = tmp"));
 	
 	reset();
 
@@ -339,6 +359,7 @@ void DArray::growArray()
 
 	action.push_back(vector<function<void(int)> >());
 
+	action.back().push_back(bind(&DArray::HighlightAppear, this, 0, placeholders::_1));
 	action.back().push_back(bind(&DArray::LabelAppear, this, String("tmp"), DummyArr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::ArrAppear, this, DummyArr, 0, capacity, placeholders::_1));
 	action.back().push_back(bind(&DArray::MoveArrDown, this, placeholders::_1));
@@ -352,15 +373,23 @@ void DArray::growArray()
 		action.back().push_back(bind(&DArray::drawLabel, this, String("tmp"), DummyArr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::setArrNormal, this, Arr, placeholders::_1));
 		action.back().push_back(bind(&DArray::setArrNormal, this, DummyArr, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawArr, this, DummyArr, 0, i, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawArr, this, DummyArr, 0, i - 1, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, DummyArr, i + 1, capacity, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, i, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, i - 1, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, i + 1, prevCap, placeholders::_1));
 		action.back().push_back(bind(&DArray::ChangeState, this, Arr[i], 0, 1, placeholders::_1));
 		action.back().push_back(bind(&DArray::ChangeState, this, DummyArr[i], 0, 1, placeholders::_1));
 
+		if (i > 0) {
+			action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 1, placeholders::_1));
+			action.back().push_back(bind(&DArray::ChangeState, this, Arr[i - 1], 1, 0, placeholders::_1));
+			action.back().push_back(bind(&DArray::ChangeState, this, DummyArr[i - 1], 1, 0, placeholders::_1));
+		} else
+			action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 1, placeholders::_1));
+
 		action.push_back(vector<function<void(int)> >());
 
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 1, 2, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("tmp"), DummyArr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, DummyArr, 0, i, placeholders::_1));
@@ -371,6 +400,7 @@ void DArray::growArray()
 
 	action.push_back(vector<function<void(int)> >());
 
+	action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 4, placeholders::_1));
 	action.back().push_back(bind(&DArray::LabelAppear, this, String("arr"), DummyArr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::LabelDisappear, this, String("tmp"), DummyArr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::LabelDisappear, this, String("arr"), Arr[0], placeholders::_1));
@@ -391,15 +421,28 @@ void DArray::pushBack(int v)
 
 	reset();
 
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("if (size == capacity) growArray()\narr[size] = v, size++"));
+
 	if (size == capacity) {
-		action.push_back(vector<function<void(int)> >());
 		capacity = min(capacity * 2, maxCap);
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::HighlightAppear, this, 1, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 		action.back().push_back(bind(&DArray::ArrAppear, this, Arr, size, capacity, placeholders::_1));
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 1, 2, placeholders::_1));
+	}
+	else {
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::HighlightAppear, this, 2, placeholders::_1));
 	}
 
-	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, size + 1, capacity, placeholders::_1));
@@ -417,37 +460,71 @@ void DArray::insertAt(int i, int v)
 		return;
 	}
 
+	if (i == size - 1) {
+		pushBack(v);
+		return;
+	}
+
 	reset();
 
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("if (size == capacity) growArray()\nfor(k = size - 1; k >= i; k++)\n		arr[k + 1] = arr[k]\narr[i] = v, size++"));	
+
 	if (size == capacity) {
-		action.push_back(vector<function<void(int)> >());
 		capacity = min(capacity * 2, maxCap);
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::HighlightAppear, this, 0, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 		action.back().push_back(bind(&DArray::ArrAppear, this, Arr, size, capacity, placeholders::_1));
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 1, placeholders::_1));
+	}
+	else {
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::HighlightAppear, this, 1, placeholders::_1));
 	}
 
 	for (int j = size - 1; j >= i; j--) {
 		String tmp = Arr[j]->Val;
 		String tmp2 = Arr[j + 1]->Val;
 
-		action.push_back(vector<function<void(int)> >());
-		
+		if (j < size - 1) {
+			action.push_back(vector<function<void(int)> >());
+			action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 1, placeholders::_1));
+		}
+
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::setArrNormal, this, Arr, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, j, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawArr, this, Arr, j + 2, capacity, placeholders::_1));
+
+		if (j < size - 1) {
+			action.back().push_back(bind(&DArray::ChangeState, this, Arr[j + 2], 1, 0, placeholders::_1));
+			action.back().push_back(bind(&DArray::ChangeState, this, Arr[j + 1], 1, 0, placeholders::_1));
+			action.back().push_back(bind(&DArray::drawArr, this, Arr, j + 3, capacity, placeholders::_1));
+		} else
+			action.back().push_back(bind(&DArray::drawArr, this, Arr, j + 1, capacity, placeholders::_1));
+
 		action.back().push_back(bind(&DArray::ChangeState, this, Arr[j], 0, 1, placeholders::_1));
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 1, 2, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, j + 1, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawArr, this, Arr, j + 2, capacity, placeholders::_1));
 		action.back().push_back(bind(&DArray::ChangeValue, this, Arr[j + 1], tmp2, tmp, placeholders::_1));
 
-		if (j != size - 1)
-			action.back().push_back(bind(&DArray::ChangeState, this, Arr[j + 2], 1, 0, placeholders::_1));
 	}
 
 	String tmp = Arr[i]->Val;
 
 	action.push_back(vector<function<void(int)> >());
 
+	action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 3, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, i, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, i + 1, capacity, placeholders::_1));
@@ -467,9 +544,15 @@ void DArray::popBack()
 
 	reset();
 
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("arr[size - 1] = 0, size--\nif (size == capacity / 2) shrinkArray()"));
+
 	String tmp = Arr[size - 1]->Val;
 	action.push_back(vector<function<void(int)> >());
 
+	action.back().push_back(bind(&DArray::HighlightAppear, this, 0, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size - 1, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, size, capacity, placeholders::_1));
@@ -480,6 +563,7 @@ void DArray::popBack()
 	if (size == (capacity) / 2) {
 		action.push_back(vector<function<void(int)> >());
 
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 1, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 		action.back().push_back(bind(&DArray::ArrDisappear, this, Arr, size, capacity, placeholders::_1));
@@ -497,40 +581,68 @@ void DArray::deleteAt(int i)
 		return;
 	}
 
+	if (i == size - 1) {
+		popBack();
+		return;
+	}
+
 	reset();
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("for(k = i; k < size - 1; k++)\n		arr[k] = arr[k + 1]\narr[size - 1] = 0, size--\nif (size == capacity / 2) shrinkArray()"));
 
 	for (int j = i; j < size - 1; j++) {
 		String tmp = Arr[j]->Val;
 		String tmp2 = Arr[j + 1]->Val;
 
 		action.push_back(vector<function<void(int)> >());
+
+		if (j > i) {
+			action.back().push_back(bind(&DArray::MoveHighlight, this, 1, 0, placeholders::_1));
+		} else
+			action.back().push_back(bind(&DArray::HighlightAppear, this, 0, placeholders::_1));
 		
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::setArrNormal, this, Arr, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, j, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawArr, this, Arr, j + 2, capacity, placeholders::_1));
-		action.back().push_back(bind(&DArray::ChangeValue, this, Arr[j], tmp, tmp2, placeholders::_1));
-		action.back().push_back(bind(&DArray::ChangeState, this, Arr[j + 1], 0, 1, placeholders::_1));
-
-		if (j > i)
+		if (j > i) {
 			action.back().push_back(bind(&DArray::ChangeState, this, Arr[j - 1], 1, 0, placeholders::_1));
+			action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, j - 1, placeholders::_1));
+		} else
+			action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, j, placeholders::_1));
+
+		action.back().push_back(bind(&DArray::drawArr, this, Arr, j + 1, capacity, placeholders::_1));
+		action.back().push_back(bind(&DArray::ChangeState, this, Arr[j], 0, 1, placeholders::_1));
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 1, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, j, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawArr, this, Arr, j + 1, capacity, placeholders::_1));
+		action.back().push_back(bind(&DArray::ChangeValue, this, Arr[j], tmp, tmp2, placeholders::_1));
+
 	}
 	
 	String tmp = Arr[size - 1]->Val;
 
 	action.push_back(vector<function<void(int)> >());
 
+	action.back().push_back(bind(&DArray::MoveHighlight, this, 1, 2, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::setArrNormal, this, Arr, placeholders::_1));
-	action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size - 1, placeholders::_1));
+	action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size - 2, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, size, capacity, placeholders::_1));
+	if (size >= 2) {
+		action.back().push_back(bind(&DArray::ChangeState, this, Arr[size - 2], 1, 0, placeholders::_1));
+	}
 	action.back().push_back(bind(&DArray::ChangeValue, this, Arr[size - 1], tmp, String(""), placeholders::_1));
 
 	size--;
 
 	if (size == capacity / 2) {
 		action.push_back(vector<function<void(int)> >());
-
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 3, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 		action.back().push_back(bind(&DArray::ArrDisappear, this, Arr, size, capacity, placeholders::_1));
@@ -543,16 +655,27 @@ void DArray::deleteAt(int i)
 
 void DArray::searchMem(int v)
 {
+	if (size == 0)
+		return;
+
 	reset();
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("for(k = 0; k < size; k++)\n		if(arr[k] == v)\n			return k\nreturn -1"));
 	
 	int j = 0;
 
 	while(j < size) {
 		action.push_back(vector<function<void(int)> >());
 
+		if (j == 0)
+			action.back().push_back(bind(&DArray::HighlightAppear, this, 0, placeholders::_1));
+		else
+			action.back().push_back(bind(&DArray::MoveHighlight, this, 1, 0, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::setArrNormal, this, Arr, placeholders::_1));
-
 		if (j > 0) {
 			action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, j - 1, placeholders::_1));
 			action.back().push_back(bind(&DArray::ChangeState, this, Arr[j - 1], 1, 0, placeholders::_1));
@@ -560,8 +683,15 @@ void DArray::searchMem(int v)
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, j + 1, capacity, placeholders::_1));
 		action.back().push_back(bind(&DArray::ChangeState, this, Arr[j], 0, 1, placeholders::_1));
 
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, capacity, placeholders::_1));
+		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 1, placeholders::_1));
+
 		if (Arr[j]->Val == String(to_string(v))) {
-			
+			action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, capacity, placeholders::_1));
+			action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+			action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 2, placeholders::_1));
 			break;
 		}
 
@@ -570,7 +700,7 @@ void DArray::searchMem(int v)
 
 	if (j == size) {
 		action.push_back(vector<function<void(int)> >());
-
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 1, 3, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::setArrNormal, this, Arr, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size - 1, placeholders::_1));
@@ -583,13 +713,21 @@ void DArray::searchMem(int v)
 
 void DArray::updateMem(int i, int v)
 {
+	if (i < 0 || i >= size)
+		return;
+
 	reset();
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("arr[i] = v"));
 
 	String preVal = Arr[i]->Val;
 	String nexVal(to_string(v));
 
 	action.push_back(vector<function<void(int)> >());
-
+	action.back().push_back(bind(&DArray::HighlightAppear, this, 0, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, i, placeholders::_1));
 	action.back().push_back(bind(&DArray::drawArr, this, Arr, i + 1, capacity, placeholders::_1));
@@ -1292,7 +1430,8 @@ void DArray::interactDArr()
 
 	switch (Signal) {
 	case Pending:
-		drawLabel(String("arr"), Arr[0], 1);
+		if (capacity > 0)
+			drawLabel(String("arr"), Arr[0], 1);
 		drawArr(Arr, 0, capacity, 1);
 		break;
 

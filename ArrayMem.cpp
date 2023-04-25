@@ -21,15 +21,17 @@ void ArrayMem::changeMemPosition(float x, float y)
 
 void ArrayMem::drawMem()
 {
+	Color Main = *MainColorArr;
+
 	if (Selecting) {
-		Box.setColor(*MainColorArr);
-		BoxBack.setFillColor(Color(255, 255, 255, 178.5));
-		Value.setFillColor(*MainColorArr);
+		Box.setColor(Main);
+		BoxBack.setFillColor(Color(255, 255, 255, 255 * 0.7));
+		Value.setFillColor(Main);
 		Index.setFillColor(NRed);
 	}
 	else {
 		Box.setColor(Color::Black);
-		BoxBack.setFillColor(Color(255, 255, 255, 178.5));
+		BoxBack.setFillColor(Color(255, 255, 255, 255 * 0.7));
 		Value.setFillColor(Color::Black);
 		Index.setFillColor(NRed);
 	}
