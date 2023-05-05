@@ -166,7 +166,7 @@ void Stack::HighlightAppear(int Line, int Elapsed)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
 
-	TextHighlight->setPosition({ 0, 4 * Line });
+	TextHighlight->setPosition({ 0, 4 + 26 * Line });
 	TextHighlight->setVisible(1);
 	TextHighlight->setInheritedOpacity(2 * (float)Elapsed / Duration);
 }
@@ -576,6 +576,83 @@ bool Stack::insertNode(int i, int v)
 	return 1;
 }
 
+void Stack::ClearList(int Dummy)
+{
+	while (Head) {
+		Node* tmp = Head;
+		Head = Head->nxt;
+		delete tmp;
+	}
+
+	Tail = nullptr;
+}
+
+void Stack::popAll()
+{
+	initList();
+	if (NodeNumber == 0) {
+		Signal = Pending;
+		return;
+	}
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("while(Head) {\n		Node* Cur = Head\n		Head = Head.next\n		delete Cur\n}"));
+
+	Node* Cur = Head;
+
+	for (Node* tmp = Head; tmp; tmp = tmp->nxt)
+		tmp->NumberInList = 0;
+
+	for(int i = 0; i < NodeNumber; i++) {
+		//tmp = Head
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&Stack::drawListPartial, this, Cur, Tail, placeholders::_1));
+		if (i == 0) {
+			action.back().push_back(bind(&Stack::HighlightAppear, this, 1, placeholders::_1));
+			action.back().push_back(bind(&Stack::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
+		}
+		else {
+			action.back().push_back(bind(&Stack::MoveHighlight, this, 3, 1, placeholders::_1));
+			action.back().push_back(bind(&Stack::ChangeState, this, Cur, Next, Selecting, placeholders::_1));
+		}
+		action.back().push_back(bind(&Stack::TitleAppear, this, Cur, Selecting, placeholders::_1));
+
+		//Next = Head
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&Stack::MoveHighlight, this, 1, 2, placeholders::_1));
+		action.back().push_back(bind(&Stack::SetNodesNormal, this, Cur, Tail, placeholders::_1));
+		action.back().push_back(bind(&Stack::drawListPartial, this, Cur, Tail, placeholders::_1));
+		action.back().push_back(bind(&Stack::ChangeState, this, Cur, Selecting, Remove, placeholders::_1));
+		action.back().push_back(bind(&Stack::ChangeState, this, Cur->nxt, Normal, Next, placeholders::_1));
+		action.back().push_back(bind(&Stack::TitleAppear, this, Cur->nxt, Next, placeholders::_1));
+		action.back().push_back(bind(&Stack::TitleDisappear, this, Cur, Selecting, placeholders::_1));
+
+		//Del disappear
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&Stack::MoveHighlight, this, 2, 3, placeholders::_1));
+		action.back().push_back(bind(&Stack::SetNodesNormal, this, Cur, Tail, placeholders::_1));
+		action.back().push_back(bind(&Stack::setNodeState, this, Cur, Remove, placeholders::_1));
+		action.back().push_back(bind(&Stack::drawListPartial, this, Cur->nxt, Tail, placeholders::_1));
+		action.back().push_back(bind(&Stack::DisconnectNode, this, Cur, Cur->nxt, placeholders::_1));
+		action.back().push_back(bind(&Stack::NodeDisappear, this, Cur, placeholders::_1));
+		action.back().push_back(bind(&Stack::TitleDisappear, this, Cur->nxt, Next, placeholders::_1));
+
+		Cur = Cur->nxt;
+	}
+
+	action.push_back(vector<function<void(int)> >());
+	action.back().push_back(bind(&Stack::ClearList, this, placeholders::_1));
+
+	NodeNumber = 0;
+
+	initProgress();
+}
+
 void Stack::removeAtBeginning() {
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
@@ -612,10 +689,10 @@ void Stack::removeAtBeginning() {
 	action.back().push_back(bind(&Stack::MoveHighlight, this, 1, 2, placeholders::_1));
 	action.back().push_back(bind(&Stack::SetNodesNormal, this, Dell, Tail, placeholders::_1));
 	action.back().push_back(bind(&Stack::setNodeState, this, Dell, Remove, placeholders::_1));
-
 	action.back().push_back(bind(&Stack::drawListExcept, this, Dell, placeholders::_1));
 	action.back().push_back(bind(&Stack::DisconnectNode, this, Dell, Dell->nxt, placeholders::_1));
 	action.back().push_back(bind(&Stack::NodeDisappear, this, Dell, placeholders::_1));
+	action.back().push_back(bind(&Stack::TitleDisappear, this, Dell->nxt, Next, placeholders::_1));
 	
 	//Delete
 	action.push_back(vector<function<void(int)> >());
@@ -700,6 +777,9 @@ void Stack::initProgress() {
 
 void Stack::initButtons()
 {
+	tgui::Button::Ptr ClearButton = gui.get<tgui::Button>("ClearButton");
+	ClearButton->setRenderer(theme.getRenderer("Button"));
+
 	tgui::Picture::Ptr Background = gui.get<tgui::Picture>("Background");
 	Background->setRenderer(theme.getRenderer("Background"));
 
@@ -776,6 +856,8 @@ void Stack::initButtons()
 	tgui::RadioButton::Ptr Theme2 = EditPanel->get<tgui::RadioButton>("Theme2");
 	Theme2->setRenderer(theme.getRenderer("RadioButton"));
 
+	PseudoCode->setPosition({ 1120 , 131 });
+
 	if (ThemeNum == 0) {
 		Theme1->setChecked(1);
 	}
@@ -784,6 +866,19 @@ void Stack::initButtons()
 	}
 
 	Speed->setValue(2);
+
+	ClearButton->onPress([=] {
+		Signal = Removing;
+		timer.restart();
+
+		ClearAction();
+		ShowDirection = 0;
+		CurStep = 0;
+		Elapsed = 0;
+		Last = 0;
+
+		popAll();
+		});
 
 	InsertButton->onPress([=] {
 		InsertVal->setVisible(1 - InsertVal->isVisible());

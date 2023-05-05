@@ -95,6 +95,9 @@ struct Queue {
 	void genList();
 	void genList(const tgui::String s);
 
+	void ClearList(int Dummy);
+	void popAll();
+
 	void insertAtEnd(Node*& NewNode);
 	bool insertNode(int i, int v);
 

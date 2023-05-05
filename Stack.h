@@ -31,7 +31,7 @@ struct Stack {
 	Stack() {
 		DefaultPosX = 700;
 		DefaultPosY = 700;
-		maxNodeNumber = 9;
+		maxNodeNumber = 8;
 
 		Head = nullptr;
 		Tail = nullptr;
@@ -94,6 +94,9 @@ struct Stack {
 
 	void genList();
 	void genList(const tgui::String s);
+
+	void ClearList(int Dummy);
+	void popAll();
 
 	void insertAtBeginning(Node*& NewNode);
 	bool insertNode(int i, int v);

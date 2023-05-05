@@ -738,6 +738,7 @@ bool SLL::insertNode( int i, int v)
 	action.back().push_back(bind(&SLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 	action.back().push_back(bind(&SLL::MoveHighlight, this, 5, 6, placeholders::_1));
 	action.back().push_back(bind(&SLL::setNodeState, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&SLL::DisconnectNode, this, Cur, NewNode->nxt, placeholders::_1));
 	action.back().push_back(bind(&SLL::ConnectNode, this, Cur, NewNode, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawListPartial, this, Head, NewNode->prev, placeholders::_1));
 	action.back().push_back(bind(&SLL::drawListPartial, this, NewNode, Tail, placeholders::_1));

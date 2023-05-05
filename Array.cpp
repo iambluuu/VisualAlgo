@@ -269,6 +269,101 @@ void Array::MoveArrDown(int Elapsed)
 		Arr[i]->changeMemPosition(DefaultPosX + 95 * (i - 1), NewY);
 }
 
+void Array::pushBack(int v)
+{
+	if (size == capacity) {
+		Signal = Pending;
+		return;
+	}
+
+	reset();
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("arr[size++] = v"));
+
+	action.push_back(vector<function<void(int)> >());
+	action.back().push_back(bind(&Array::HighlightAppear, this, 0, placeholders::_1));
+	
+	action.back().push_back(bind(&Array::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+	action.back().push_back(bind(&Array::drawArr, this, Arr, 0, size, placeholders::_1));
+	action.back().push_back(bind(&Array::drawArr, this, Arr, size + 1, capacity, placeholders::_1));
+	action.back().push_back(bind(&Array::ChangeValue, this, Arr[size], String(""), String(to_string(v)), placeholders::_1));
+
+	size++;
+
+	initProgress();
+}
+
+void Array::insertAt(int i, int v)
+{
+	if (i < 0 || i >= size || size == capacity) {
+		Signal = Pending;
+		return;
+	}
+
+	if (i == size - 1) {
+		pushBack(v);
+		return;
+	}
+
+	reset();
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("for(k = size - 1; k >= i; k++)\n		arr[k + 1] = arr[k]\narr[i] = v, size++"));
+
+
+	for (int j = size - 1; j >= i; j--) {
+		String tmp = Arr[j]->Val;
+		String tmp2 = Arr[j + 1]->Val;
+
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&Array::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+		action.back().push_back(bind(&Array::setArrNormal, this, Arr, placeholders::_1));
+		action.back().push_back(bind(&Array::drawArr, this, Arr, 0, j, placeholders::_1));
+
+		if (j < size - 1) {
+			action.back().push_back(bind(&Array::MoveHighlight, this, 1, 0, placeholders::_1));
+			action.back().push_back(bind(&Array::ChangeState, this, Arr[j + 2], 1, 0, placeholders::_1));
+			action.back().push_back(bind(&Array::ChangeState, this, Arr[j + 1], 1, 0, placeholders::_1));
+			action.back().push_back(bind(&Array::drawArr, this, Arr, j + 3, capacity, placeholders::_1));
+		}
+		else {
+			action.back().push_back(bind(&Array::HighlightAppear, this, 0, placeholders::_1));
+			action.back().push_back(bind(&Array::drawArr, this, Arr, j + 1, capacity, placeholders::_1));
+		}
+
+		action.back().push_back(bind(&Array::ChangeState, this, Arr[j], 0, 1, placeholders::_1));
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&Array::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+		action.back().push_back(bind(&Array::MoveHighlight, this, 0, 1, placeholders::_1));
+		action.back().push_back(bind(&Array::drawArr, this, Arr, 0, j + 1, placeholders::_1));
+		action.back().push_back(bind(&Array::drawArr, this, Arr, j + 2, capacity, placeholders::_1));
+		action.back().push_back(bind(&Array::ChangeValue, this, Arr[j + 1], tmp2, tmp, placeholders::_1));
+
+	}
+
+	String tmp = Arr[i]->Val;
+
+	action.push_back(vector<function<void(int)> >());
+
+	action.back().push_back(bind(&Array::MoveHighlight, this, 1, 2, placeholders::_1));
+	action.back().push_back(bind(&Array::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+	action.back().push_back(bind(&Array::drawArr, this, Arr, 0, i, placeholders::_1));
+	action.back().push_back(bind(&Array::drawArr, this, Arr, i + 1, capacity, placeholders::_1));
+	action.back().push_back(bind(&Array::ChangeValue, this, Arr[i], tmp, String(to_string(v)), placeholders::_1));
+
+	size++;
+
+	initProgress();
+}
+
+
 void Array::searchMem(int v)
 {
 	if (size == 0)
@@ -412,7 +507,6 @@ void Array::initButtons()
 	tgui::EditBox::Ptr UpdatePos = gui.get<tgui::EditBox>("UpdatePos");
 	UpdatePos->setRenderer(theme.getRenderer("EditBox"));
 
-
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	PseudoCode->loadWidgetsFromFile("assets/themes/CodeWindow.txt");
 	PseudoCode->setRenderer(theme.getRenderer("CodeWindow"));
@@ -463,9 +557,11 @@ void Array::initButtons()
 	Theme2->setRenderer(theme.getRenderer("RadioButton"));
 
 	if (ThemeNum == 0) {
+		MainColorArr = &DeepBlue;
 		Theme1->setChecked(1);
 	}
 	else {
+		MainColorArr = &Fulvous;
 		Theme2->setChecked(1);
 	}
 
@@ -475,205 +571,310 @@ void Array::initButtons()
 
 	GrowButton->setVisible(0);
 
-	InsertButton->setVisible(0);
-	InsertPos->setVisible(0);
-	InsertVal->setVisible(0);
-	InsertMode->setVisible(0);
+	InsertButton->onPress([=] {
+		InsertMode->setVisible(1 - InsertMode->isVisible());
 
-	DeleteButton->setVisible(0);
-	DeleteMode->setVisible(0);
-	DeletePos->setVisible(0);
+	if (InsertModes == 0)
+		InsertPos->setVisible(InsertMode->isVisible());
+
+	InsertVal->setVisible(InsertMode->isVisible());
+
+	InsertEx->setVisible(InsertMode->isVisible());
+		});
+
+	InsertMode->onPress([=] {
+		InsertModes = 1 - InsertModes;
+
+	switch (InsertModes) {
+	case 0:
+		InsertMode->setText(tgui::String("Insert At"));
+		InsertPos->setVisible(1);
+		InsertPos->setText(tgui::String(""));
+		InsertPos->setPosition({ "InsertMode.right + 10", "InsertMode.top" });
+		InsertVal->setPosition({ "InsertPos.right + 10", "InsertMode.top" });
+		InsertEx->setPosition({ "InsertVal.right + 10", "InsertMode.top" });
+
+		break;
+
+	case 1:
+		InsertMode->setText(tgui::String("Push Back"));
+		InsertPos->setVisible(0);
+		InsertVal->setPosition({ "InsertMode.right + 10", "InsertMode.top" });
+		InsertEx->setPosition({ "InsertVal.right + 10", "InsertMode.top" });
+
+		break;
+
+	}
+		});
+
+	DeleteButton->onPress([=] {
+		DeleteMode->setVisible(1 - DeleteMode->isVisible());
+
+	if (!DeleteModes)
+		DeletePos->setVisible(DeleteMode->isVisible());
+
+	DeleteEx->setVisible(DeleteMode->isVisible());
+
+	tgui::String s = DeletePos->getText();
+
+		});
+
+	DeleteMode->onPress([=] {
+		DeleteModes = 1 - DeleteModes;
+
+	switch (DeleteModes) {
+	case 0:
+		DeleteMode->setText(tgui::String("Remove At"));
+		DeletePos->setVisible(1);
+		DeletePos->setText(tgui::String(""));
+		DeletePos->setPosition({ "DeleteMode.right + 10", "DeleteMode.top" });
+		DeleteEx->setPosition({ "DeletePos.right + 10", "DeleteMode.top" });
+
+		break;
+
+	case 1:
+		DeleteMode->setText(tgui::String("Pop Back"));
+		DeletePos->setVisible(0);
+		DeleteEx->setPosition({ "DeleteMode.right + 10", "DeleteMode.top" });
+
+		break;
+	}
+		});
 
 	InputGen->onPress([=] {
 		GenModes = (GenModes + 1) % 4;
 
-		switch (GenModes) {
-		case 0:
-			InputGen->setText(tgui::String("Manual Input"));
+	switch (GenModes) {
+	case 0:
+		InputGen->setText(tgui::String("Manual Input"));
 
-			ArraySize->setVisible(0);
-			UserInput->setVisible(1);
-			UserInputEx->setPosition({ "EditBox1.right + 10", "EditBox1.top" });
-			break;
+		ArraySize->setVisible(0);
+		UserInput->setVisible(1);
+		UserInputEx->setPosition({ "EditBox1.right + 10", "EditBox1.top" });
+		break;
 
-		case 1:
-			InputGen->setText(tgui::String("Random Input"));
+	case 1:
+		InputGen->setText(tgui::String("Random Input"));
 
-			ArraySize->setVisible(0);
-			UserInput->setVisible(0);
-			UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
-			break;
+		ArraySize->setVisible(0);
+		UserInput->setVisible(0);
+		UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
+		break;
 
-		case 2:
-			InputGen->setText(tgui::String("Browse"));
+	case 2:
+		InputGen->setText(tgui::String("Browse"));
 
-			ArraySize->setVisible(0);
-			UserInput->setVisible(0);
-			UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
-			break;
+		ArraySize->setVisible(0);
+		UserInput->setVisible(0);
+		UserInputEx->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
+		break;
 
-		case 3:
-			InputGen->setText(tgui::String("Empty"));
+	case 3:
+		InputGen->setText(tgui::String("Empty"));
 
-			ArraySize->setVisible(1);
-			UserInput->setVisible(0);
-			ArraySize->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
-			UserInputEx->setPosition({ "ArraySize.right + 10", "ArraySize.top" });
-			break;
-		}
+		ArraySize->setVisible(1);
+		UserInput->setVisible(0);
+		ArraySize->setPosition({ "InputGen.right + 10", "InputGen.top + 5" });
+		UserInputEx->setPosition({ "ArraySize.right + 10", "ArraySize.top" });
+		break;
+	}
 
 		});
 
 	SearchNode->onPress([=] {
 		SearchVal->setVisible(1 - SearchVal->isVisible());
-		SearchEx->setVisible(1 - SearchEx->isVisible());
+	SearchEx->setVisible(1 - SearchEx->isVisible());
 		});
 
 	UpdateNode->onPress([=] {
 		UpdateVal->setVisible(1 - UpdateVal->isVisible());
-		UpdatePos->setVisible(1 - UpdatePos->isVisible());
-		UpdateEx->setVisible(1 - UpdateEx->isVisible());
+	UpdatePos->setVisible(1 - UpdatePos->isVisible());
+	UpdateEx->setVisible(1 - UpdateEx->isVisible());
 		});
 
 
 	CreateButton->onPress([=] {
 		InputGen->setVisible(1 - InputGen->isVisible());
 
-		if (!GenModes)
-			UserInput->setVisible(InputGen->isVisible());
-		UserInputEx->setVisible(InputGen->isVisible());
+	if (!GenModes)
+		UserInput->setVisible(InputGen->isVisible());
+	UserInputEx->setVisible(InputGen->isVisible());
 		});
 
 
 	UserInputEx->onPress([=] {
 		ClearAction();
-		Signal = Pending;
+	Signal = Pending;
 
-		switch (GenModes) {
-		case 0:
-		{
-			tgui::String s = UserInput->getText();
-			genList(s);
-			break;
-		}
-		case 1:
-		{
-			genList();
-			break;
-		}
-		case 2:
-		{
-			OPENFILENAME ofn;
-			ZeroMemory(&ofn, sizeof(ofn));
-			ofn.lStructSize = sizeof(ofn);
-			ofn.hwndOwner = hwnd;
-			ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0";
-			ofn.lpstrFile = szFileName;
-			ofn.nMaxFile = MAX_PATH;
-			ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_NOCHANGEDIR;
-			ofn.lpstrDefExt = L"txt";
+	switch (GenModes) {
+	case 0:
+	{
+		tgui::String s = UserInput->getText();
+		genList(s);
+		break;
+	}
+	case 1:
+	{
+		genList();
+		break;
+	}
+	case 2:
+	{
+		OPENFILENAME ofn;
+		ZeroMemory(&ofn, sizeof(ofn));
+		ofn.lStructSize = sizeof(ofn);
+		ofn.hwndOwner = hwnd;
+		ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0";
+		ofn.lpstrFile = szFileName;
+		ofn.nMaxFile = MAX_PATH;
+		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_NOCHANGEDIR;
+		ofn.lpstrDefExt = L"txt";
 
-			tgui::String S;
+		tgui::String S;
 
-			if (GetOpenFileName(&ofn) == TRUE) {
-				// User selected a file
-				std::ifstream file(ofn.lpstrFile);
-				std::string line;
-				while (std::getline(file, line)) {
-					S.append(line);
-				}
-
-				file.close();
-			}
-			else {
-				// User cancelled the dialog
+		if (GetOpenFileName(&ofn) == TRUE) {
+			// User selected a file
+			std::ifstream file(ofn.lpstrFile);
+			std::string line;
+			while (std::getline(file, line)) {
+				S.append(line);
 			}
 
-			genList(S);
+			file.close();
+		}
+		else {
+			// User cancelled the dialog
+		}
 
+		genList(S);
+
+		break;
+	}
+
+	case 3:
+	{
+		int tmp;
+		tgui::String s = ArraySize->getText();
+		if (!s.attemptToInt(tmp))
 			break;
-		}
 
-		case 3:
-		{
-			int tmp;
-			tgui::String s = ArraySize->getText();
-			if (!s.attemptToInt(tmp))
-				break;
+		if (tmp <= maxCap)
+			capacity = tmp;
+		break;
+	}
+	}
+		});
 
-			if (tmp <= maxCap)
-				capacity = tmp;
-			break;
-		}
-		}
-			});
+	InsertEx->onPress([=] {
+		/*if (size == maxNodeNumber)
+			return;*/
 
-	InsertEx->setVisible(0);
+		Signal = Inserting;
+	timer.restart();
 
-	DeleteEx->setVisible(0);
+	ClearAction();
+	ShowDirection = 0;
+	CurStep = 0;
+	Elapsed = 0;
+	Last = 0;
+
+	int Pos = InsertPos->getText().toInt();
+	int Val = InsertVal->getText().toInt();
+
+	if (InsertModes == 0) {
+		insertAt(Pos, Val);
+	}
+	else if (InsertModes == 1)
+		pushBack(Val);
+
+		});
+
+	DeleteEx->onPress([=] {
+		//if (NodeNumber == 0)
+		//	return;
+
+		Signal = Removing;
+	timer.restart();
+
+	ClearAction();
+	ShowDirection = 0;
+	CurStep = 0;
+	Last = 0;
+	Elapsed = 0;
+
+	int Pos = DeletePos->getText().toInt();
+
+	//if (DeleteModes == 0) {
+	//	deleteAt(Pos);
+	//}
+	//else if (DeleteModes == 1)
+	//	popBack();
+
+		});
+
 
 	SearchEx->onPress([=] {
 		Signal = Searching;
-		timer.restart();
+	timer.restart();
 
-		ClearAction();
-		ShowDirection = 0;
-		CurStep = 0;
-		Last = 0;
-		Elapsed = 0;
+	ClearAction();
+	ShowDirection = 0;
+	CurStep = 0;
+	Last = 0;
+	Elapsed = 0;
 
-		tgui::String Val = SearchVal->getText();
+	tgui::String Val = SearchVal->getText();
 
-		searchMem(Val.toInt());
-			});
+	searchMem(Val.toInt());
+		});
 
-		UpdateEx->onPress([=] {
-			Signal = Searching;
-		timer.restart();
+	UpdateEx->onPress([=] {
+		Signal = Searching;
+	timer.restart();
 
-		ClearAction();
-		ShowDirection = 0;
-		CurStep = 0;
-		Last = 0;
-		Elapsed = 0;
+	ClearAction();
+	ShowDirection = 0;
+	CurStep = 0;
+	Last = 0;
+	Elapsed = 0;
 
-		tgui::String Val = UpdateVal->getText();
-		tgui::String Pos = UpdatePos->getText();
+	tgui::String Val = UpdateVal->getText();
+	tgui::String Pos = UpdatePos->getText();
 
-		updateMem(Pos.toInt(), Val.toInt());
+	updateMem(Pos.toInt(), Val.toInt());
 		});
 
 
 	PseudoCode->onMinimize([=] {
 		Vector2f MinSiz = PseudoCode->getMinimumSize();
-		Vector2f CurSiz = PseudoCode->getSize();
+	Vector2f CurSiz = PseudoCode->getSize();
 
-		if (CurSiz.x > MinSiz.x || CurSiz.y > MinSiz.y)
-			PseudoCode->setSize({ MinSiz.x, MinSiz.y });
-		else
-			PseudoCode->setSize({ 360, 277.52 });
+	if (CurSiz.x > MinSiz.x || CurSiz.y > MinSiz.y)
+		PseudoCode->setSize({ MinSiz.x, MinSiz.y });
+	else
+		PseudoCode->setSize({ 360, 277.52 });
 		});
 
 	PseudoCode->onMaximize([=] {
 		Vector2f MaxSiz = PseudoCode->getMaximumSize();
-		PseudoCode->setSize({ MaxSiz.x, MaxSiz.y });
+	PseudoCode->setSize({ MaxSiz.x, MaxSiz.y });
 		});
 
 	SlideOut->onClick([=] {
 		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
-		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
+	SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		});
 
 	SlideIn->onClick([=] {
 		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
-		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
+	SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		});
 
 	Speed->onValueChange([=] {
 		tgui::String s(0.5f + 0.25f * Speed->getValue());
 
-		SpeedIndicator->setText(tgui::String("x") + s);
-		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
+	SpeedIndicator->setText(tgui::String("x") + s);
+	Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
 		});
 
 	ProgressThumb->onValueChange([=] {
@@ -682,62 +883,62 @@ void Array::initButtons()
 			return;
 		}
 
-		int NewProgress = ProgressThumb->getValue();
+	int NewProgress = ProgressThumb->getValue();
 
-		int CurProgress = CurStep;
-		if (ShowDirection == 0)
-			CurProgress++;
+	int CurProgress = CurStep;
+	if (ShowDirection == 0)
+		CurProgress++;
 
-		Progress->setValue(ProgressThumb->getValue());
+	Progress->setValue(ProgressThumb->getValue());
 
-		//timer.restart();
-		//Last = 0;
+	//timer.restart();
+	//Last = 0;
 
-		if (CurProgress < NewProgress) {
-			ShowDirection = 0;
-			for (; CurStep < NewProgress - 1; CurStep++)
-				for (int i = 0; i < action[CurStep].size(); i++) {
-					action[CurStep][i](Duration);
-				}
+	if (CurProgress < NewProgress) {
+		ShowDirection = 0;
+		for (; CurStep < NewProgress - 1; CurStep++)
+			for (int i = 0; i < action[CurStep].size(); i++) {
+				action[CurStep][i](Duration);
+			}
 
-			Last = 0;
+		Last = 0;
+		timer.restart();
+	}
+
+	if (CurProgress > NewProgress) {
+		for (; CurStep > NewProgress; CurStep--)
+			for (int i = 0; i < action[CurStep].size(); i++) {
+				action[CurStep][i](0);
+			}
+
+		if (ShowMode) {
+			ShowDirection = 1;
+			Last = Duration;
+			Elapsed = Duration;
 			timer.restart();
 		}
-
-		if (CurProgress > NewProgress) {
-			for (; CurStep > NewProgress; CurStep--)
-				for (int i = 0; i < action[CurStep].size(); i++) {
-					action[CurStep][i](0);
-				}
-
-			if (ShowMode) {
-				ShowDirection = 1;
-				Last = Duration;
-				Elapsed = Duration;
-				timer.restart();
-			}
-			else {
-				ShowDirection = 0;
-				Last = 0;
-				Elapsed = 0;
-				timer.restart();
-			}
+		else {
+			ShowDirection = 0;
+			Last = 0;
+			Elapsed = 0;
+			timer.restart();
 		}
+	}
 
 		});
 
 	Play->onPress([=] {
 		ShowMode = (1 - ShowMode);
 
-		Last = Elapsed;
-		timer.restart();
+	Last = Elapsed;
+	timer.restart();
 
-		if (ShowMode)
-			Play->setRenderer(theme.getRenderer("PlayButton"));
-		else {
-			ShowDirection = 0;
-			Play->setRenderer(theme.getRenderer("PauseButton"));
-		}
+	if (ShowMode)
+		Play->setRenderer(theme.getRenderer("PlayButton"));
+	else {
+		ShowDirection = 0;
+		Play->setRenderer(theme.getRenderer("PauseButton"));
+	}
 		});
 
 	Begin->onPress([=] {
@@ -750,60 +951,60 @@ void Array::initButtons()
 
 	Forward->onPress([=] {
 		ShowMode = 1;
-		ProgressThumb->setValue(ProgressThumb->getValue() + 1);
+	ProgressThumb->setValue(ProgressThumb->getValue() + 1);
 		});
 
 	Backward->onPress([=] {
 		ShowMode = 1;
-		ProgressThumb->setValue(ProgressThumb->getValue() - 1);
+	ProgressThumb->setValue(ProgressThumb->getValue() - 1);
 		});
 
 	Theme1->onCheck([=] {
 		MainColorArr = &DeepBlue;
-		ThemeNum = 0;
-		theme.load("assets/themes/CyberPurple.txt");
+	ThemeNum = 0;
+	theme.load("assets/themes/CyberPurple.txt");
 		});
 
 	Theme2->onCheck([=] {
 		MainColorArr = &Fulvous;
-		ThemeNum = 1;
-		theme.load("assets/themes/ForestGreen.txt");
+	ThemeNum = 1;
+	theme.load("assets/themes/ForestGreen.txt");
 		});
 
-	StructList->setSelectedItem(tgui::String("Dynamic Array"));
+	StructList->setSelectedItem(tgui::String("Array"));
 
 	StructList->onItemSelect([=] {
 		tgui::String s = StructList->getSelectedItem();
 
-		if (s != tgui::String("Array")) {
-			ClearAction();
+	if (s != tgui::String("Array")) {
+		ClearAction();
 
-			Array::size = 0;
-			capacity = 0;
+		Array::size = 0;
+		capacity = 0;
 
-			for (int i = 0; i < 12; i++) {
-				Arr[i]->changeMemValue(String(""));
-			}
-
+		for (int i = 0; i < 12; i++) {
+			Arr[i]->changeMemValue(String(""));
 		}
 
-		if (s == tgui::String("DLL"))
-			State = _DLList;
+	}
 
-		if (s == tgui::String("CLL"))
-			State = _CLL;
+	if (s == tgui::String("DLL"))
+		State = _DLList;
 
-		if (s == tgui::String("Stack"))
-			State = _Stack;
+	if (s == tgui::String("CLL"))
+		State = _CLL;
 
-		if (s == tgui::String("Queue"))
-			State = _Queue;
+	if (s == tgui::String("Stack"))
+		State = _Stack;
 
-		if (s == tgui::String("Dynamic Array"))
-			State = _DArray;
+	if (s == tgui::String("Queue"))
+		State = _Queue;
 
-		if (s == tgui::String("SLL"))
-			State = _SLL;
+	if (s == tgui::String("Dynamic Array"))
+		State = _DArray;
+
+	if (s == tgui::String("SLL"))
+		State = _SLL;
 		});
 }
 

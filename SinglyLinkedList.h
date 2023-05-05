@@ -31,7 +31,7 @@ struct SLL {
 	SLL() {
 		DefaultPosX = 250;
 		DefaultPosY = 250;
-		maxNodeNumber = 15;
+		maxNodeNumber = 12;
 
 		Head = nullptr;
 		Tail = nullptr;

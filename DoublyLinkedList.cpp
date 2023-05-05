@@ -784,6 +784,7 @@ bool DLL::insertNode(int i, int v)
 	action.back().push_back(bind(&DLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 	action.back().push_back(bind(&DLL::MoveHighlight, this, 5, 6, placeholders::_1));
 	action.back().push_back(bind(&DLL::setNodeState, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&DLL::DisconnectNode, this, Cur, NewNode->nxt, placeholders::_1));
 	action.back().push_back(bind(&DLL::ConnectNode, this, Cur, NewNode, placeholders::_1));
 	action.back().push_back(bind(&DLL::drawListPartial, this, Head, NewNode->prev, placeholders::_1));
 	action.back().push_back(bind(&DLL::drawListPartial, this, NewNode, Tail, placeholders::_1));
@@ -793,9 +794,9 @@ bool DLL::insertNode(int i, int v)
 	action.push_back(vector<function<void(int) > >());
 	action.back().push_back(bind(&DLL::TitleAppear, this, NewNode, New, placeholders::_1));
 	action.back().push_back(bind(&DLL::setNodeState, this, NewNode, New, placeholders::_1));
-	action.back().push_back(std::bind(&DLL::MoveNode, this, NewNode, Cur->Pos.x + 95, Cur->Pos.y + 100, Cur->Pos.x + 95, Cur->Pos.y, placeholders::_1));
-	action.back().push_back(std::bind(&DLL::SlideNodes, this, NewNode->nxt, Cur->Pos.x + 95, Cur->Pos.y, Cur->Pos.x + 95 + 95, DefaultPosY, placeholders::_1));
-	action.back().push_back(std::bind(&DLL::drawList, this, placeholders::_1));
+	action.back().push_back(bind(&DLL::MoveNode, this, NewNode, Cur->Pos.x + 95, Cur->Pos.y + 100, Cur->Pos.x + 95, Cur->Pos.y, placeholders::_1));
+	action.back().push_back(bind(&DLL::SlideNodes, this, NewNode->nxt, Cur->Pos.x + 95, Cur->Pos.y, Cur->Pos.x + 95 + 95, DefaultPosY, placeholders::_1));
+	action.back().push_back(bind(&DLL::drawList, this, placeholders::_1));
 
 	initProgress();
 

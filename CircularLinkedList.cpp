@@ -1084,6 +1084,7 @@ bool CLL::insertNode(int i, int v)
 	action.back().push_back(bind(&CLL::SetNodesNormal, this, Cur, Tail, placeholders::_1));
 	action.back().push_back(bind(&CLL::MoveHighlight, this, 5, 6, placeholders::_1));
 	action.back().push_back(bind(&CLL::setNodeState, this, NewNode, New, placeholders::_1));
+	action.back().push_back(bind(&CLL::DisconnectNode, this, Cur, NewNode->nxt, placeholders::_1));
 	action.back().push_back(bind(&CLL::ConnectNode, this, Cur, NewNode, placeholders::_1));
 	action.back().push_back(bind(&CLL::drawListPartial, this, Head, NewNode->prev, placeholders::_1));
 	action.back().push_back(bind(&CLL::drawListPartial, this, NewNode, Tail, placeholders::_1));

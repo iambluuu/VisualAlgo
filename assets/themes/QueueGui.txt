@@ -542,3 +542,40 @@ Button.SearchNode {
         TextureHover = None;
     }
 }
+
+Button.ClearButton {
+    Position = (20, 547.333);
+    Size = (110, 44);
+    Text = Clear;
+    TextSize = 15;
+
+    Renderer {
+        BackgroundColor = #8E6FFF;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #7F76FF;
+        BackgroundColorDownFocused = #7F76FF;
+        BackgroundColorDownHover = #FAC0FF00;
+        BackgroundColorFocused = #8E6FFF;
+        BackgroundColorHover = #AB96FF;
+        BorderColor = #3C2877;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #FFAEF4;
+        BorderColorHover = #FFC9EF;
+        Borders = (2, 2, 2, 2);
+        Font = "SpaceGrotesk-Bold.ttf";
+        RoundedBorderRadius = 13;
+        TextColor = #F4DDFF;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        TextStyle = Regular;
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}

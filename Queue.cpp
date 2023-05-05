@@ -174,7 +174,7 @@ void Queue::HighlightAppear(int Line, int Elapsed)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
 
-	TextHighlight->setPosition({ 0, 4 * Line });
+	TextHighlight->setPosition({ 0, 4 + 26 * Line });
 	TextHighlight->setVisible(1);
 	TextHighlight->setInheritedOpacity(2 * (float)Elapsed / Duration);
 }
@@ -560,6 +560,84 @@ bool Queue::insertNode(int i, int v)
 	return 1;
 }
 
+void Queue::ClearList(int Dummy)
+{
+	while (Head) {
+		Node* tmp = Head;
+		Head = Head->nxt;
+		delete tmp;
+	}
+
+	Tail = nullptr;
+}
+
+void Queue::popAll()
+{
+	initList();
+	if (NodeNumber == 0) {
+		Signal = Pending;
+		return;
+	}
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("while(Head) {\n		Node* Cur = Head\n		Head = Head.next\n		delete Cur\n}"));
+
+	Node* Cur = Head;
+
+	for (Node* tmp = Head; tmp; tmp = tmp->nxt)
+		tmp->NumberInList = 0;
+
+	for (int i = 0; i < NodeNumber; i++) {
+		//tmp = Head
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&Queue::drawListPartial, this, Cur, Tail, placeholders::_1));
+		if (i == 0) {
+			action.back().push_back(bind(&Queue::HighlightAppear, this, 1, placeholders::_1));
+			action.back().push_back(bind(&Queue::ChangeState, this, Cur, Normal, Selecting, placeholders::_1));
+		}
+		else {
+			action.back().push_back(bind(&Queue::MoveHighlight, this, 3, 1, placeholders::_1));
+			action.back().push_back(bind(&Queue::ChangeState, this, Cur, Next, Selecting, placeholders::_1));
+		}
+		action.back().push_back(bind(&Queue::TitleAppear, this, Cur, Selecting, placeholders::_1));
+
+		//Next = Head
+
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&Queue::MoveHighlight, this, 1, 2, placeholders::_1));
+		action.back().push_back(bind(&Queue::SetNodesNormal, this, Cur, Tail, placeholders::_1));
+		action.back().push_back(bind(&Queue::drawListPartial, this, Cur, Tail, placeholders::_1));
+		action.back().push_back(bind(&Queue::ChangeState, this, Cur, Selecting, Remove, placeholders::_1));
+		action.back().push_back(bind(&Queue::ChangeState, this, Cur->nxt, Normal, Next, placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleAppear, this, Cur->nxt, Next, placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleDisappear, this, Cur, Selecting, placeholders::_1));
+
+		//Update Nodes position
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&Queue::MoveHighlight, this, 2, 3, placeholders::_1));
+		action.back().push_back(bind(&Queue::SetNodesNormal, this, Cur, Tail, placeholders::_1));
+		action.back().push_back(bind(&Queue::setNodeState, this, Cur, Remove, placeholders::_1));
+		action.back().push_back(bind(&Queue::drawListPartial, this, Cur->nxt, Tail, placeholders::_1));
+		action.back().push_back(bind(&Queue::DisconnectNode, this, Cur, Cur->nxt, placeholders::_1));
+		action.back().push_back(bind(&Queue::NodeDisappear, this, Cur, placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleDisappear, this, Cur->nxt, Next, placeholders::_1));
+		action.back().push_back(bind(&Queue::SlideNodes, this, Cur->nxt, DefaultPosX + 95, DefaultPosY, DefaultPosX, DefaultPosY, placeholders::_1));
+
+		Cur = Cur->nxt;
+	}
+
+	action.push_back(vector<function<void(int)> >());
+	action.back().push_back(bind(&Queue::ClearList, this, placeholders::_1));
+
+	NodeNumber = 0;
+
+	initProgress();
+}
+
 void Queue::removeAtBeginning() {
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
@@ -647,7 +725,6 @@ void Queue::Peek()
 		return;
 	}
 
-	//Run to node
 	action.push_back(vector<function<void(int)> >());
 
 	action.back().push_back(bind(&Queue::HighlightAppear, this, 1, placeholders::_1));
@@ -684,6 +761,9 @@ void Queue::initProgress() {
 
 void Queue::initButtons()
 {
+	tgui::Button::Ptr ClearButton = gui.get<tgui::Button>("ClearButton");
+	ClearButton->setRenderer(theme.getRenderer("Button"));
+
 	tgui::Picture::Ptr Background = gui.get<tgui::Picture>("Background");
 	Background->setRenderer(theme.getRenderer("Background"));
 
@@ -769,6 +849,19 @@ void Queue::initButtons()
 	}
 
 	Speed->setValue(2);
+
+	ClearButton->onPress([=] {
+		Signal = Removing;
+		timer.restart();
+
+		ClearAction();
+		ShowDirection = 0;
+		CurStep = 0;
+		Elapsed = 0;
+		Last = 0;
+
+		popAll();
+		});
 
 	InsertButton->onPress([=] {
 		InsertVal->setVisible(1 - InsertVal->isVisible());

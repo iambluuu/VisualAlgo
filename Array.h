@@ -98,7 +98,10 @@ struct Array {
 	void drawArr(vector<ArrayMem*>& A, int l, int r, int Dummy);
 	void MoveArrDown(int Elapsed);
 
-
+	void pushBack(int v);
+	void insertAt(int i, int v);
+	//void popBack();
+	//void deleteAt(int i);
 	void searchMem(int v);
 	void updateMem(int i, int v);
 

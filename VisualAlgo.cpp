@@ -72,7 +72,7 @@ int main()
 			break;
 		case _Stack:
 			gui.removeAllWidgets();
-			gui.loadWidgetsFromFile("assets/themes/StackGui.txt");
+			gui.loadWidgetsFromFile("assets/themes/QueueGui.txt");
 			B.Signal = Pending;
 			B.NodeNumber = 0;
 			B.ShowMode = 1;

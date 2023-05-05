@@ -424,7 +424,7 @@ void DArray::pushBack(int v)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("if (size == capacity) growArray()\narr[size] = v, size++"));
+	TextArea->setText(tgui::String("if (size == capacity)\n		growArray()\narr[size] = v, size++"));
 
 	if (size == capacity) {
 		capacity = min(capacity * 2, maxCap);
@@ -547,7 +547,7 @@ void DArray::popBack()
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("arr[size - 1] = 0, size--\nif (size == capacity / 2) shrinkArray()"));
+	TextArea->setText(tgui::String("arr[size - 1] = 0, size--\nif (size == capacity / 2)\n	shrinkArray()"));
 
 	String tmp = Arr[size - 1]->Val;
 	action.push_back(vector<function<void(int)> >());
@@ -563,7 +563,7 @@ void DArray::popBack()
 	if (size == (capacity) / 2) {
 		action.push_back(vector<function<void(int)> >());
 
-		action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 1, placeholders::_1));
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 2, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 		action.back().push_back(bind(&DArray::ArrDisappear, this, Arr, size, capacity, placeholders::_1));
@@ -591,7 +591,7 @@ void DArray::deleteAt(int i)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("for(k = i; k < size - 1; k++)\n		arr[k] = arr[k + 1]\narr[size - 1] = 0, size--\nif (size == capacity / 2) shrinkArray()"));
+	TextArea->setText(tgui::String("for(k = i; k < size - 1; k++)\n		arr[k] = arr[k + 1]\narr[size - 1] = 0, size--\nif (size == capacity / 2)\n		shrinkArray()"));
 
 	for (int j = i; j < size - 1; j++) {
 		String tmp = Arr[j]->Val;
@@ -642,7 +642,7 @@ void DArray::deleteAt(int i)
 
 	if (size == capacity / 2) {
 		action.push_back(vector<function<void(int)> >());
-		action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 3, placeholders::_1));
+		action.back().push_back(bind(&DArray::MoveHighlight, this, 2, 4, placeholders::_1));
 		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 		action.back().push_back(bind(&DArray::ArrDisappear, this, Arr, size, capacity, placeholders::_1));
@@ -655,8 +655,10 @@ void DArray::deleteAt(int i)
 
 void DArray::searchMem(int v)
 {
-	if (size == 0)
+	if (size == 0) {
+		Signal = Pending;
 		return;
+	}
 
 	reset();
 
@@ -713,8 +715,10 @@ void DArray::searchMem(int v)
 
 void DArray::updateMem(int i, int v)
 {
-	if (i < 0 || i >= size)
+	if (i < 0 || i >= size) {
+		Signal = Pending;
 		return;
+	}
 
 	reset();
 
@@ -796,7 +800,6 @@ void DArray::initButtons()
 	tgui::EditBox::Ptr UpdatePos = gui.get<tgui::EditBox>("UpdatePos");
 	UpdatePos->setRenderer(theme.getRenderer("EditBox"));
 
-
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	PseudoCode->loadWidgetsFromFile("assets/themes/CodeWindow.txt");
 	PseudoCode->setRenderer(theme.getRenderer("CodeWindow"));
@@ -847,9 +850,11 @@ void DArray::initButtons()
 	Theme2->setRenderer(theme.getRenderer("RadioButton"));
 
 	if (ThemeNum == 0) {
+		MainColorArr = &DeepBlue;
 		Theme1->setChecked(1);
 	}
 	else {
+		MainColorArr = &Fulvous;
 		Theme2->setChecked(1);
 	}
 
