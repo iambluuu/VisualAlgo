@@ -45,7 +45,7 @@ struct ArrayMem {
 		Box.setColor(Color(0, 0, 0));
 
 		BoxBack.setSize(Vector2f(46, 46));
-		BoxBack.setFillColor(Color(255, 255, 255, 178.5));
+		BoxBack.setFillColor(Color(255, 255, 255, 255 * 0.7));
 
 		Selecting = 0;
 	}

@@ -126,6 +126,7 @@ EditBox.InsertVal {
     Position = (170, 610);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -225,6 +226,7 @@ Button.InsertEx {
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #313893;

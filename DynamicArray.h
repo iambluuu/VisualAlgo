@@ -32,8 +32,8 @@ struct DArray {
 	Text ArrLabel;
 
 	DArray() {
-		DefaultPosX = 250;
-		DefaultPosY = 250;
+		DefaultPosX = 270;
+		DefaultPosY = 200;
 
 		maxCap = 15;
 
@@ -104,6 +104,7 @@ struct DArray {
 	void insertAt(int i, int v);
 	void popBack();
 	void deleteAt(int i);
+	void accessMem(int i);
 	void searchMem(int v);
 	void updateMem(int i, int v);
 

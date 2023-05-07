@@ -69,7 +69,7 @@ struct Queue {
 
 	void initList();
 	void drawList(int Dummy);
-	void drawTitle(Node* Cur, Nodestate NodeState, int Dummy);
+	void drawTitle(Node* Cur, String s, int Dummy);
 	void drawListPartial(Node* A, Node* B, int Dummy);
 	void drawListExcept(Node* ExceptNode, int Dummy);
 	void drawArrowFlow(Node* Cur, int Elapsed);
@@ -77,8 +77,8 @@ struct Queue {
 	void changePosition(Node* Cur, float x, float y);
 	void NodeAppear(Node* Cur, int Elapsed);
 	void NodeDisappear(Node* Cur, int Elapsed);
-	void TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed);
-	void TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed);
+	void TitleAppear(Node* Cur, String s, int Elapsed);
+	void TitleDisappear(Node* Cur, String s, int Elapsed);
 	void HighlightAppear(int Line, int Elapsed);
 	void MoveHighlight(int CurLine, int NextLine, int Elapsed);
 	void drawNode(Node* Cur, int Dummy);

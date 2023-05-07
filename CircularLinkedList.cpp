@@ -83,6 +83,13 @@ void CLL::ClearAction()
 		for (int j = 0; j < action[i].size(); j++)
 			action[i][j](Duration);
 
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
+
+	TextArea->setText(tgui::String(""));
+	TextHighlight->setVisible(0);
+
 	action.clear();
 }
 
@@ -216,7 +223,8 @@ void CLL::ReconnectLongArrow(Node* from, Node* preDes, Node* newDes, int Elapsed
 	if (!from || !preDes || !newDes)
 		return;
 
-	int TimeUnit = Duration / 20;
+	int TimeUnit = Duration / 20 + (Duration / 10 % 2);
+
 	int Length = 0;
 
 	if (Elapsed > Duration / 2) {
@@ -278,8 +286,8 @@ void CLL::ReconnectLongArrow(Node* from, Node* preDes, Node* newDes, int Elapsed
 
 		Length = 0;
 
-		if (9 * TimeUnit < Elapsed && Elapsed <= 10 * TimeUnit) {
-			Length = (int)(30 * (double)(Elapsed - 9 * TimeUnit) / TimeUnit);
+		if (9 * TimeUnit < Elapsed) {
+			Length = min(30, (int)(30 * (double)(Elapsed - 9 * TimeUnit) / TimeUnit));
 		}
 
 		LongArrow.setRotation(0);
@@ -346,8 +354,8 @@ void CLL::ReconnectLongArrow(Node* from, Node* preDes, Node* newDes, int Elapsed
 
 		Length = 0;
 
-		if (9 * TimeUnit < Elapsed && Elapsed <= 10 * TimeUnit) {
-			Length = (int)(30 * (double)(Elapsed - 9 * TimeUnit) / TimeUnit);
+		if (9 * TimeUnit < Elapsed) {
+			Length = min(30, (int)(30 * (double)(Elapsed - 9 * TimeUnit) / TimeUnit));
 		}
 
 		LongArrow.setRotation(0);
@@ -411,6 +419,8 @@ void CLL::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 
 		break;
 	}
+	Cur->Title.setOrigin(Cur->Title.getLocalBounds().left + Cur->Title.getLocalBounds().width / 2, Cur->Title.getLocalBounds().top + Cur->Title.getLocalBounds().height / 2);
+	Cur->Title.setPosition(Cur->Pos.x + 23, Cur->Pos.y + 50 + Cur->Title.getLocalBounds().height / 2);
 	app.draw(Cur->Title);
 }
 
@@ -1615,7 +1625,6 @@ void CLL::initButtons()
 	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
 	TextHighlight->setRenderer(theme.getRenderer("TextHighlight"));
 
-
 	tgui::Button::Ptr SlideIn = gui.get<tgui::Button>("SlideIn");
 	tgui::Button::Ptr SlideOut = gui.get<tgui::Button>("SlideOut");
 	tgui::Panel::Ptr EditPanel = gui.get<tgui::Panel>("EditPanel");
@@ -1664,6 +1673,8 @@ void CLL::initButtons()
 	}
 
 	Speed->setValue(2);
+	EditPanel->setVisible(ControlVisible);
+	SlideIn->setVisible(ControlVisible);
 
 	InsertButton->onPress([=] {
 		InsertMode->setVisible(1 - InsertMode->isVisible());
@@ -1949,11 +1960,14 @@ void CLL::initButtons()
 		});
 
 	SlideOut->onClick([=] {
+		ControlVisible = 1;
+
 		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		});
 
 	SlideIn->onClick([=] {
+		ControlVisible = 0;
 		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		});
@@ -1962,7 +1976,10 @@ void CLL::initButtons()
 		tgui::String s(0.5f + 0.25f * Speed->getValue());
 
 		SpeedIndicator->setText(tgui::String("x") + s);
+		double tmpDur = Duration;
 		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
+		Elapsed = (int)(((double)Elapsed / tmpDur) * Duration);
+		Last = Elapsed;
 		});
 
 	ProgressThumb->onValueChange([=] {

@@ -82,6 +82,13 @@ void Queue::ClearAction()
 	for (int i = 0; i < action.size(); i++)
 		for (int j = 0; j < action[i].size(); j++)
 			action[i][j](Duration);
+	
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
+
+	TextArea->setText(tgui::String(""));
+	TextHighlight->setVisible(0);
 
 	action.clear();
 }
@@ -98,72 +105,22 @@ void Queue::drawList(int Dummy)
 	}
 }
 
-void Queue::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
+void Queue::TitleAppear(Node* Cur, String s, int Elapsed)
 {
 	if (!Cur)
 		return;
 
 	Cur->Title.setFillColor(Color(229, 9, 20, (int)(255 * (double)Elapsed / Duration)));
-	switch (NodeState) {
-	case Normal:
-		if (Cur->NumberInList == 0)
-			Cur->Title.setString(String("Head"));
-		else if (Cur->NumberInList == NodeNumber - 1)
-			Cur->Title.setString(String("Tail"));
-		else
-			Cur->Title.setString(String(""));
+	Cur->Title.setString(s);
+	Cur->Title.setOrigin(Cur->Title.getLocalBounds().left + Cur->Title.getLocalBounds().width / 2, Cur->Title.getLocalBounds().top + Cur->Title.getLocalBounds().height / 2);
+	Cur->Title.setPosition(Cur->Pos.x + 23, Cur->Pos.y + 50 + Cur->Title.getLocalBounds().height / 2);
 
-		break;
-
-	case Visited:
-		if (Cur->NumberInList == 0)
-			Cur->Title.setString(String("Head"));
-		else if (Cur->NumberInList == NodeNumber - 1)
-			Cur->Title.setString(String("Tail"));
-		else
-			Cur->Title.setString(String(""));
-
-		break;
-
-	case Selecting:
-		if (Cur->NumberInList == 0)
-			Cur->Title.setString(String("Cur/Head"));
-		else if (Cur->NumberInList == NodeNumber - 1)
-			Cur->Title.setString(String("Tail"));
-		else
-			Cur->Title.setString(String("Cur/") + String(to_string(Cur->NumberInList)));
-		break;
-
-	case New:
-
-		if (Cur->NumberInList == 0)
-			Cur->Title.setString(String("New/Head"));
-		else if (Cur->NumberInList == NodeNumber - 1)
-			Cur->Title.setString(String("New/Tail"));
-		else if (Cur->NumberInList > 0)
-			Cur->Title.setString(String("New/") + String(to_string(Cur->NumberInList)));
-		else
-			Cur->Title.setString(String("New"));
-		break;
-
-	case Remove:
-
-		break;
-
-	case Next:
-		if (Cur->NumberInList == 0)
-			Cur->Title.setString(String("Head"));
-		else
-			Cur->Title.setString(String("Aft"));
-
-		break;
-	}
 	app.draw(Cur->Title);
 }
 
-void Queue::TitleDisappear(Node* Cur, Nodestate NodeState, int Elapsed)
+void Queue::TitleDisappear(Node* Cur, String s, int Elapsed)
 {
-	TitleAppear(Cur, NodeState, Duration - Elapsed);
+	TitleAppear(Cur, s, Duration - Elapsed);
 }
 
 void Queue::HighlightAppear(int Line, int Elapsed)
@@ -501,13 +458,21 @@ void Queue::insertAtEnd(Node*& NewNode)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("Node NewNode = new Node(v)\nTail.next = NewNode\nTail = NewNode"));
+	TextArea->setText(tgui::String("Node NewNode = new Node(v)\nif (!Head)\n		Head = NewNode\nelse\n		Tail.next = NewNode\nTail = NewNode"));
 
-	NewNode->changeNodePosition(Tail->Pos.x + 95, Tail->Pos.y);
+	if (Tail) {
+		NewNode->changeNodePosition(Tail->Pos.x + 95, Tail->Pos.y);
+		Tail->nxt = NewNode;
+	}
+	else {
+		Head = NewNode;
+		NewNode->changeNodePosition(DefaultPosX, DefaultPosY);
+	}
 
-	Tail->nxt = NewNode;
 	NewNode->prev = Tail;
 	Tail = NewNode;
+
+	String title = String("New");
 
 	action.push_back(vector<function<void(int)> >());
 
@@ -515,20 +480,39 @@ void Queue::insertAtEnd(Node*& NewNode)
 	action.back().push_back(bind(&Queue::HighlightAppear, this, 0, placeholders::_1));
 	action.back().push_back(bind(&Queue::NodeAppear, this, NewNode, placeholders::_1));
 
-	action.push_back(vector<function<void(int)> >());
+	if (NewNode->prev) {
+		action.push_back(vector<function<void(int)> >());
 
-	action.back().push_back(bind(&Queue::MoveHighlight, this, 0, 1, placeholders::_1));
-	action.back().push_back(bind(&Queue::drawListExcept, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&Queue::drawNode, this, NewNode, placeholders::_1));
-	action.back().push_back(bind(&Queue::ChangeState, this, NewNode->prev, Normal, Selecting, placeholders::_1));
-	action.back().push_back(bind(&Queue::ConnectNode, this, NewNode->prev, NewNode, placeholders::_1));
+		action.back().push_back(bind(&Queue::MoveHighlight, this, 0, 4, placeholders::_1));
+		action.back().push_back(bind(&Queue::drawListExcept, this, NewNode, placeholders::_1));
+		action.back().push_back(bind(&Queue::drawNode, this, NewNode, placeholders::_1));
+		action.back().push_back(bind(&Queue::ChangeState, this, NewNode->prev, Normal, Selecting, placeholders::_1));
+		action.back().push_back(bind(&Queue::ConnectNode, this, NewNode->prev, NewNode, placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleAppear, this, NewNode->prev, String("Cur/Tail"), placeholders::_1));
+	}
+	else {
+		title = title + String("/Head");
+		action.push_back(vector<function<void(int)> >());
+
+		action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
+		action.back().push_back(bind(&Queue::MoveHighlight, this, 0, 2, placeholders::_1));
+	}
+	action.back().push_back(bind(&Queue::TitleAppear, this, NewNode, title, placeholders::_1));
 
 	action.push_back(vector<function<void(int)> >());
 
 	action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&Queue::MoveHighlight, this, 1, 2, placeholders::_1));
-	action.back().push_back(bind(&Queue::ChangeState, this, NewNode->prev, Selecting, Normal, placeholders::_1));
-	action.back().push_back(bind(&Queue::TitleAppear, this, NewNode, New, placeholders::_1));
+	if (NewNode->prev) {
+		action.back().push_back(bind(&Queue::MoveHighlight, this, 4, 5, placeholders::_1));
+		action.back().push_back(bind(&Queue::ChangeState, this, NewNode->prev, Selecting, Normal, placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleDisappear, this, NewNode->prev, String("Cur/Tail"), placeholders::_1));
+	}
+	else {
+		action.back().push_back(bind(&Queue::MoveHighlight, this, 2, 5, placeholders::_1));
+	}
+	action.back().push_back(bind(&Queue::TitleDisappear, this, NewNode, title, placeholders::_1));
+	title = title + String("/Tail");
+	action.back().push_back(bind(&Queue::TitleAppear, this, NewNode, title, placeholders::_1));
 
 	initProgress();
 }
@@ -602,7 +586,7 @@ void Queue::popAll()
 			action.back().push_back(bind(&Queue::MoveHighlight, this, 3, 1, placeholders::_1));
 			action.back().push_back(bind(&Queue::ChangeState, this, Cur, Next, Selecting, placeholders::_1));
 		}
-		action.back().push_back(bind(&Queue::TitleAppear, this, Cur, Selecting, placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleAppear, this, Cur, String("Cur/Head"), placeholders::_1));
 
 		//Next = Head
 
@@ -612,8 +596,8 @@ void Queue::popAll()
 		action.back().push_back(bind(&Queue::drawListPartial, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&Queue::ChangeState, this, Cur, Selecting, Remove, placeholders::_1));
 		action.back().push_back(bind(&Queue::ChangeState, this, Cur->nxt, Normal, Next, placeholders::_1));
-		action.back().push_back(bind(&Queue::TitleAppear, this, Cur->nxt, Next, placeholders::_1));
-		action.back().push_back(bind(&Queue::TitleDisappear, this, Cur, Selecting, placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleAppear, this, Cur->nxt, String("Aft/Head"), placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleDisappear, this, Cur, String("Cur/Head"), placeholders::_1));
 
 		//Update Nodes position
 		action.push_back(vector<function<void(int)> >());
@@ -624,7 +608,7 @@ void Queue::popAll()
 		action.back().push_back(bind(&Queue::drawListPartial, this, Cur->nxt, Tail, placeholders::_1));
 		action.back().push_back(bind(&Queue::DisconnectNode, this, Cur, Cur->nxt, placeholders::_1));
 		action.back().push_back(bind(&Queue::NodeDisappear, this, Cur, placeholders::_1));
-		action.back().push_back(bind(&Queue::TitleDisappear, this, Cur->nxt, Next, placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleDisappear, this, Cur->nxt, String("Aft/Head"), placeholders::_1));
 		action.back().push_back(bind(&Queue::SlideNodes, this, Cur->nxt, DefaultPosX + 95, DefaultPosY, DefaultPosX, DefaultPosY, placeholders::_1));
 
 		Cur = Cur->nxt;
@@ -655,7 +639,7 @@ void Queue::removeAtBeginning() {
 	action.back().push_back(bind(&Queue::HighlightAppear, this, 0, placeholders::_1));
 	action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
 	action.back().push_back(bind(&Queue::ChangeState, this, Dell, Normal, Selecting, placeholders::_1));
-	action.back().push_back(bind(&Queue::TitleAppear, this, Dell, Selecting, placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleAppear, this, Dell, String("Cur/Head"), placeholders::_1));
 
 	//Next = Head
 
@@ -665,8 +649,8 @@ void Queue::removeAtBeginning() {
 	action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
 	action.back().push_back(bind(&Queue::ChangeState, this, Dell, Selecting, Remove, placeholders::_1));
 	action.back().push_back(bind(&Queue::ChangeState, this, Dell->nxt, Normal, Next, placeholders::_1));
-	action.back().push_back(bind(&Queue::TitleAppear, this, Dell->nxt, Next, placeholders::_1));
-	action.back().push_back(bind(&Queue::TitleDisappear, this, Dell, Selecting, placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleAppear, this, Dell->nxt, String("Aft/Head"), placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleDisappear, this, Dell, String("Cur/Head"), placeholders::_1));
 
 	//Update Nodes position
 	action.push_back(vector<function<void(int)> >());
@@ -729,7 +713,7 @@ void Queue::Peek()
 
 	action.back().push_back(bind(&Queue::HighlightAppear, this, 1, placeholders::_1));
 	action.back().push_back(bind(&Queue::drawList, this, placeholders::_1));
-	action.back().push_back(bind(&Queue::TitleAppear, this, Head, Selecting, placeholders::_1));
+	action.back().push_back(bind(&Queue::TitleAppear, this, Head, String("Cur/Head"), placeholders::_1));
 	action.back().push_back(bind(&Queue::ChangeState, this, Head, Normal, New, placeholders::_1));
 
 	initProgress();
@@ -849,6 +833,8 @@ void Queue::initButtons()
 	}
 
 	Speed->setValue(2);
+	EditPanel->setVisible(ControlVisible);
+	SlideIn->setVisible(ControlVisible);
 
 	ClearButton->onPress([=] {
 		Signal = Removing;
@@ -1017,20 +1003,25 @@ void Queue::initButtons()
 		});
 
 	SlideOut->onClick([=] {
+		ControlVisible = 1;
 		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
-			});
+		});
 
 	SlideIn->onClick([=] {
+		ControlVisible = 0;
 		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
-	});
+		});
 
 	Speed->onValueChange([=] {
 		tgui::String s(0.5f + 0.25f * Speed->getValue());
 
 		SpeedIndicator->setText(tgui::String("x") + s);
+		double tmpDur = Duration;
 		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
+		Elapsed = (int)(((double)Elapsed / tmpDur) * Duration);
+		Last = Elapsed;
 		});
 
 	ProgressThumb->onValueChange([=] {

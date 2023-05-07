@@ -23,6 +23,7 @@ __declspec(selectany) tgui::Gui gui;
 __declspec(selectany) RenderWindow app(VideoMode(1600, 900), "VisualAlgo", Style::Close);
 __declspec(selectany) tgui::Theme theme;
 __declspec(selectany) int ThemeNum = 0;
+__declspec(selectany) bool ControlVisible = 0;
 
 __declspec(selectany) HWND hwnd;
 __declspec(selectany) TCHAR szFileName[MAX_PATH];

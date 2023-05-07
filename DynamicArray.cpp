@@ -20,6 +20,13 @@ void DArray::ClearAction()
 		for (int j = 0; j < action[i].size(); j++)
 			action[i][j](Duration);
 
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
+
+	TextArea->setText(tgui::String(""));
+	TextHighlight->setVisible(0);
+
 	action.clear();
 }
 
@@ -424,7 +431,7 @@ void DArray::pushBack(int v)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("if (size == capacity)\n		growArray()\narr[size] = v, size++"));
+	TextArea->setText(tgui::String("if (size == capacity)\n		growArray()\narr[size++] = v"));
 
 	if (size == capacity) {
 		capacity = min(capacity * 2, maxCap);
@@ -455,12 +462,12 @@ void DArray::pushBack(int v)
 
 void DArray::insertAt(int i, int v)
 {
-	if (i < 0 || i >= size) {
+	if (i < 0 || i > size) {
 		Signal = Pending;
 		return;
 	}
 
-	if (i == size - 1) {
+	if (i == size) {
 		pushBack(v);
 		return;
 	}
@@ -576,7 +583,7 @@ void DArray::popBack()
 
 void DArray::deleteAt(int i)
 {
-	if (size == 0) {
+	if (size == 0 || i >= size || i < 0) {
 		Signal = Pending;
 		return;
 	}
@@ -649,6 +656,31 @@ void DArray::deleteAt(int i)
 
 		capacity = size;
 	}
+
+	initProgress();
+}
+
+void DArray::accessMem(int i)
+{
+	if (i >= size || i < 0) {
+		Signal = Pending;
+		return;
+	}
+
+	reset();
+
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+
+	TextArea->setText(tgui::String("return arr[i]"));
+
+	action.push_back(vector<function<void(int)> >());
+
+	action.back().push_back(bind(&DArray::HighlightAppear, this, 0, placeholders::_1));
+	action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+	action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, i, placeholders::_1));
+	action.back().push_back(bind(&DArray::drawArr, this, Arr, i + 1, capacity, placeholders::_1));
+	action.back().push_back(bind(&DArray::ChangeState, this, Arr[i], 0, 1, placeholders::_1));
 
 	initProgress();
 }
@@ -784,6 +816,13 @@ void DArray::initButtons()
 	tgui::EditBox::Ptr ArraySize = gui.get<tgui::EditBox>("ArraySize");
 	ArraySize->setRenderer(theme.getRenderer("EditBox"));
 
+	tgui::Button::Ptr AccessButton = gui.get<tgui::Button>("AccessButton");
+	AccessButton->setRenderer(theme.getRenderer("Button"));
+	tgui::Button::Ptr AccessEx = gui.get<tgui::Button>("AccessEx");
+	AccessEx->setRenderer(theme.getRenderer("ExButton"));
+	tgui::EditBox::Ptr AccessPos = gui.get<tgui::EditBox>("AccessPos");
+	AccessPos->setRenderer(theme.getRenderer("EditBox"));
+
 	tgui::Button::Ptr SearchNode = gui.get<tgui::Button>("SearchNode");
 	SearchNode->setRenderer(theme.getRenderer("Button"));
 	tgui::Button::Ptr SearchEx = gui.get<tgui::Button>("SearchEx");
@@ -859,8 +898,13 @@ void DArray::initButtons()
 	}
 
 	Speed->setValue(2);
+	EditPanel->setVisible(ControlVisible);
+	SlideIn->setVisible(ControlVisible);
 
 	ShrinkButton->onPress([=] {
+		if (size == 0 || size == capacity)
+			return;
+		
 		Signal = Inserting;
 		timer.restart();
 
@@ -898,7 +942,7 @@ void DArray::initButtons()
 		});
 
 	InsertMode->onPress([=] {
-		InsertModes = 1 - InsertModes;
+		InsertModes = (InsertModes + 1) % 3;
 
 		switch (InsertModes) {
 		case 0:
@@ -908,15 +952,20 @@ void DArray::initButtons()
 			InsertPos->setPosition({ "InsertMode.right + 10", "InsertMode.top" });
 			InsertVal->setPosition({ "InsertPos.right + 10", "InsertMode.top" });
 			InsertEx->setPosition({ "InsertVal.right + 10", "InsertMode.top" });
-
 			break;
 
 		case 1:
+			InsertMode->setText(tgui::String("Push Front"));
+			InsertPos->setVisible(0);
+			InsertVal->setPosition({ "InsertMode.right + 10", "InsertMode.top" });
+			InsertEx->setPosition({ "InsertVal.right + 10", "InsertMode.top" });
+			break;
+
+		case 2:
 			InsertMode->setText(tgui::String("Push Back"));
 			InsertPos->setVisible(0);
 			InsertVal->setPosition({ "InsertMode.right + 10", "InsertMode.top" });
 			InsertEx->setPosition({ "InsertVal.right + 10", "InsertMode.top" });
-
 			break;
 
 		}
@@ -935,7 +984,7 @@ void DArray::initButtons()
 		});
 
 	DeleteMode->onPress([=] {
-		DeleteModes = 1 - DeleteModes;
+		DeleteModes = (DeleteModes + 1) % 3;
 
 		switch (DeleteModes) {
 		case 0:
@@ -944,14 +993,18 @@ void DArray::initButtons()
 			DeletePos->setText(tgui::String(""));
 			DeletePos->setPosition({ "DeleteMode.right + 10", "DeleteMode.top" });
 			DeleteEx->setPosition({ "DeletePos.right + 10", "DeleteMode.top" });
-
 			break;
 
 		case 1:
+			DeleteMode->setText(tgui::String("Pop Front"));
+			DeletePos->setVisible(0);
+			DeleteEx->setPosition({ "DeleteMode.right + 10", "DeleteMode.top" });
+			break;
+
+		case 2:
 			DeleteMode->setText(tgui::String("Pop Back"));
 			DeletePos->setVisible(0);
 			DeleteEx->setPosition({ "DeleteMode.right + 10", "DeleteMode.top" });
-
 			break;
 		}
 		});
@@ -996,6 +1049,11 @@ void DArray::initButtons()
 
 		});
 
+	AccessButton->onPress([=] {
+		AccessPos->setVisible(1 - AccessPos->isVisible());
+		AccessEx->setVisible(1 - AccessEx->isVisible());
+		});
+
 	SearchNode->onPress([=] {
 		SearchVal->setVisible(1 - SearchVal->isVisible());
 		SearchEx->setVisible(1 - SearchEx->isVisible());
@@ -1019,6 +1077,7 @@ void DArray::initButtons()
 
 	UserInputEx->onPress([=] {
 		ClearAction();
+		reset();
 		Signal = Pending;
 
 		switch (GenModes) {
@@ -1068,13 +1127,17 @@ void DArray::initButtons()
 
 		case 3:
 		{
+			for (int i = 0; i < maxCap; i++)
+				Arr[i]->changeMemValue(String(""));
+
 			int tmp;
 			tgui::String s = ArraySize->getText();
 			if (!s.attemptToInt(tmp))
 				break;
 
-			if (tmp <= maxCap)
+			if (tmp <= maxCap && tmp > 0)
 				capacity = tmp;
+
 			break;
 		}
 		}
@@ -1083,6 +1146,17 @@ void DArray::initButtons()
 	InsertEx->onPress([=] {
 		/*if (size == maxNodeNumber)
 			return;*/
+
+		int Pos = InsertPos->getText().toInt();
+		int Val = InsertVal->getText().toInt();
+
+		if (InsertModes == 1)
+			Pos = 0;
+		else if (InsertModes == 2)
+			Pos = size;
+
+		if (size == maxCap || Pos < 0 || Pos > size)
+			return;
 
 		Signal = Inserting;
 		timer.restart();
@@ -1093,20 +1167,23 @@ void DArray::initButtons()
 		Elapsed = 0;
 		Last = 0;
 
-		int Pos = InsertPos->getText().toInt();
-		int Val = InsertVal->getText().toInt();
-
-		if (InsertModes == 0) {
-			insertAt(Pos, Val);
-		}
-		else if (InsertModes == 1)
-			pushBack(Val);
-
+		insertAt(Pos, Val);
 		});
 
 	DeleteEx->onPress([=] {
 		//if (NodeNumber == 0)
 		//	return;
+
+		int Pos = DeletePos->getText().toInt();
+
+		if (DeleteModes == 1)
+			Pos = 0;
+		else if (DeleteModes == 2)
+			Pos = size - 1;
+
+		if (size == 0 || Pos < 0 || Pos >= size) {
+			return;
+		}
 
 		Signal = Removing;
 		timer.restart();
@@ -1117,18 +1194,32 @@ void DArray::initButtons()
 		Last = 0;
 		Elapsed = 0;
 
-		int Pos = DeletePos->getText().toInt();
-
-		if (DeleteModes == 0) {
-			deleteAt(Pos);
-		}
-		else if (DeleteModes == 1)
-			popBack();
-
+		deleteAt(Pos);
 		});
 
+	AccessEx->onPress([=] {
+		tgui::String Pos = AccessPos->getText();
+
+		int i = Pos.toInt();
+		if (i < 0 || i >= size)
+			return;
+
+		Signal = Searching;
+		timer.restart();
+
+		ClearAction();
+		ShowDirection = 0;
+		CurStep = 0;
+		Last = 0;
+		Elapsed = 0;
+
+		accessMem(i);
+		});
 
 	SearchEx->onPress([=] {
+		if (size == 0)
+			return;
+
 		Signal = Searching;
 		timer.restart();
 
@@ -1144,6 +1235,13 @@ void DArray::initButtons()
 		});
 
 	UpdateEx->onPress([=] {
+		tgui::String Val = UpdateVal->getText();
+		tgui::String Pos = UpdatePos->getText();
+
+		int i = Pos.toInt();
+		if (i < 0 || i >= size)
+			return;
+
 		Signal = Searching;
 		timer.restart();
 
@@ -1152,9 +1250,6 @@ void DArray::initButtons()
 		CurStep = 0;
 		Last = 0;
 		Elapsed = 0;
-
-		tgui::String Val = UpdateVal->getText();
-		tgui::String Pos = UpdatePos->getText();
 
 		updateMem(Pos.toInt(), Val.toInt());
 		});
@@ -1176,11 +1271,13 @@ void DArray::initButtons()
 		});
 
 	SlideOut->onClick([=] {
+		ControlVisible = 1;
 		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		});
 
 	SlideIn->onClick([=] {
+		ControlVisible = 0;
 		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		});
@@ -1343,15 +1440,12 @@ void DArray::HandleEvent(Event& e)
 					timer.restart();
 				}
 				else {
-					if (CurStep + 1 == (int)action.size()) {
+					if (CurStep + 1 == (int)action.size() || (double)Elapsed / Duration < 0.8) {
+						Last = Duration;
 						Elapsed = Duration;
 					}
 					else {
-						for (int i = 0; i < (int)action[CurStep].size(); i++)
-							action[CurStep][i](Duration);
-
 						CurStep++;
-
 						Elapsed = 0;
 						Last = 0;
 						timer.restart();
@@ -1370,13 +1464,11 @@ void DArray::HandleEvent(Event& e)
 					timer.restart();
 				}
 				else {
-					if (CurStep == 0) {
+					if (CurStep == 0 || (double)Elapsed / Duration > 0.2) {
+						Last = 0;
 						Elapsed = 0;
 					}
 					else {
-						for (int i = 0; i < (int)action[CurStep].size(); i++)
-							action[CurStep][i](0);
-
 						CurStep--;
 						Elapsed = Duration;
 						Last = Duration;
@@ -1445,7 +1537,7 @@ void DArray::interactDArr()
 
 			if (ShowDirection == 0 && Elapsed >= Duration) {
 
-				if ((CurStep + 2 == (int)action.size() && Signal == Removing) || (CurStep + 1 == (int)action.size()))
+				if (CurStep + 1 == (int)action.size())
 					Elapsed = Duration;
 				else {
 					timer.restart();

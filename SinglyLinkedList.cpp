@@ -83,6 +83,13 @@ void SLL::ClearAction()
 		for (int j = 0; j < action[i].size(); j++)
 			action[i][j](Duration);
 
+	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
+	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
+	tgui::Panel::Ptr TextHighlight = PseudoCode->get<tgui::Panel>("TextHighlight");
+
+	TextArea->setText(tgui::String(""));
+	TextHighlight->setVisible(0);
+
 	action.clear();
 }
 
@@ -150,6 +157,8 @@ void SLL::TitleAppear(Node* Cur, Nodestate NodeState, int Elapsed)
 
 		break;
 	}
+	Cur->Title.setOrigin(Cur->Title.getLocalBounds().left + Cur->Title.getLocalBounds().width / 2, Cur->Title.getLocalBounds().top + Cur->Title.getLocalBounds().height / 2);
+	Cur->Title.setPosition(Cur->Pos.x + 23, Cur->Pos.y + 50 + Cur->Title.getLocalBounds().height / 2);
 	app.draw(Cur->Title);
 }
 
@@ -1267,6 +1276,8 @@ void SLL::initButtons()
 	}
 
 	Speed->setValue(2);
+	EditPanel->setVisible(ControlVisible);
+	SlideIn->setVisible(ControlVisible);
 
 	InsertButton->onPress([=] {
 		InsertMode->setVisible(1 - InsertMode->isVisible());
@@ -1552,11 +1563,13 @@ void SLL::initButtons()
 		});
 
 	SlideOut->onClick([=] {
+		ControlVisible = 1;
 		EditPanel->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		SlideIn->showWithEffect(tgui::ShowAnimationType::SlideFromRight, 500);
 		});
 
 	SlideIn->onClick([=] {
+		ControlVisible = 0;
 		EditPanel->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		SlideIn->hideWithEffect(tgui::ShowAnimationType::SlideToRight, 500);
 		});
@@ -1565,7 +1578,10 @@ void SLL::initButtons()
 		tgui::String s(0.5f + 0.25f * Speed->getValue());
 
 		SpeedIndicator->setText(tgui::String("x") + s);
+		double tmpDur = Duration;
 		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
+		Elapsed = (int)(((double)Elapsed / tmpDur) * Duration);
+		Last = Elapsed;
 		});
 
 	ProgressThumb->onValueChange([=] {

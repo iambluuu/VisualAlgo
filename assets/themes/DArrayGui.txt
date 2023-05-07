@@ -144,7 +144,7 @@ Picture.Background {
 }
 
 Button.InsertButton {
-    Position = (20, 540);
+    Position = (20, 480);
     Size = (140, 51.3333);
     Text = Insert;
     TextSize = 15;
@@ -181,7 +181,7 @@ Button.InsertButton {
 }
 
 Button.DeleteButton {
-    Position = (20, 600);
+    Position = (20, 540);
     Size = (140, 51.3333);
     Text = Remove;
     TextSize = 15;
@@ -259,9 +259,10 @@ EditBox.DeletePos {
     InputValidator = Int;
     MaximumCharacters = 2;
     MouseCursor = Text;
-    Position = (250, 610);
+    Position = (250, 550);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -294,9 +295,10 @@ EditBox.InsertPos {
     InputValidator = Int;
     MaximumCharacters = 3;
     MouseCursor = Text;
-    Position = (250, 550);
+    Position = (250, 490);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -329,9 +331,10 @@ EditBox.InsertVal {
     InputValidator = Int;
     MaximumCharacters = 2;
     MouseCursor = Text;
-    Position = (320, 550);
+    Position = (320, 490);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -427,19 +430,21 @@ EditBox.EditBox1 {
 }
 
 Button.InsertEx {
-    Position = (400, 550);
+    Position = (390, 490);
     Renderer = &1;
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.DeleteEx {
-    Position = (320, 610);
+    Position = (320, 550);
     Renderer = &1;
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.UserInputEx {
@@ -491,6 +496,7 @@ ComboBox.ComboBox1 {
         BackgroundColor = #8E6FFF;
         BorderColor = black;
         Borders = (0, 0, 0, 0);
+        Font = "SpaceGrotesk-Bold.ttf";
         Padding = (0, 0, 0, 0);
         TextColor = #3C3C3C;
         TextureArrow = None;
@@ -567,6 +573,7 @@ Button.SlideOut {
 Panel.EditPanel {
     Position = (1190, 610);
     Size = (410, 170);
+    Visible = false;
 
     Renderer {
         BackgroundColor = #8E6FFF;
@@ -581,6 +588,7 @@ Button.SlideIn {
     Position = (1150, 610);
     Size = (40, 170);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = black;
@@ -704,11 +712,11 @@ Button.UpdateNode {
     TextSize = 15;
 }
 
-Button.SearchNode {
-    Position = (20, 660);
+Button.AccessButton {
+    Position = (20, 600);
     Renderer = &2;
     Size = (140, 51.3333);
-    Text = Search;
+    Text = Access;
     TextSize = 15;
 }
 
@@ -720,6 +728,7 @@ EditBox.UpdatePos {
     Position = (170, 730);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -755,6 +764,7 @@ EditBox.UpdateVal {
     Position = (250, 730);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -790,6 +800,7 @@ EditBox.SearchVal {
     Position = (170, 670);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -823,6 +834,7 @@ Button.SearchEx {
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.UpdateEx {
@@ -831,26 +843,29 @@ Button.UpdateEx {
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.InsertMode {
-    Position = (170, 550);
+    Position = (170, 490);
     Renderer = &4;
     Size = (70, 30.3333);
     Text = "Insert At";
     TextSize = 13;
+    Visible = false;
 }
 
 Button.DeleteMode {
-    Position = (170, 610);
+    Position = (170, 550);
     Renderer = &4;
     Size = (70, 30.3333);
     Text = "Remove At";
     TextSize = 13;
+    Visible = false;
 }
 
 Button.ShrinkButton {
-    Position = (20, 494.667);
+    Position = (20, 434.667);
     Renderer = &5;
     Size = (100, 36.6666);
     Text = Shrink;
@@ -858,7 +873,7 @@ Button.ShrinkButton {
 }
 
 Button.GrowButton {
-    Position = (20, 448.333);
+    Position = (20, 388.333);
     Renderer = &5;
     Size = (100, 36.6666);
     Text = Grow;
@@ -896,6 +911,112 @@ EditBox.ArraySize {
         TextColorDisabled = #7D7D7D;
         Texture = None;
         TextureDisabled = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+Button.SearchNode {
+    Position = (20, 660);
+    Size = (140, 51.3333);
+    Text = Search;
+    TextSize = 15;
+
+    Renderer {
+        BackgroundColor = #8E6FFF;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #7F76FF;
+        BackgroundColorDownFocused = #7F76FF;
+        BackgroundColorDownHover = #FAC0FF00;
+        BackgroundColorFocused = #8E6FFF;
+        BackgroundColorHover = #AB96FF;
+        BorderColor = #3C2877;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #FFAEF4;
+        BorderColorHover = #FFC9EF;
+        Borders = (2, 2, 2, 2);
+        Font = "SpaceGrotesk-Bold.ttf";
+        RoundedBorderRadius = 13;
+        TextColor = #F4DDFF;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        TextStyle = Regular;
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+EditBox.AccessPos {
+    DefaultText = "i = . . .";
+    InputValidator = Int;
+    MaximumCharacters = 3;
+    MouseCursor = Text;
+    Position = (170, 610);
+    Size = (60, 30.1714);
+    TextSize = 13;
+    Visible = false;
+
+    Renderer {
+        BackgroundColor = #E1D0FF;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorHover = #EFDDFF;
+        BorderColor = #A588BF;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorFocused = #636387;
+        BorderColorHover = black;
+        Borders = (2, 2, 2, 2);
+        CaretColor = black;
+        CaretWidth = 0;
+        DefaultTextColor = #483C4F;
+        Font = "SpaceGrotesk-Bold.ttf";
+        Opacity = 0.8;
+        Padding = (0, 0, 0, 0);
+        SelectedTextBackgroundColor = #006EFF;
+        SelectedTextColor = white;
+        TextColor = #3C3C3C;
+        TextColorDisabled = #7D7D7D;
+        Texture = None;
+        TextureDisabled = None;
+        TextureFocused = None;
+        TextureHover = None;
+    }
+}
+
+Button.AccessEx {
+    Position = (250, 610);
+    Size = (30, 30);
+    Text = GO;
+    TextSize = 13;
+    Visible = false;
+
+    Renderer {
+        BackgroundColor = #313893;
+        BackgroundColorDisabled = #E6E6E6;
+        BackgroundColorDown = #EBEBEB;
+        BackgroundColorHover = white;
+        BorderColor = #071831;
+        BorderColorDisabled = #7D7D7D;
+        BorderColorDown = black;
+        BorderColorFocused = #1E1EB4;
+        BorderColorHover = black;
+        Borders = (1, 1, 1, 1);
+        Font = "SpaceGrotesk-Bold.ttf";
+        TextColor = #ECF7FF;
+        TextColorDisabled = #7D7D7D;
+        TextColorDown = black;
+        TextColorHover = black;
+        Texture = None;
+        TextureDisabled = None;
+        TextureDown = None;
+        TextureDownFocused = None;
+        TextureDownHover = None;
         TextureFocused = None;
         TextureHover = None;
     }

@@ -232,6 +232,7 @@ EditBox.DeletePos {
     Position = (240, 610);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -267,6 +268,7 @@ EditBox.InsertPos {
     Position = (240, 550);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -302,6 +304,7 @@ EditBox.InsertVal {
     Position = (310, 550);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -402,6 +405,7 @@ Button.InsertEx {
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.DeleteEx {
@@ -410,6 +414,7 @@ Button.DeleteEx {
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.UserInputEx {
@@ -690,6 +695,7 @@ EditBox.UpdatePos {
     Position = (170, 730);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -725,6 +731,7 @@ EditBox.UpdateVal {
     Position = (240, 730);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -760,6 +767,7 @@ EditBox.SearchVal {
     Position = (170, 670);
     Size = (60, 30.1714);
     TextSize = 13;
+    Visible = false;
 
     Renderer {
         BackgroundColor = #E1D0FF;
@@ -793,6 +801,7 @@ Button.SearchEx {
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.UpdateEx {
@@ -801,6 +810,7 @@ Button.UpdateEx {
     Size = (30, 30);
     Text = GO;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.InsertMode {
@@ -809,6 +819,7 @@ Button.InsertMode {
     Size = (60, 30.3333);
     Text = Middle;
     TextSize = 13;
+    Visible = false;
 }
 
 Button.DeleteMode {
@@ -817,4 +828,5 @@ Button.DeleteMode {
     Size = (60, 30.3333);
     Text = Middle;
     TextSize = 13;
+    Visible = false;
 }

@@ -118,6 +118,7 @@ ComboBox {
         BorderColor = black;
         Borders = (0, 0, 0, 0);
         Padding = (0, 0, 0, 0);
+	Font = "SpaceGrotesk-Bold.ttf";
         TextColor = #3C3C3C;
         TextureArrow = None;
         TextureArrowDisabled = None;
@@ -219,7 +220,7 @@ CodeWindow {
         BorderColor = black;
         Borders = (1, 1, 1, 1);
         DistanceToSide = 3;
-        Font = "SpaceGrotesk-Bold.ttf";
+        //Font = "SpaceGrotesk-Bold.ttf";
         Opacity = 0.8;
         PaddingBetweenButtons = 3;
         ShowTextOnTitleButtons = true;
@@ -308,9 +309,9 @@ SpeedSlider {
         TextureTrack = None;
         TextureTrackHover = None;
         ThumbColor = #F4DDFF;
-        ThumbColorHover = #F4DDFF;
+        ThumbColorHover = #D6CDA4;
         TrackColor = black;
-        TrackColorHover = #F4DDFF;
+        TrackColorHover = #D6CDA4;
     }
 
 ProgressBar {
