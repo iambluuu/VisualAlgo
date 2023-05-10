@@ -873,6 +873,9 @@ void Stack::initButtons()
 		Theme2->setChecked(1);
 	}
 
+	InsertModes = 0;
+	DeleteModes = 0;
+	GenModes = 0;
 	Speed->setValue(2);
 	EditPanel->setVisible(ControlVisible);
 	SlideIn->setVisible(ControlVisible);
@@ -1364,6 +1367,9 @@ void Stack::interactStack()
 		gui.handleEvent(e);
 		HandleEvent(e);
 	}
+
+	if (State != _Stack)
+		return;
 
 	switch (Signal) {
 	case Pending:

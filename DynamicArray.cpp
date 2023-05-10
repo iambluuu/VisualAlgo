@@ -434,11 +434,19 @@ void DArray::pushBack(int v)
 	TextArea->setText(tgui::String("if (size == capacity)\n		growArray()\narr[size++] = v"));
 
 	if (size == capacity) {
-		capacity = min(capacity * 2, maxCap);
 
 		action.push_back(vector<function<void(int)> >());
 		action.back().push_back(bind(&DArray::HighlightAppear, this, 1, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+
+		if (size == 0) {
+			capacity = 1;
+			action.back().push_back(bind(&DArray::LabelAppear, this, String("arr"), Arr[0], placeholders::_1));
+		}
+		else {
+			capacity = min(capacity * 2, maxCap);
+			action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+		}
+		
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 		action.back().push_back(bind(&DArray::ArrAppear, this, Arr, size, capacity, placeholders::_1));
 
@@ -477,7 +485,11 @@ void DArray::insertAt(int i, int v)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("if (size == capacity) growArray()\nfor(k = size - 1; k >= i; k++)\n		arr[k + 1] = arr[k]\narr[i] = v, size++"));	
+	if (InsertModes == 1)
+		TextArea->setText(tgui::String("if (size == capacity) growArray()\nfor(k = size - 1; k >= 0; k++)\n		arr[k + 1] = arr[k]\narr[0] = v, size++"));	
+	else
+		TextArea->setText(tgui::String("if (size == capacity) growArray()\nfor(k = size - 1; k >= i; k++)\n		arr[k + 1] = arr[k]\narr[i] = v, size++"));
+
 
 	if (size == capacity) {
 		capacity = min(capacity * 2, maxCap);
@@ -571,9 +583,13 @@ void DArray::popBack()
 		action.push_back(vector<function<void(int)> >());
 
 		action.back().push_back(bind(&DArray::MoveHighlight, this, 0, 2, placeholders::_1));
-		action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
 		action.back().push_back(bind(&DArray::drawArr, this, Arr, 0, size, placeholders::_1));
 		action.back().push_back(bind(&DArray::ArrDisappear, this, Arr, size, capacity, placeholders::_1));
+		if (size == 0)
+			action.back().push_back(bind(&DArray::LabelDisappear, this, "arr", Arr[0], placeholders::_1));
+		else
+			action.back().push_back(bind(&DArray::drawLabel, this, String("arr"), Arr[0], placeholders::_1));
+
 		capacity = size;
 
 	}
@@ -598,7 +614,7 @@ void DArray::deleteAt(int i)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("for(k = i; k < size - 1; k++)\n		arr[k] = arr[k + 1]\narr[size - 1] = 0, size--\nif (size == capacity / 2)\n		shrinkArray()"));
+	TextArea->setText(tgui::String("for(k = i; k < size - 1; k++)\n		arr[k] = arr[k + 1]\narr[size--] = 0\nif (size == capacity / 2)\n	shrinkArray()"));
 
 	for (int j = i; j < size - 1; j++) {
 		String tmp = Arr[j]->Val;
@@ -900,6 +916,9 @@ void DArray::initButtons()
 	Speed->setValue(2);
 	EditPanel->setVisible(ControlVisible);
 	SlideIn->setVisible(ControlVisible);
+	InsertModes = 0;
+	DeleteModes = 0;
+	GenModes = 0;
 
 	ShrinkButton->onPress([=] {
 		if (size == 0 || size == capacity)
@@ -1286,7 +1305,10 @@ void DArray::initButtons()
 		tgui::String s(0.5f + 0.25f * Speed->getValue());
 
 		SpeedIndicator->setText(tgui::String("x") + s);
+		double tmpDur = Duration;
 		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
+		Elapsed = (int)(((double)Elapsed / tmpDur) * Duration);
+		Last = Elapsed;
 		});
 
 	ProgressThumb->onValueChange([=] {
@@ -1391,7 +1413,7 @@ void DArray::initButtons()
 		if (s != tgui::String("Dynamic Array")) {
 			ClearAction();
 
-			DArray::size = 0;
+			size = 0;
 			capacity = 0;
 
 			for (int i = 0; i < 12; i++) {
@@ -1525,6 +1547,9 @@ void DArray::interactDArr()
 		HandleEvent(e);
 	}
 
+	if (State != _DArray)
+		return;
+
 	switch (Signal) {
 	case Pending:
 		if (capacity > 0)
@@ -1535,7 +1560,7 @@ void DArray::interactDArr()
 	default:
 		if (ShowMode == 0) {
 
-			if (ShowDirection == 0 && Elapsed >= Duration) {
+			if (Elapsed >= Duration) {
 
 				if (CurStep + 1 == (int)action.size())
 					Elapsed = Duration;

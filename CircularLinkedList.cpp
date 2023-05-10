@@ -203,7 +203,7 @@ void CLL::ConnectLongArrow(Node* A, Node* B, int Elapsed)
 
 	Length = 0;
 
-	if (9 * TimeUnit < Elapsed && Elapsed <= 10 * TimeUnit) {
+	if (9 * TimeUnit < Elapsed) {
 		Length = (int)(30 * (double)(Elapsed - 9 * TimeUnit) / TimeUnit);
 	}
 
@@ -1672,6 +1672,9 @@ void CLL::initButtons()
 		Theme2->setChecked(1);
 	}
 
+	InsertModes = 0;
+	DeleteModes = 0;
+	GenModes = 0;
 	Speed->setValue(2);
 	EditPanel->setVisible(ControlVisible);
 	SlideIn->setVisible(ControlVisible);
@@ -2283,6 +2286,9 @@ void CLL::interactCLL()
 		gui.handleEvent(e);
 		HandleEvent(e);
 	}
+
+	if (State != _CLL)
+		return;
 
 	switch (Signal) {
 	case Pending:

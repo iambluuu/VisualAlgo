@@ -170,6 +170,7 @@ void Node::drawDArrow()
 
 	Vector2f OriginPos = Arrow.getPosition();
 	float Angle = Arrow.getRotation() * PI / 180;
+	double Distance = Util::DistanceBetweenNodes(Pos, nxt->Pos) - 46 + 10;
 
 	Arrow.setPosition(OriginPos.x + 7 * sin(Angle) - 5 * cos(Angle), OriginPos.y - 7 * cos(Angle) - 5 * sin(Angle));
 	app.draw(Arrow);
@@ -190,11 +191,11 @@ void Node::drawDArrow()
 	}
 
 	Arrow.setRotation(Angle * 180 / PI + 180);
-	Arrow.setOrigin(Arrow.getLocalBounds().left + Arrow.getLocalBounds().width, Arrow.getLocalBounds().top + Arrow.getLocalBounds().height);
-	Arrow.setPosition(OriginPos.x - 7 * sin(Angle) - 5 * cos(Angle), OriginPos.y + 7 * cos(Angle) - 5 * sin(Angle));
+	Arrow.setOrigin(Arrow.getLocalBounds().left, Arrow.getLocalBounds().top + Arrow.getLocalBounds().height);
+	Arrow.setPosition(OriginPos.x - 7 * sin(Angle) + (Distance - 5) * cos(Angle), OriginPos.y + 7 * cos(Angle) - 5 * sin(Angle) + Distance * sin(Angle));
 	app.draw(Arrow);
 
-	Arrow.setOrigin(Arrow.getLocalBounds().left, Arrow.getLocalBounds().top);
+	Arrow.setOrigin(Arrow.getLocalBounds().left,Arrow.getLocalBounds().top);
 	Arrow.setPosition(OriginPos);
 	Arrow.setRotation(Angle * 180 / PI);
 }

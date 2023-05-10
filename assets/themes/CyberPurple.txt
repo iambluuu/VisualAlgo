@@ -105,7 +105,7 @@ EditBox {
         BorderColorHover = black;
         Borders = (2, 2, 2, 2);
         CaretColor = black;
-        CaretWidth = 0;
+        CaretWidth = 2;
         DefaultTextColor = #483C4F;
         Font = "SpaceGrotesk-Bold.ttf";
         Opacity = 0.8;

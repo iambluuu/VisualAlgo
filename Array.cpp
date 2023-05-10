@@ -710,6 +710,10 @@ void Array::initButtons()
 	Speed->setValue(2);
 	ShrinkButton->setVisible(0);
 	GrowButton->setVisible(0);
+	InsertModes = 0;
+	DeleteModes = 0;
+	GenModes = 0;
+
 
 	EditPanel->setVisible(ControlVisible);
 	SlideIn->setVisible(ControlVisible);
@@ -975,11 +979,7 @@ void Array::initButtons()
 		Last = 0;
 		Elapsed = 0;
 
-		if (DeleteModes == 0) {
-			deleteAt(Pos);
-		}
-		else if (DeleteModes == 1)
-			popBack();
+		deleteAt(Pos);
 
 		});
 
@@ -1317,6 +1317,9 @@ void Array::interactArr()
 		gui.handleEvent(e);
 		HandleEvent(e);
 	}
+
+	if (State != _Array)
+		return;
 
 	switch (Signal) {
 	case Pending:

@@ -42,7 +42,7 @@ SemiButton {
         BorderColorDisabled = #7D7D7D;
         BorderColorDown = black;
         BorderColorFocused = #1E1EB4;
-        BorderColorHover = #D39BFF;
+        BorderColorHover = #3D8361;
         Borders = (1, 1, 1, 1);
         Font = "SpaceGrotesk-Bold.ttf";
         RoundedBorderRadius = 6;
@@ -94,7 +94,7 @@ EditBox {
         BorderColorHover = black;
         Borders = (2, 2, 2, 2);
         CaretColor = black;
-        CaretWidth = 0;
+        CaretWidth = 2;
         DefaultTextColor = #483C4F;
         Font = "SpaceGrotesk-Bold.ttf";
         Opacity = 0.8;

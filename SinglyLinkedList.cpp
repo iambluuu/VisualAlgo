@@ -1275,6 +1275,9 @@ void SLL::initButtons()
 		Theme2->setChecked(1);
 	}
 
+	InsertModes = 0;
+	DeleteModes = 0;
+	GenModes = 0;
 	Speed->setValue(2);
 	EditPanel->setVisible(ControlVisible);
 	SlideIn->setVisible(ControlVisible);
@@ -1885,6 +1888,9 @@ void SLL::interactSLL()
 		gui.handleEvent(e);
 		HandleEvent(e);
 	}
+
+	if (State != _SLL)
+		return;
 
 	switch (Signal) {
 	case Pending:

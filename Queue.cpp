@@ -566,7 +566,7 @@ void Queue::popAll()
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("while(Head) {\n		Node* Cur = Head\n		Head = Head.next\n		delete Cur\n}"));
+	TextArea->setText(tgui::String("while(Head) {\n		Node Cur = Head\n		Head = Head.next\n		delete Cur\n}\nTail = null"));
 
 	Node* Cur = Head;
 
@@ -596,7 +596,7 @@ void Queue::popAll()
 		action.back().push_back(bind(&Queue::drawListPartial, this, Cur, Tail, placeholders::_1));
 		action.back().push_back(bind(&Queue::ChangeState, this, Cur, Selecting, Remove, placeholders::_1));
 		action.back().push_back(bind(&Queue::ChangeState, this, Cur->nxt, Normal, Next, placeholders::_1));
-		action.back().push_back(bind(&Queue::TitleAppear, this, Cur->nxt, String("Aft/Head"), placeholders::_1));
+		action.back().push_back(bind(&Queue::TitleAppear, this, Cur->nxt, String("Head"), placeholders::_1));
 		action.back().push_back(bind(&Queue::TitleDisappear, this, Cur, String("Cur/Head"), placeholders::_1));
 
 		//Update Nodes position
@@ -613,6 +613,9 @@ void Queue::popAll()
 
 		Cur = Cur->nxt;
 	}
+
+	action.push_back(vector<function<void(int)> >());
+	action.back().push_back(bind(&Queue::MoveHighlight, this, 3, 5, placeholders::_1));
 
 	action.push_back(vector<function<void(int)> >());
 	action.back().push_back(bind(&Queue::ClearList, this, placeholders::_1));
@@ -832,6 +835,9 @@ void Queue::initButtons()
 		Theme2->setChecked(1);
 	}
 
+	InsertModes = 0;
+	DeleteModes = 0;
+	GenModes = 0;
 	Speed->setValue(2);
 	EditPanel->setVisible(ControlVisible);
 	SlideIn->setVisible(ControlVisible);
@@ -1325,6 +1331,9 @@ void Queue::interactQueue()
 		gui.handleEvent(e);
 		HandleEvent(e);
 	}
+
+	if (State != _Queue)
+		return;
 
 	switch (Signal) {
 	case Pending:

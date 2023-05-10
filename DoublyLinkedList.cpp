@@ -545,7 +545,7 @@ void DLL::insertAtBeginning(Node*& NewNode)
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("Node NewNode = new Node(v)\nNewNode.next = Head, if(Head) Head.prev = NewNode\nHead = NewNode"));
+	TextArea->setText(tgui::String("Node NewNode = new Node(v)\nNewNode.next = Head\nif(Head)\n	Head.prev = NewNode\nHead = NewNode"));
 
 	NewNode->nxt = Head;
 	if (Head)
@@ -576,7 +576,12 @@ void DLL::insertAtBeginning(Node*& NewNode)
 		action.push_back(vector<function<void(int) > >());
 
 		action.back().push_back(std::bind(&DLL::drawList, this, placeholders::_1));
-		action.back().push_back(std::bind(&DLL::MoveHighlight, this, 0, 2, placeholders::_1));
+		action.back().push_back(std::bind(&DLL::MoveHighlight, this, 0, 1, placeholders::_1));
+
+		action.push_back(vector<function<void(int) > >());
+
+		action.back().push_back(std::bind(&DLL::drawList, this, placeholders::_1));
+		action.back().push_back(std::bind(&DLL::MoveHighlight, this, 1, 4, placeholders::_1));
 		action.back().push_back(std::bind(&DLL::TitleAppear, this, NewNode, New, placeholders::_1));
 		return;
 	}
@@ -592,11 +597,16 @@ void DLL::insertAtBeginning(Node*& NewNode)
 	action.back().push_back(std::bind(&DLL::drawListExcept, this, NewNode, placeholders::_1));
 	action.back().push_back(std::bind(&DLL::drawNode, this, NewNode, placeholders::_1));
 
+	action.push_back(vector<function<void(int) > >());
+
+	action.back().push_back(std::bind(&DLL::drawList, this, placeholders::_1));
+	action.back().push_back(std::bind(&DLL::MoveHighlight, this, 1, 3, placeholders::_1));
+
 	//TextHighlight->setSize(Line3->getSize());
 	//TextHighlight->setPosition(Line3->getPosition());
 	if (NewNode->nxt) {
 		action.push_back(vector<function<void(int) > >());
-		action.back().push_back(std::bind(&DLL::MoveHighlight, this, 1, 2, placeholders::_1));
+		action.back().push_back(std::bind(&DLL::MoveHighlight, this, 3, 4, placeholders::_1));
 		action.back().push_back(std::bind(&DLL::TitleAppear, this, NewNode, New, placeholders::_1));
 		action.back().push_back(std::bind(&DLL::MoveNode, this, NewNode, DefaultPosX, DefaultPosY + 100, DefaultPosX, DefaultPosY, placeholders::_1));
 		action.back().push_back(std::bind(&DLL::SlideNodes, this, NewNode->nxt, DefaultPosX, DefaultPosY, DefaultPosX + 95, DefaultPosY, placeholders::_1));
@@ -816,7 +826,7 @@ void DLL::removeAtBeginning() {
 	tgui::ChildWindow::Ptr PseudoCode = gui.get<tgui::ChildWindow>("PseudoCode");
 	tgui::TextArea::Ptr TextArea = PseudoCode->get<tgui::TextArea>("TextArea1");
 
-	TextArea->setText(tgui::String("Node Cur = Head\nHead = Cur.next\nif(Head != null) Head.prev = null, delete Cur"));
+	TextArea->setText(tgui::String("Node Cur = Head\nHead = Cur.next\nif(Head)\n	Head.prev = null\ndelete Cur"));
 
 	Node* Dell = Head;
 	Dell->NumberInList = 0;
@@ -842,13 +852,25 @@ void DLL::removeAtBeginning() {
 	action.back().push_back(bind(&DLL::TitleAppear, this, Dell->nxt, Next, placeholders::_1));
 	action.back().push_back(bind(&DLL::TitleDisappear, this, Dell, Selecting, placeholders::_1));
 
+	if (Dell->nxt) {
+		action.push_back(vector<function<void(int)> >());
+		action.back().push_back(bind(&DLL::MoveHighlight, this, 1, 3, placeholders::_1));
+		action.back().push_back(bind(&DLL::DisconnectNode, this, Dell, Dell->nxt, placeholders::_1));
+		action.back().push_back(bind(&DLL::drawListExcept, this, Dell, placeholders::_1));
+		action.back().push_back(bind(&DLL::drawListPartial, this, Dell, Dell, placeholders::_1));
+		action.back().push_back(bind(&DLL::TitleDisappear, this, Dell->nxt, Next, placeholders::_1));
+	}
+
 	//Update Nodes position
 	action.push_back(vector<function<void(int)> >());
 
-	action.back().push_back(bind(&DLL::MoveHighlight, this, 1, 2, placeholders::_1));
+	if (Dell->nxt) {
+		action.back().push_back(bind(&DLL::MoveHighlight, this, 3, 4, placeholders::_1));
+	}
+	else
+		action.back().push_back(bind(&DLL::MoveHighlight, this, 1, 4, placeholders::_1));
 	action.back().push_back(bind(&DLL::SetNodesNormal, this, Dell, Tail, placeholders::_1));
 	action.back().push_back(bind(&DLL::setNodeState, this, Dell, Remove, placeholders::_1));
-	action.back().push_back(bind(&DLL::DisconnectNode, this, Dell, Dell->nxt, placeholders::_1));
 	action.back().push_back(bind(&DLL::drawListExcept, this, Dell, placeholders::_1));
 	action.back().push_back(bind(&DLL::NodeDisappear, this, Dell, placeholders::_1));
 	action.back().push_back(bind(&DLL::SlideNodes, this, Dell->nxt, Dell->Pos.x + 95, DefaultPosY, Dell->Pos.x, DefaultPosY, placeholders::_1));
@@ -1319,6 +1341,9 @@ void DLL::initButtons()
 		Theme2->setChecked(1);
 	}
 
+	InsertModes = 0;
+	DeleteModes = 0;
+	GenModes = 0;
 	Speed->setValue(2);
 	EditPanel->setVisible(ControlVisible);
 	SlideIn->setVisible(ControlVisible);
@@ -1622,7 +1647,10 @@ void DLL::initButtons()
 		tgui::String s(0.5f + 0.25f * Speed->getValue());
 
 		SpeedIndicator->setText(tgui::String("x") + s);
+		double tmpDur = Duration;
 		Duration = (int)(700 / (0.5f + 0.25f * Speed->getValue()));
+		Elapsed = (int)(((double)Elapsed / tmpDur) * Duration);
+		Last = Elapsed;
 		});
 
 	ProgressThumb->onValueChange([=] {
@@ -1924,6 +1952,9 @@ void DLL::interactDLL()
 		gui.handleEvent(e);
 		HandleEvent(e);
 	}
+
+	if (State != _DLList)
+		return;
 
 	switch (Signal) {
 	case Pending:

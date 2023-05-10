@@ -413,7 +413,7 @@ EditBox.EditBox1 {
         BorderColorHover = black;
         Borders = (2, 2, 2, 2);
         CaretColor = black;
-        CaretWidth = 0;
+        CaretWidth = 1;
         DefaultTextColor = #483C4F;
         Font = "SpaceGrotesk-Bold.ttf";
         Opacity = 0.8;
@@ -881,7 +881,7 @@ Button.GrowButton {
 }
 
 EditBox.ArraySize {
-    DefaultText = "size = ...";
+    DefaultText = "capacity = ...";
     InputValidator = Int;
     MaximumCharacters = 2;
     MouseCursor = Text;
