@@ -837,9 +837,14 @@ void Array::initButtons()
 
 			});
 
-		SearchNode->onPress([=] {
-			SearchVal->setVisible(1 - SearchVal->isVisible());
+	SearchNode->onPress([=] {
+		SearchVal->setVisible(1 - SearchVal->isVisible());
 		SearchEx->setVisible(1 - SearchEx->isVisible());
+		});
+
+	AccessButton->onPress([=] {
+		AccessPos->setVisible(1 - AccessPos->isVisible());
+		AccessEx->setVisible(1 - AccessEx->isVisible());
 		});
 
 	UpdateNode->onPress([=] {
