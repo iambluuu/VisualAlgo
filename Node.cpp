@@ -168,9 +168,10 @@ void Node::drawDArrow()
 		break;
 	}
 
+	double Distance = Arrow.getLocalBounds().width;
+
 	Vector2f OriginPos = Arrow.getPosition();
 	float Angle = Arrow.getRotation() * PI / 180;
-	double Distance = Util::DistanceBetweenNodes(Pos, nxt->Pos) - 46 + 10;
 
 	Arrow.setPosition(OriginPos.x + 7 * sin(Angle) - 5 * cos(Angle), OriginPos.y - 7 * cos(Angle) - 5 * sin(Angle));
 	app.draw(Arrow);
@@ -195,59 +196,6 @@ void Node::drawDArrow()
 	Arrow.setPosition(OriginPos.x - 7 * sin(Angle) + (Distance - 5) * cos(Angle), OriginPos.y + 7 * cos(Angle) - 5 * sin(Angle) + Distance * sin(Angle));
 	app.draw(Arrow);
 
-	Arrow.setOrigin(Arrow.getLocalBounds().left,Arrow.getLocalBounds().top);
-	Arrow.setPosition(OriginPos);
-	Arrow.setRotation(Angle * 180 / PI);
-}
-
-void Node::drawDArrow(int Opacity)
-{
-	if (!nxt)
-		return;
-
-	Color Main = *MainColor;
-	Main.a = Opacity;
-	switch (ArrowState) {
-	case Normal:
-		Arrow.setColor(Color(0, 0, 0, Opacity));
-		break;
-	case Visited:
-		Arrow.setColor(Main);
-		break;
-	case New:
-		Arrow.setColor(Color(30, 215, 96, Opacity));
-		break;
-	case Remove:
-		Arrow.setColor(Color(229, 9, 20, Opacity));
-		break;
-	}
-
-	Vector2f OriginPos = Arrow.getPosition();
-	float Angle = Arrow.getRotation() * PI / 180;
-
-	Arrow.setPosition(OriginPos.x + 7 * sin(Angle) - 5 * cos(Angle), OriginPos.y - 7 * cos(Angle) - 5 * sin(Angle));
-	app.draw(Arrow);
-
-	switch (ArrowStateU) {
-	case Normal:
-		Arrow.setColor(Color(0, 0, 0, Opacity));
-		break;
-	case Visited:
-		Arrow.setColor(Main);
-		break;
-	case New:
-		Arrow.setColor(Color(30, 215, 96, Opacity));
-		break;
-	case Remove:
-		Arrow.setColor(Color(229, 9, 20, Opacity));
-		break;
-	}
-
-	Arrow.setRotation(Angle * 180 / PI + 180);
-	Arrow.setOrigin(Arrow.getLocalBounds().left + Arrow.getLocalBounds().width, Arrow.getLocalBounds().top + Arrow.getLocalBounds().height);
-	Arrow.setPosition(OriginPos.x - 7 * sin(Angle) - 5 * cos(Angle), OriginPos.y + 7 * cos(Angle) - 5 * sin(Angle));
-	app.draw(Arrow);
-
 	Arrow.setOrigin(Arrow.getLocalBounds().left, Arrow.getLocalBounds().top);
 	Arrow.setPosition(OriginPos);
 	Arrow.setRotation(Angle * 180 / PI);
@@ -261,8 +209,21 @@ void Node::updateArrow(Node* Nxt)
 	Arrow.setPosition(Pos.x + 46, Pos.y + 17);
 
 	int ArrowLength = (int)(Util::DistanceBetweenNodes(Pos, Nxt->Pos) - 46);
-	if (NodeType == 1)
+
+	if (NodeType == 1) {
 		ArrowLength += 10;
+	}
+	
+	//if (NodeState == New || Nxt->NodeState == New) {
+	//	ArrowState = New;
+	//	ArrowStateU = New;
+	//}
+
+	//if (NodeState == Remove || Nxt->NodeState == Remove) {
+	//	ArrowState = Remove;
+	//	ArrowStateU = Remove;
+	//}
+	
 	float Angle = Util::AngleOfArrow(Pos, Nxt->Pos);
 
 	Arrow.setTextureRect(IntRect(100 - ArrowLength, 0, ArrowLength, 10));

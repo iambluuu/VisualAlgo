@@ -31,7 +31,7 @@ struct DLL {
 	DLL() {
 		DefaultPosX = 250;
 		DefaultPosY = 250;
-		maxNodeNumber = 12;
+		maxNodeNumber = 13;
 
 		Head = nullptr;
 		Tail = nullptr;

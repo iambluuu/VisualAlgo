@@ -320,8 +320,7 @@ void DLL::genList()
 		for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 			if (tmp->nxt) {
 				int ArrowLength = (int)((Util::DistanceBetweenNodes(tmp->Pos, tmp->nxt->Pos) - 46 + 10) * Elapsed / Duration);
-				tmp->Arrow.setTextureRect(IntRect(100 - ArrowLength, 0, ArrowLength, 10));
-				tmp->drawDArrow();
+				DisconnectNode(tmp, tmp->nxt, Duration - Elapsed);
 			}
 
 			tmp->drawNode(255);
@@ -395,8 +394,7 @@ void DLL::genList(const tgui::String s)
 		for (Node* tmp = Head; tmp; tmp = tmp->nxt) {
 			if (tmp->nxt) {
 				int ArrowLength = (int)((Util::DistanceBetweenNodes(tmp->Pos, tmp->nxt->Pos) - 46 + 10) * Elapsed / Duration);
-				tmp->Arrow.setTextureRect(IntRect(100 - ArrowLength, 0, ArrowLength, 10));
-				tmp->drawDArrow();
+				DisconnectNode(tmp, tmp->nxt, Duration - Elapsed);
 			}
 
 			tmp->drawNode(255);
@@ -491,7 +489,6 @@ void DLL::ConnectNode(Node* A, Node* B, int Elapsed)
 	double Distance = Util::DistanceBetweenNodes(A->Pos, B->Pos) - 46 + 10;
 	int Length = (int)Distance * Elapsed / Duration;
 	A->Arrow.setTextureRect(IntRect(100 - Length, 0, Length, 10));
-
 	A->Arrow.setColor(SGreen);
 	
 	Vector2f OriginPos = A->Arrow.getPosition();
@@ -519,10 +516,13 @@ void DLL::DisconnectNode(Node* A, Node* B, int Elapsed)
 	Elapsed = Duration - Elapsed;
 
 	A->updateArrow(B);
+	A->ArrowState = Normal;
+	A->ArrowStateU = Normal;
 
 	double Distance = Util::DistanceBetweenNodes(A->Pos, B->Pos) - 46 + 10;
 	int Length = (int)Distance * Elapsed / Duration;
 	A->Arrow.setTextureRect(IntRect(100 - Length, 0, Length, 10));
+	A->Arrow.setColor(Color::Black);
 
 	Vector2f OriginPos = A->Arrow.getPosition();
 	float Angle = A->Arrow.getRotation() * PI / 180;
@@ -790,6 +790,7 @@ bool DLL::insertNode(int i, int v)
 	action.back().push_back(bind(&DLL::setNodeState, this, NewNode, New, placeholders::_1));
 	action.back().push_back(bind(&DLL::setNodeState, this, NewNode->nxt, Next, placeholders::_1));
 	action.back().push_back(bind(&DLL::drawListExcept, this, NewNode, placeholders::_1));
+	action.back().push_back(bind(&DLL::TitleDisappear, this, NewNode->nxt, Next, placeholders::_1));
 	action.back().push_back(bind(&DLL::NodeAppear, this, NewNode, placeholders::_1));
 
 	//Connect Nodes	
