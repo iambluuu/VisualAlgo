@@ -583,6 +583,9 @@ void DLL::insertAtBeginning(Node*& NewNode)
 		action.back().push_back(std::bind(&DLL::drawList, this, placeholders::_1));
 		action.back().push_back(std::bind(&DLL::MoveHighlight, this, 1, 4, placeholders::_1));
 		action.back().push_back(std::bind(&DLL::TitleAppear, this, NewNode, New, placeholders::_1));
+
+		initProgress();
+
 		return;
 	}
 

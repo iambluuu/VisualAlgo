@@ -532,6 +532,8 @@ void SLL::insertAtBeginning(Node*& NewNode)
 		action.back().push_back(std::bind(&SLL::drawList, this, placeholders::_1));
 		action.back().push_back(std::bind(&SLL::MoveHighlight, this, 0, 2, placeholders::_1));
 		action.back().push_back(std::bind(&SLL::TitleAppear, this, NewNode, New, placeholders::_1));
+
+		initProgress();
 		return;
 	}
 	

@@ -801,10 +801,6 @@ void CLL::insertAtBeginning(Node*& NewNode)
 
 	action.push_back(vector<function<void(int) > >());
 
-	if (Tail == NewNode->nxt) {
-		cerr << "wau\n";
-	}
-
 	action.back().push_back(bind(&CLL::drawLongArrow, this, Tail, NewNode->nxt, placeholders::_1));
 	action.back().push_back(bind(&CLL::HighlightAppear, this, placeholders::_1));
 	action.back().push_back(std::bind(&CLL::drawListExcept, this, NewNode, std::placeholders::_1));
